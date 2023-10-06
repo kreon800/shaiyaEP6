@@ -27,3 +27,13 @@ To build a stable library that replaces pet.dll and exceeds its capabilities.
 ## Motivation
 
 I worked at two private servers that used the [pet](https://www.elitepvpers.com/forum/shaiya-pserver-guides-releases/4102262-release-shen1ls-wings.html) library. I learned a lot, but building code alongside another library can be frustrating. It took at least two years to become comfortable with the situation.
+
+## References
+
+This is a list of projects that have been used as reference material.
+
+[Teos](https://github.com/ShaiyaTeos/Teos)
+
+[Imgeneus](https://github.com/AlaiyaNetwork/Imgeneus)
+
+[Parsec](https://github.com/matigramirez/Parsec)
