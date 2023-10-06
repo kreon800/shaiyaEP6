@@ -52,24 +52,10 @@ The project addresses the following issues:
 
 * Weapon enchant bug
 
-* HP/MP/SP bug
+* Disguise removal bug
 
 * Lag when adding/removing equipment
 
 * Market search index
 
-It also modifies the client to accept the older `0x2602` packet by ignoring the dates in the product item definition.
-
-```cpp
-struct ProductItemDefinition
-{
-    UINT8 bag;
-    UINT8 slot;
-    UINT8 type;
-    UINT8 typeId;
-    UINT8 count;
-    // ep6 fields
-    ULONG fromDate;
-    ULONG toDate;
-};
-```
+* Chat color exploit

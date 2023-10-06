@@ -1,5 +1,5 @@
 #pragma once
-#include <shaiya/common.h>
+#include <include/shaiya/common.h>
 
 namespace shaiya
 {
@@ -12,11 +12,11 @@ namespace shaiya
 
     struct ItemComposeResponse
     {
-        UINT16 opcode; // 0x806
+        UINT16 opcode{ 0x806 };
         ItemComposeResult result;
         UINT8 bag;
         UINT8 slot;
-        char craftName[21];
+        CraftName craftName;
     };
     #pragma pack(pop)
 }

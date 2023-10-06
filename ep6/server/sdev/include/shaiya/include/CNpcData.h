@@ -1,42 +1,48 @@
 #pragma once
-#include <shaiya/common.h>
-#include <shaiya/include/SVector.h>
+#include <include/shaiya/common.h>
+#include <include/shaiya/include/SVector.h>
 
 namespace shaiya
 {
+    typedef Array<char, 256> NpcName;
+    typedef Array<char, 256> Location;
+
     #pragma pack(push, 1)
+    enum struct NpcCountry : UINT32
+    {
+        Neutral,
+        Light,
+        Fury
+    };
+
     struct Npc
     {
-        UINT16 type;     //0x00
-        UINT16 typeId;   //0x02
-        UINT32 shape;    //0x04
+        UINT16 type;         //0x00
+        UINT16 typeId;       //0x02
+        UINT32 shape;        //0x04
         PAD(8);
-        UINT32 country;  //0x10
-        char name[29];   //0x14
-        PAD(243);
+        NpcCountry country;  //0x10
+        NpcName name;        //0x14
+        // 0x114
+        PAD(16);
         // 0x124
     };
 
     struct NpcGate
     {
-        UINT16 mapdId;       //0x00
+        UINT16 mapId;       //0x00
         PAD(2);
-        SVector outPos;      //0x04
-        char location[256];  //0x10
-        UINT32 cost;         //0x110
+        SVector outPos;     //0x04
+        Location location;  //0x10
+        UINT32 price;       //0x110
         // 0x114
     };
 
     struct NpcGateKeeper
     {
-        UINT16 type;      //0x00
-        UINT16 typeId;    //0x02
-        UINT32 shape;     //0x04
-        PAD(8);
-        UINT32 country;   //0x10
-        char name[29];    //0x14
-        PAD(243);
-        NpcGate gate[3];  //0x124
+        Npc npc;
+        // 0x124
+        Array<NpcGate, 3> gate;
         // 0x460
     };
 
@@ -48,13 +54,7 @@ namespace shaiya
 
     struct NpcShop
     {
-        UINT16 type;       //0x00
-        UINT16 typeId;     //0x02
-        UINT32 shape;      //0x04
-        PAD(8);
-        UINT32 country;    //0x10
-        char name[29];     //0x14
-        PAD(243);
+        Npc npc;           //0x00
         UINT32 shopType;   //0x124
         UINT32 itemCount;  //0x128
         NpcItem* item;     //0x12C

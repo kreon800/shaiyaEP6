@@ -1,4 +1,3 @@
-#pragma unmanaged
 #include <array>
 #include <thread>
 #define WIN32_LEAN_AND_MEAN
@@ -6,9 +5,12 @@
 
 #include <include/main.h>
 #include <include/util.h>
-
-#include <shaiya/include/CClientToMgr.h>
-#include <shaiya/include/CUser.h>
+#include <include/shaiya/packets/2602.h>
+#include <include/shaiya/include/CClientToMgr.h>
+#include <include/shaiya/include/CGameData.h>
+#include <include/shaiya/include/CUser.h>
+#include <include/shaiya/include/SConnection.h>
+#include <include/shaiya/include/ServerTime.h>
 using namespace shaiya;
 
 unsigned g_nPayLetterEnable = 0x58799C;
@@ -38,16 +40,16 @@ struct PacketBuffer1B02
     void* p0x04;
     ULONG u0x08;
     ULONG u0x0C;
-    ULONG userUid;         // ebx+0x02
-    ULONG charId;          // ebx+0x06
-    UINT8 result;          // ebx+0x0A
-    char itemKey[25];      // ebx+0x0B
-    UINT32 u0x32;          // ebx+0x24
-    char orderNumber[16];  // ebx+0x28
+    UserId userId;                // ebx+0x02
+    ULONG charId;                 // ebx+0x06
+    UINT8 result;                 // ebx+0x0A
+    Array<char, 25> itemKey;      // ebx+0x0B
+    UINT32 u0x32;                 // ebx+0x24
+    Array<char, 16> orderNumber;  // ebx+0x28
     // user->id
-    ULONG userId;          // ebx+0x38
-    UINT32 u0x4A;          // ebx+0x3C
-    UINT32 itemCount;      // ebx+0x40
+    ULONG id;                     // ebx+0x38
+    UINT32 u0x4A;                 // ebx+0x3C
+    UINT32 itemCount;             // ebx+0x40
     // 0x52
 };
 
@@ -57,20 +59,18 @@ struct PacketBuffer1B03
     void* p0x04;
     ULONG u0x08;
     ULONG u0x0C;
-    ULONG userUid;         // ebx+0x02
-    char productCode[21];  // ebx+0x06
-    char targetName[21];   // ebx+0x1B
-    UINT32 usePoint;       // ebx+0x30
-    UINT32 points;         // ebx+0x34
+    UserId userId;            // ebx+0x02
+    ProductCode productCode;  // ebx+0x06
+    CharName targetName;      // ebx+0x1B
+    UINT32 itemPrice;         // ebx+0x30
+    UINT32 points;            // ebx+0x34
     // 0x46
 };
 #pragma pack(pop)
 
 namespace packet_shop
 {
-    using namespace shaiya;
-
-    void event_0x105(bool enable)
+    void raise_event_0x105(bool enable)
     {
         PacketBuffer0105 packet{};
         packet.u0x00 = 0;
@@ -82,7 +82,7 @@ namespace packet_shop
         CClientToMgr::OnRecv(&packet);
     }
 
-    void event_0x1B02(CUser* user)
+    void raise_event_0x1B02(CUser* user)
     {
         PacketBuffer1B02 packet{};
         packet.u0x00 = 0;
@@ -90,12 +90,12 @@ namespace packet_shop
         packet.u0x08 = 0;
         // 00 00 02 1B
         packet.u0x0C = 0x1B020000;
-        packet.userUid = user->userUid;
+        packet.userId = user->userId;
         packet.charId = user->charId;
         CClientToMgr::OnRecv(&packet);
     }
 
-    void event_0x1B03(CUser* user, const char* targetName, const char* productCode, std::uint32_t usePoint)
+    void raise_event_0x1B03(CUser* user, const char* targetName, const char* productCode, int itemPrice)
     {
         PacketBuffer1B03 packet{};
         packet.u0x00 = 0;
@@ -103,33 +103,74 @@ namespace packet_shop
         packet.u0x08 = 0;
         // 00 00 03 1B
         packet.u0x0C = 0x1B030000;
-        packet.userUid = user->userUid;
-        strncpy_s(packet.productCode, productCode, sizeof(packet.productCode));
-        strncpy_s(packet.targetName, targetName, sizeof(packet.targetName));
-        packet.usePoint = usePoint;
+        packet.userId = user->userId;
+        std::memcpy(&packet.productCode, productCode, sizeof(packet.productCode));
+        std::memcpy(&packet.targetName, targetName, sizeof(packet.targetName));
+        packet.itemPrice = itemPrice;
         packet.points = user->points;
         CClientToMgr::OnRecv(&packet);
     }
 
-    void purchase_item(CUser* user)
+    void purchase_item_async(CUser* user)
     {
         std::thread([=] {
-            event_0x1B02(user);
+            raise_event_0x1B02(user);
             }).detach();
     }
 
-    void send_present(CUser* user, const char* targetName, const char* productCode, std::uint32_t usePoint)
+    void send_present_async(CUser* user, const char* targetName, const char* productCode, int usePoint)
     {
         std::thread([=] {
-            event_0x1B03(user, targetName, productCode, usePoint);
+            raise_event_0x1B03(user, targetName, productCode, usePoint);
             }).detach();
     }
 
-    void set_pay_letter_enable(bool enable)
+    void set_pay_letter_enable_async(bool enable)
     {
         std::thread([=] {
-            event_0x105(enable);
+            raise_event_0x105(enable);
             }).detach();
+    }
+
+    void send_purchase(CUser* user, Packet packet)
+    {
+        constexpr int item_size_without_dates = 5;
+
+        ProductItemPurchaseResponse response{};
+        response.opcode = util::read_bytes<std::uint16_t>(packet, 0);
+        response.result = util::read_bytes<ProductItemPurchaseResult>(packet, 2);
+        response.points = util::read_bytes<std::uint32_t>(packet, 3);
+        std::memcpy(&response.productCode, &packet[7], sizeof(response.productCode));
+        response.purchaseDate = util::read_bytes<std::uint32_t>(packet, 28);
+        response.itemPrice = util::read_bytes<std::uint32_t>(packet, 32);
+        response.itemCount = util::read_bytes<std::uint8_t>(packet, 36);
+
+        int offset = 0;
+        for (int i = 0; i < response.itemCount; ++i)
+        {
+            Item2602 product_item{};
+            product_item.bag = util::read_bytes<std::uint8_t>(packet, 37 + offset);
+            product_item.slot = util::read_bytes<std::uint8_t>(packet, 38 + offset);
+            product_item.type = util::read_bytes<std::uint8_t>(packet, 39 + offset);
+            product_item.typeId = util::read_bytes<std::uint8_t>(packet, 40 + offset);
+            product_item.count = util::read_bytes<std::uint8_t>(packet, 41 + offset);
+
+            #ifdef SHAIYA_EP6
+            auto itemInfo = CGameData::GetItemInfo(product_item.type, product_item.typeId);
+            if (itemInfo)
+            {
+                product_item.toDate = ServerTime::GetItemExpireTime(response.purchaseDate, itemInfo);
+                product_item.fromDate = product_item.toDate ? response.purchaseDate : 0;
+            }
+            #endif
+
+            std::memcpy(&response.itemList[i], &product_item, sizeof(Item2602));
+            offset += item_size_without_dates;
+        }
+
+        constexpr int packet_size_without_list = 37;
+        int packet_size = packet_size_without_list + (response.itemCount * sizeof(Item2602));
+        SConnection::Send(&user->connection, &response, packet_size);
     }
 }
 
@@ -141,10 +182,11 @@ void __declspec(naked) naked_0x48876F()
         pushad
 
         push edi // user
-        call packet_shop::purchase_item
+        call packet_shop::purchase_item_async
         add esp,0x4
 
         popad
+
         // original
         jmp u0x488D5F
     }
@@ -171,16 +213,17 @@ void __declspec(naked) naked_0x488A80()
         pushad
 
         mov eax,[esp+0x174]
-        push eax // usePoint
+        push eax // itemPrice
         lea eax,[esp+0x14E]
         push eax // productCode
         lea eax,[esp+0x167]
         push eax // targetName
         push edi // user
-        call packet_shop::send_present
+        call packet_shop::send_present_async
         add esp,0x10
 
         popad
+
         // original
         jmp u0x488D5F
     }
@@ -203,17 +246,49 @@ void __declspec(naked) naked_0x47D3D7()
     }
 }
 
+unsigned u0x488709 = 0x488709;
+void __declspec(naked) naked_0x4886E0()
+{
+    __asm
+    {
+        // purchaseDate
+        mov [esp+0x188],esi
+        // price
+        mov [esp+0x18C],edx
+        // itemCount
+        mov byte ptr[esp+0x190],bl
+
+        pushad
+
+        lea ecx,[esp+0x18C]
+
+        push ecx // packet
+        push edi // user
+        call packet_shop::send_purchase
+        add esp,0x8
+
+        popad
+
+        jmp u0x488709
+    }
+}
+
 void hook::packet_shop()
 {
-    // CUser::PacketShop
+    // CUser::PacketShop case 0x2602
     util::detour((void*)0x48876F, naked_0x48876F, 5);
-    // CUser::PacketUserDBPoint
+    // CUser::PacketUserDBPoint case 0xE01
     util::detour((void*)0x47D151, naked_0x47D151, 6);
-    // CUser::PacketShop
+    // CUser::PacketShop case 0x2603
     util::detour((void*)0x488A80, naked_0x488A80, 5);
-    // CUser::PacketUserDBPoint
+    // CUser::PacketUserDBPoint case 0xE03
     util::detour((void*)0x47D3D7, naked_0x47D3D7, 5);
 
     // fake a 0x105 event
-    packet_shop::set_pay_letter_enable(true);
+    packet_shop::set_pay_letter_enable_async(true);
+
+    #ifdef SHAIYA_EP6
+    // CUser::PacketShop case 0x2602
+    util::detour((void*)0x4886E0, naked_0x4886E0, 5);
+    #endif
 }

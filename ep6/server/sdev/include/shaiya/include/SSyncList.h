@@ -1,16 +1,11 @@
 #pragma once
-#include <shaiya/common.h>
+#include <include/shaiya/common.h>
+#include <include/shaiya/include/SNode.h>
 
 namespace shaiya
 {
     #pragma pack(push, 1)
     // thanks, Cups ^^
-    struct SNode
-    {
-        SNode* prev;
-        SNode* next;
-    };
-
     template<class T>
     struct SSyncList
     {

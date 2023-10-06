@@ -1,17 +1,17 @@
-#pragma unmanaged
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 #include <include/main.h>
 #include <include/util.h>
-
-#include <shaiya/packets/0A05.h>
-#include <shaiya/packets/0A0A.h>
-#include <shaiya/include/CUser.h>
-#include <shaiya/include/SConnection.h>
+#include <include/shaiya/packets/0A05.h>
+#include <include/shaiya/packets/0A09.h>
+#include <include/shaiya/packets/0A0A.h>
+#include <include/shaiya/packets/240D.h>
+#include <include/shaiya/include/CItem.h>
+#include <include/shaiya/include/CUser.h>
+#include <include/shaiya/include/SConnection.h>
+#include <include/shaiya/include/ServerTime.h>
 using namespace shaiya;
-
-// author: unknown
 
 namespace packet_exchange
 {
@@ -19,27 +19,27 @@ namespace packet_exchange
     {
         user->confirmExchangeState = 0;
         ConfirmExchangeResponse confirm_response{ 0xA0A, 1, 0 };
-        SConnection::Send(user, &confirm_response, sizeof(ConfirmExchangeResponse));
+        SConnection::Send(&user->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
 
         confirm_response.state1 = 2;
-        SConnection::Send(user, &confirm_response, sizeof(ConfirmExchangeResponse));
+        SConnection::Send(&user->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
 
         user->exchangeState = 0;
         ExchangeResponse exchange_response{ 0xA05, 3, 1 };
-        SConnection::Send(user, &exchange_response, sizeof(ExchangeResponse));
+        SConnection::Send(&user->connection, &exchange_response, sizeof(ExchangeResponse));
 
         user->exchangeUser->confirmExchangeState = 0;
         confirm_response.state1 = 1;
         confirm_response.state2 = 0;
-        SConnection::Send(user->exchangeUser, &confirm_response, sizeof(ConfirmExchangeResponse));
+        SConnection::Send(&user->exchangeUser->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
 
         confirm_response.state1 = 2;
-        SConnection::Send(user->exchangeUser, &confirm_response, sizeof(ConfirmExchangeResponse));
+        SConnection::Send(&user->exchangeUser->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
 
         user->exchangeUser->exchangeState = 0;
         confirm_response.state1 = 3;
         confirm_response.state2 = 1;
-        SConnection::Send(user->exchangeUser, &exchange_response, sizeof(ExchangeResponse));
+        SConnection::Send(&user->exchangeUser->connection, &exchange_response, sizeof(ExchangeResponse));
     }
 
     void confirm_exchange_handler(CUser* user, Packet packet)
@@ -53,10 +53,10 @@ namespace packet_exchange
         {
             user->confirmExchangeState = 1;
             ConfirmExchangeResponse confirm_response{ 0xA0A, 1, 1 };
-            SConnection::Send(user, &confirm_response, sizeof(ConfirmExchangeResponse));
+            SConnection::Send(&user->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
 
             confirm_response.state1 = 2;
-            SConnection::Send(user->exchangeUser, &confirm_response, sizeof(ConfirmExchangeResponse));
+            SConnection::Send(&user->exchangeUser->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
         }
         else
         {
@@ -70,22 +70,22 @@ namespace packet_exchange
         exchangeUser->confirmExchangeState = 0;
 
         ConfirmExchangeResponse confirm_response{ 0xA0A, 1, 0 };
-        SConnection::Send(user, &confirm_response, sizeof(ConfirmExchangeResponse));
+        SConnection::Send(&user->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
 
         confirm_response.state1 = 2;
-        SConnection::Send(user, &confirm_response, sizeof(ConfirmExchangeResponse));
+        SConnection::Send(&user->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
 
         confirm_response.state1 = 1;
-        SConnection::Send(exchangeUser, &confirm_response, sizeof(ConfirmExchangeResponse));
+        SConnection::Send(&exchangeUser->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
 
         confirm_response.state1 = 2;
-        SConnection::Send(exchangeUser, &confirm_response, sizeof(ConfirmExchangeResponse));
+        SConnection::Send(&exchangeUser->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
 
         // original code
 
         ExchangeResponse exchange_response{ 0xA05, 3, 1 };
-        SConnection::Send(user, &exchange_response, sizeof(ExchangeResponse));
-        SConnection::Send(exchangeUser, &exchange_response, sizeof(ExchangeResponse));
+        SConnection::Send(&user->connection, &exchange_response, sizeof(ExchangeResponse));
+        SConnection::Send(&exchangeUser->connection, &exchange_response, sizeof(ExchangeResponse));
     }
 
     void maybe_reset_state(CUser* user)
@@ -95,6 +95,56 @@ namespace packet_exchange
                 return;
 
         reset_state(user);
+    }
+
+    void send_exchange_item(CUser* user, CUser* exchangeUser, Packet packet)
+    {
+        ExchangeItem exchange_item{};
+        exchange_item.destSlot = util::read_bytes<std::uint8_t>(packet, 5);
+
+        auto src_bag = util::read_bytes<std::uint8_t>(packet, 2);
+        auto src_slot = util::read_bytes<std::uint8_t>(packet, 3);
+
+        // bag, slot, etc. have already been tested
+        auto& item = exchangeUser->inventory[src_bag][src_slot];
+        exchange_item.type = item->type;
+        exchange_item.typeId = item->typeId;
+        exchange_item.count = util::read_bytes<std::uint8_t>(packet, 4);
+        exchange_item.quality = item->quality;
+        exchange_item.gems = item->gems;
+
+        #ifdef SHAIYA_EP6
+        exchange_item.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
+        exchange_item.fromDate = exchange_item.toDate ? item->makeTime : 0;
+        #endif
+
+        exchange_item.craftName = item->craftName;
+        SConnection::Send(&user->connection, &exchange_item, sizeof(ExchangeItem));
+    }
+
+    void send_battle_exchange_item(CUser* user, CUser* exchangeUser, Packet packet)
+    {
+        BattleExchangeItem exchange_item{};
+        exchange_item.destSlot = util::read_bytes<std::uint8_t>(packet, 5);
+
+        auto src_bag = util::read_bytes<std::uint8_t>(packet, 2);
+        auto src_slot = util::read_bytes<std::uint8_t>(packet, 3);
+
+        // bag, slot, etc. have already been tested
+        auto& item = exchangeUser->inventory[src_bag][src_slot];
+        exchange_item.type = item->type;
+        exchange_item.typeId = item->typeId;
+        exchange_item.count = util::read_bytes<std::uint8_t>(packet, 4);
+        exchange_item.quality = item->quality;
+        exchange_item.gems = item->gems;
+
+        #ifdef SHAIYA_EP6
+        exchange_item.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
+        exchange_item.fromDate = exchange_item.toDate ? item->makeTime : 0;
+        #endif
+
+        exchange_item.craftName = item->craftName;
+        SConnection::Send(&user->connection, &exchange_item, sizeof(ExchangeItem));
     }
 }
 
@@ -118,6 +168,7 @@ void __declspec(naked) naked_0x47D964()
         add esp,0x8
 
         popad
+
         jmp u0x47E0DA
     }
 }
@@ -129,11 +180,13 @@ void __declspec(naked) naked_0x47E253()
     __asm
     {
         // user->confirmExchangeState
-        cmp [ecx+0x1534],al
+        cmp byte ptr[ecx+0x15E5],al
         jne _0x47E263
+
         // user->confirmExchangeState
-        cmp [esi+0x1534],al
+        cmp byte ptr[esi+0x15E5],al
         jne _0x47E263
+
         // user->exchangeState
         cmp byte ptr[ecx+0x15E4],al
         jne _0x47E263
@@ -157,6 +210,7 @@ void __declspec(naked) naked_0x47E26F()
         add esp,0x8
 
         popad
+
         jmp u0x47E29D
     }
 }
@@ -167,7 +221,6 @@ void __declspec(naked) naked_0x47DE08()
 {
     __asm
     {
-        // original
         pushad
 
         push ebx // user
@@ -187,7 +240,6 @@ void __declspec(naked) naked_0x47DFC0()
 {
     __asm
     {
-        // original
         pushad
 
         push ebx // user
@@ -199,6 +251,44 @@ void __declspec(naked) naked_0x47DFC0()
         // original
         call u0x47E250
         jmp u0x47DFC5
+    }
+}
+
+unsigned u0x47DF34 = 0x47DF34;
+void __declspec(naked) naked_0x47DE7B()
+{
+    __asm
+    {
+        pushad
+
+        push edi // packet
+        push ebx // exchange user
+        push esi // user
+        call packet_exchange::send_exchange_item
+        add esp,0xC
+
+        popad
+
+        jmp u0x47DF34
+    }
+}
+
+unsigned u0x48C753 = 0x48C753;
+void __declspec(naked) naked_0x48C69A()
+{
+    __asm
+    {
+        pushad
+
+        push edi // packet
+        push ebp // exchange user
+        push esi // user
+        call packet_exchange::send_battle_exchange_item
+        add esp,0xC
+
+        popad
+
+        jmp u0x48C753
     }
 }
 
@@ -214,4 +304,11 @@ void hook::packet_exchange()
     util::detour((void*)0x47DE08, naked_0x47DE08, 5);
     // CUser::PacketExchange case 0xA07
     util::detour((void*)0x47DFC0, naked_0x47DFC0, 5);
+
+    #ifdef SHAIYA_EP6
+    // CUser::PacketExchange case 0xA06
+    util::detour((void*)0x47DE7B, naked_0x47DE7B, 8);
+    // CUser::PacketPvP case 0x240A
+    util::detour((void*)0x48C69A, naked_0x48C69A, 8);
+    #endif
 }

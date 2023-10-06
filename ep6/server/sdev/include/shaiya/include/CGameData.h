@@ -1,10 +1,16 @@
 #pragma once
-#include <shaiya/common.h>
+#include <include/shaiya/common.h>
 
 namespace shaiya
 {
     #pragma pack(push, 1)
     static Address g_GameData = 0x587C68;
+    // item effect 59 (EP5 itemId 100169)
+    static Address g_ItemSpecialMoveWar = 0x56E668;
+
+    typedef Array<char, 32> ItemName;
+    typedef Array<char, 32> MobName;
+    typedef Array<char, 32> SkillName;
 
     struct CGameData
     {
@@ -45,7 +51,7 @@ namespace shaiya
             DarknessCure,
             StopCure,
             SlowCure,
-            ProtectedFaINT,
+            ProtectedFaint,
             ProtectedDeath,
             VenomCure,
             DiseaseCure,
@@ -86,6 +92,7 @@ namespace shaiya
             GuildHouseRecall,
             LuckyCharm,
             ExtractionHammer,
+            MoveWar,
             ItemCompose = 62,
             Promotion,
             PerfectLinkingHammer = 69,
@@ -108,7 +115,7 @@ namespace shaiya
             DungeonMap,
             CraftingHammer = 102,
             SafetyEnchant,
-            TownTeleport,
+            TownTeleportScroll,
             EnchantEnhancer = 107,
             Dye = 110,
             HaloReactor,
@@ -122,16 +129,48 @@ namespace shaiya
             Item500 = 210
         };
 
+        enum struct ItemMarketType : UINT8
+        {
+            TwoHandedWeapon = 1,
+            OneHandedWeapon,
+            DualWeapon,
+            Spear,
+            HeavyWeapon,
+            Knuckles,
+            Dagger,
+            Staff,
+            Bow,
+            Projectile,
+            Helmet,
+            UpperArmor,
+            LowerArmor,
+            Gloves,
+            Shoes,
+            Cloak,
+            Shield,
+            Necklace,
+            #ifdef SHAIYA_EP6_4
+            Vehicle,
+            #endif
+            Ring,
+            Bracelet,
+            Lapis,
+            Lapisian,
+            Other,
+            Mount,
+            HighQuality
+        };
+
         enum struct ItemRealType : UINT32
         {
             OneHandedSword = 1,
             TwoHandedSword,
             OneHandedAxe,
             TwoHandedAxe,
-            DualWield,
+            DualWeapon,
             Spear,
-            OneHandedMace,
-            TwoHandedHammer,
+            OneHandedHeavy,
+            TwoHandedHeavy,
             ReverseDagger,
             Dagger,
             Javelin,
@@ -144,12 +183,12 @@ namespace shaiya
             LowerArmor,
             Shield,
             Gloves,
-            Boots,
+            Shoes,
             Ring,
-            Amulet,
-            Cape,
-            Loop,
-            Gold,
+            Necklace,
+            Cloak,
+            Bracelet,
+            Teleportation,
             Quest,
             Gem = 30,
             Vehicle = 42,
@@ -166,7 +205,7 @@ namespace shaiya
         struct ItemInfo
         {
             UINT32 itemId;           //0x00
-            char name[32];           //0x04
+            ItemName itemName;       //0x04
             UINT8 type;              //0x24
             UINT8 typeId;            //0x25
             Race country;            //0x26
@@ -190,12 +229,12 @@ namespace shaiya
             UINT16 reqInt;           //0x3C
             UINT16 reqWis;           //0x3E
             UINT16 reqLuc;           //0x40
-            UINT16 attackRange;      //0x42
-            UINT8 attackSpeed;       //0x44
+            UINT16 range;            //0x42
+            UINT8 attackTime;        //0x44
             Attribute attribute;     //0x45
             ItemEffect effect;       //0x46
             UINT8 slots;             //0x47
-            UINT8 moveSpeed;         //0x48
+            UINT8 speed;             //0x48
             UINT8 absorption;        //0x49
             UINT8 maxOjCount;        //0x4A
             UINT8 stackSize;         //0x4B
@@ -219,7 +258,7 @@ namespace shaiya
             UINT16 mana;             //0x6E
             UINT16 strength;         //0x70
             UINT16 dexterity;        //0x72
-            UINT16 recovery;         //0x74
+            UINT16 reaction;         //0x74
             UINT16 intelligence;     //0x76
             UINT16 wisdom;           //0x78
             UINT16 luck;             //0x7A
@@ -227,8 +266,8 @@ namespace shaiya
             UINT32 buy;              //0x80
             UINT32 sell;             //0x84
             PAD(24);
-            ItemRealType realType;   //0xA0
-            UINT8 itemMType;         //0xA4
+            ItemRealType realType;      //0xA0
+            ItemMarketType marketType;  //0xA4
             PAD(3);
             // 0xA8
         };
@@ -243,7 +282,7 @@ namespace shaiya
             UINT32 stamina;           //0x14
             UINT32 mana;              //0x18
             UINT32 strength;          //0x1C
-            UINT32 recovery;          //0x20
+            UINT32 reaction;          //0x20
             UINT32 intelligence;      //0x24
             UINT32 wisdom;            //0x28
             UINT32 dexterity;         //0x2C
@@ -299,7 +338,7 @@ namespace shaiya
         struct MobInfo
         {
             UINT16 mobId;            //0x00
-            char name[32];           //0x02
+            MobName mobName;         //0x02
             UINT16 level;            //0x22
             UINT16 exp;              //0x24
             UINT8 ai;                //0x26
@@ -320,8 +359,10 @@ namespace shaiya
             PAD(1);
             UINT16 defense;          //0x42
             UINT16 resistance;       //0x44
-            bool resistState[15];    //0x46
-            UINT8 resistSkill[6];    //0x55
+            // 0x46
+            Array<bool, 15> resistState;
+            // 0x55
+            Array<UINT8, 6> resistSkill;
             UINT32 normalTime;       //0x5C
             UINT8 normalStep;        //0x60
             PAD(3);
@@ -333,20 +374,22 @@ namespace shaiya
             TickCount cooldown;      //0x6C
             PAD(8);
             UINT32 country;          //0x78
-            MobAttack attack[3];     //0x7C
+            // 0x7C
+            Array<MobAttack, 3> attack;
             // 0xB8
             PAD(12);
-            MobItem mobItem[9];      //0xC4
+            // 0xC4
+            Array<MobItem, 9> mobItem;
             // 0x10C
         };
 
         struct ProductInfo
         {
-            char code[24];      //0x00
-            UINT32 itemId[24];  //0x18
-            UINT8 count[24];    //0x78
-            UINT32 cost;        //0x90
-            char itemName[52];  //0x94
+            Array<char, 24> productCode;  //0x00
+            Array<UINT32, 24> itemId;     //0x18
+            Array<UINT8, 24> itemCount;   //0x78
+            UINT32 price;                 //0x90
+            Array<char, 52> itemName;     //0x94
             PAD(56);
             // 0x100
         };
@@ -393,8 +436,8 @@ namespace shaiya
         {
             UINT16 skillId;           //0x00
             UINT8 skillLv;            //0x02
-            char name[30];            //0x03
-            PAD(3);
+            SkillName skillName;      //0x03
+            PAD(1);
             UINT16 level;             //0x24 
             UINT8 country;            //0x26
             bool attackFighter;       //0x27
@@ -410,7 +453,8 @@ namespace shaiya
             UINT8 typeAttack;         //0x30
             UINT8 typeEffect;         //0x31
             UINT16 typeDetail;        //0x32
-            bool needWeapon[15];      //0x34
+            // 0x34
+            Array<bool, 15> needWeapon;
             bool shield;              //0x43
             UINT16 stamina;           //0x44
             UINT16 mana;              //0x46
@@ -448,7 +492,8 @@ namespace shaiya
             UINT16 addDmgHealth;      //0x76
             UINT16 addDmgStamina;     //0x78
             UINT16 addDmgMana;        //0x7A
-            SkillAbility ability[3];  //0x7C
+            // 0x7C
+            Array<SkillAbility, 3> ability;
             UINT16 healHealth;        //0x88
             UINT16 healStamina;       //0x8A
             UINT16 healMana;          //0x8C
@@ -466,12 +511,12 @@ namespace shaiya
             // 0xA4
         };
 
-        static ItemInfo* GetItemInfo(int itemType/*eax*/, int itemTypeId/*ecx*/);
+        static ItemInfo* GetItemInfo(int type/*eax*/, int typeId/*ecx*/);
         static MobInfo* GetMobInfo(int mobId/*eax*/);
         static KCStatus* GetKCStatusByCount(int country/*eax*/, ULONG killCount/*ebx*/);
         static int GetKCStatusMax(int country/*eax*/);
         static int GetKCStatusMaxKillCount(int country/*eax*/);
-        static ProductInfo* GetProductInfo(PCSTR productCode/*eax*/);
+        static ProductInfo* GetProductInfo(const char* productCode/*eax*/);
         static SkillInfo* GetSkillInfo(int skillId/*eax*/, int skillLv/*edx*/);
     };
     #pragma pack(pop)

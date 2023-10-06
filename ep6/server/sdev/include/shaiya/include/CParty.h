@@ -1,5 +1,6 @@
 #pragma once
-#include <shaiya/common.h>
+#include <include/shaiya/common.h>
+#include <include/shaiya/include/SNode.h>
 
 namespace shaiya
 {
@@ -22,17 +23,17 @@ namespace shaiya
 
     struct CParty
     {
-        PAD(8);
-        ULONG id;                 //0x08
-        UINT32 bossIndex;         //0x0C
-        UINT32 count;             //0x10
-        PartySlot slot[30];       //0x14
-        ItemDivType itemDivType;  //0x104
-        UINT32 itemDivSeq;        //0x108
-        UINT32 level;             //0x10C
-        UINT32 subBossIndex;      //0x110
-        bool isUnion;             //0x114
-        bool isAutoJoin;          //0x115
+        SNode node;                 //0x00
+        ULONG id;                   //0x08
+        UINT32 bossIndex;           //0x0C
+        UINT32 numMembers;          //0x10
+        Array<PartySlot, 30> slot;  //0x14
+        ItemDivType itemDivType;    //0x104
+        UINT32 itemDivSeq;          //0x108
+        UINT32 level;               //0x10C
+        UINT32 subBossIndex;        //0x110
+        bool isUnion;               //0x114
+        bool isAutoJoin;            //0x115
         PAD(2);
         // 0x118
 

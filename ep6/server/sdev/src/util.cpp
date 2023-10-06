@@ -1,15 +1,10 @@
 #include <chrono>
 #include <fstream>
 #include <string>
-#include <msclr/marshal.h>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 #include <include/util.h>
-
-using namespace System;
-
-#pragma unmanaged
 
 int util::detour(Address addr, Function func, int size)
 {
@@ -27,16 +22,14 @@ int util::detour(Address addr, Function func, int size)
     auto dest = reinterpret_cast<unsigned>(func) - reinterpret_cast<unsigned>(addr);
     dest -= stmt_size;
 
-    memset(addr, nop, size);
-    memset(addr, jmp, 1);
+    std::memset(addr, nop, size);
+    std::memset(addr, jmp, 1);
     __asm { inc addr }
-    memcpy(addr, &dest, 4);
+    std::memcpy(addr, &dest, 4);
     __asm { dec addr }
 
     return VirtualProtect(addr, size, protect, &protect);
 }
-
-#pragma managed
 
 void util::log(const std::string& text)
 {
@@ -50,22 +43,17 @@ void util::log(const std::string& text)
     }
 }
 
-void util::log(String^ text)
+std::string util::read_pascal_string(std::ifstream& ifs)
 {
-    auto time = std::chrono::current_zone()->to_local(std::chrono::system_clock::now());
-    std::ofstream ofs("sdev.log.txt", std::ios::app);
-    
-    if (ofs)
-    {
-        ofs << std::format("{:%Y-%m-%d %X}\n", time) << util::marshal_string(text) << '\n';
-        ofs.close();
-    }
+    auto length_prefix = util::read_number<std::int32_t>(ifs);
+    return util::read_string(ifs, length_prefix);
 }
 
-std::string util::marshal_string(String^ str)
+std::string util::read_string(std::ifstream& ifs, std::size_t count)
 {
-    msclr::interop::marshal_context ctx;
-    return ctx.marshal_as<const char*>(str);
+    std::string str(count, 0);
+    ifs.read(str.data(), str.size());
+    return str;
 }
 
 int util::write_memory(Address addr, Buffer buffer, int size)

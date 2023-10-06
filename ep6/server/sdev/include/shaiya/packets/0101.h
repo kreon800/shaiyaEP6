@@ -1,19 +1,18 @@
 #pragma once
-#include <shaiya/common.h>
-#include <shaiya/include/CUser.h>
+#include <include/shaiya/common.h>
 
 namespace shaiya
 {
     #pragma pack(push, 1)
     struct Equipment0101
     {
-        UINT8 type[17];
-        UINT8 typeId[17];
+        Array<UINT8, ITEM_LIST_SIZE> type;
+        Array<UINT8, ITEM_LIST_SIZE> typeId;
     };
 
     struct CharacterList
     {
-        UINT16 opcode; // 0x101
+        UINT16 opcode{ 0x101 };
         UINT8 slot;
         ULONG charId;
         ULONG regDate;
@@ -28,7 +27,7 @@ namespace shaiya
         UINT16 mapId;
         UINT16 strength;
         UINT16 dexterity;
-        UINT16 recovery;
+        UINT16 reaction;
         UINT16 intelligence;
         UINT16 wisdom;
         UINT16 luck;
@@ -36,9 +35,9 @@ namespace shaiya
         UINT16 mana;
         UINT16 stamina;
         Equipment0101 equipment;
-        char charName[19];
-        bool deleted;
+        Array<char, 19> charName;
         bool nameChange;
+        bool deleted;
         CloakBadge cloakBadge;
     };
     #pragma pack(pop)

@@ -1,81 +1,55 @@
 # Shaiya Episode 6 - Server
 
-A library that modifies ps_game to make it compatible with Episode 6 clients.
+A library that modifies ps_game and ps_dbAgent to make them compatible with episode 6 clients.
+
+## Prerequisites
+
+[Microsoft Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x86.exe)
 
 ## Getting Started
 
-Navigate to the `bin` directory and read the documentation. Install the binaries to `SERVER\PSM_Client\Bin` and execute the store procedures in SQL Server Management Studio. Open the project in Visual Studio, target the x86 platform, and build the solution. Copy the library to `SERVER\PSM_Client\Bin` and use `ps_game.ct` to inject the library. 
+1. Navigate to `sdev-db/bin` and read the documentation. Copy the binaries in the `bin` directory of each project to `SERVER/PSM_Client/Bin`. You can use your own binaries, but since I cannot account for what has been done to the files, support will be limited.
 
-Note: calling `LoadLibraryA` before ps_session packet `0x105` arrives will result in `g_nPayLetterEnable` being set to `false`. The intent is to use functions that are available to accomplish a task and avoid machine code as much as possible.
+2. Open the project in Visual Studio, target the x86 platform, and build the solution. Copy the libraries to `SERVER\PSM_Client\Bin` and start the services. Use the provided `.ct` files to inject the libraries.
 
-When the library attempts to establish a trusted connection with SQL Server, it will try to log in with the `NT AUTHORITY\SYSTEM` account. One way to ensure the login succeeds is to add `NT AUTHORITY\SYSTEM` to the `sysadmin` role.
+3. Pay attention to what you inject, as it may overwrite addresses targeted by the library. Compare every address in the cheat table to the addresses in the library before injecting the script.
 
-```sql
-ALTER SERVER ROLE [sysadmin] ADD MEMBER [NT AUTHORITY\SYSTEM]
+Note: injecting `sdev.dll` before ps_session packet `0x105` arrives will result in `g_nPayLetterEnable` being set to `false`, which will disable presents. Please follow the instructions or set `g_nPayLetterEnable` to `true` with a Cheat Engine script.
 
+```
+[ENABLE]
+0058799C:
+dd 01
+
+[DISABLE]
+0058799C:
+dd 00
+```
+
+To use this library with episode 5 clients, comment the episode 6 macros. `sdev-db` is not required for episode 5 projects.
+
+```cpp
+// sdev/include/shaiya/common.h
+//#define SHAIYA_EP6_3
+//#define SHAIYA_EP6_4
+```
+
+For episode 6.3 clients, expose the `SHAIYA_EP6_3` macro. See `client/0x13120600` for more information.
+
+```cpp
+// sdev/include/shaiya/common.h
+#define SHAIYA_EP6_3
+//#define SHAIYA_EP6_4
+```
+
+For episode 6.4 clients, expose the `SHAIYA_EP6_4` macro.
+
+```cpp
+// sdev/include/shaiya/common.h
+//#define SHAIYA_EP6_3
+#define SHAIYA_EP6_4
 ```
 
 ## Contributors
 
-Everyone is welcome to submit a pull request or open an issue. Whether or not the code is merged, your time and effort is appreciated. The life cycle of this project will end if the community does not support it in some way or another. There are many ways people can contribute. Please browse the open [issues](https://github.com/kurtekat/Shaiya/issues) before submitting a pull request.
-
-### Guidelines
-
-#### C++
-
-Most expressions in the `shaiya` namespace match the debug information, etc. The intent is to keep it that way. Aside from that, here are some suggested naming conventions.
-
-`snake_case`
-
-* namespaces
-* constants
-* local variables
-* global variables
-* functions
-* member methods
-
-`camelCase`
-
-* parameters
-* structure fields
-* member variables
-
-`PascalCase`
-
-* type definitions
-* structures
-* classes
-
-
-#### x86 ASM
-
-Use as little as machine code as possible. Please follow the style in the code block below. It shows the address of the detour and where it returns without having to look elsewhere.
-
-```
-unsigned u0x47A00C = 0x47A00C;
-void __declspec(naked) naked_0x47A003()
-{
-    __asm
-    {
-        pushad
-
-        push esi // packet
-        push edi // user
-        call packet_gem::item_compose_handler
-        add esp,0x8
-        
-        popad
-
-        jmp u0x47A00C
-    }
-}
-```
-
-#### .NET
-
-The source and headers contain `pragma` directives to tell the compiler whether the code is managed or unmanaged. It will default to managed, so please pay attention to the warnings. For example: the `naked` attribute and `DllMain` will emit a warning.
-
-```
-#pragma managed
-#pragma unmanaged
-```
+The project goal has been reached, so help is not wanted anymore. Pull requests are still welcome.

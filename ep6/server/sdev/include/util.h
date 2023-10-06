@@ -1,10 +1,9 @@
 #pragma once
+#include <fstream>
 #include <string>
 
 namespace util
 {
-    using namespace System;
-
     typedef void* Address;
     typedef void* Buffer;
     typedef unsigned char* ByteArray;
@@ -12,8 +11,6 @@ namespace util
 
     int detour(Address addr, Function func, int size);
     void log(const std::string& text);
-    void log(String^ text);
-    std::string marshal_string(String^ str);
 
     template<class T>
     auto read_bytes(ByteArray buffer, int offset)
@@ -23,5 +20,15 @@ namespace util
         return value;
     }
 
+    template<class T>
+    T read_number(std::ifstream& ifs)
+    {
+        T value{};
+        ifs.read(reinterpret_cast<char*>(&value), sizeof(T));
+        return value;
+    }
+
+    std::string read_pascal_string(std::ifstream& ifs);
+    std::string read_string(std::ifstream& ifs, std::size_t count);
     int write_memory(Address addr, Buffer buffer, int size);
 }

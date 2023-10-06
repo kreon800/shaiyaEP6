@@ -1,17 +1,27 @@
 #pragma once
-#include <shaiya/common.h>
+#include <include/shaiya/common.h>
 
 namespace shaiya
 {
+    typedef Array<char, 51> Memo;
+
     #pragma pack(push, 1)
+    struct BlockList
+    {
+        ULONG charId;       //0x00
+        CharName charName;  //0x04
+        Memo memo;          //0x19
+        // 0x4C
+    };
+
     struct CFriend
     {
-        ULONG id;         //0x00
-        Country country;  //0x04
-        Grow grow;        //0x05
-        Job job;          //0x06
-        char name[21];    //0x07
-        char memo[51];    //0x1C
+        ULONG charId;       //0x00
+        Country country;    //0x04
+        Grow grow;          //0x05
+        Job job;            //0x06
+        CharName charName;  //0x07
+        Memo memo;          //0x1C
         PAD(1);
         // 0x50
     };

@@ -1,4 +1,4 @@
-#include <shaiya/include/CClientToMgr.h>
+#include <include/shaiya/include/CClientToMgr.h>
 using namespace shaiya;
 
 void CClientToMgr::OnRecv(void* packet)

@@ -1,4 +1,4 @@
-#include <shaiya/include/SVector.h>
+#include <include/shaiya/include/SVector.h>
 using namespace shaiya;
 
 double SVector::Distance2(SVector* pos1/*ecx*/, SVector* pos2/*eax*/)

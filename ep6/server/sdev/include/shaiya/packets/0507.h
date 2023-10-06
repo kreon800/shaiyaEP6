@@ -1,12 +1,12 @@
 #pragma once
-#include <shaiya/common.h>
+#include <include/shaiya/common.h>
 
 namespace shaiya
 {
     #pragma pack(push, 1)
     struct SendEquipment
     {
-        UINT16 opcode; // 0x507
+        UINT16 opcode{ 0x507 };
         ULONG charId;
         UINT8 slot;
         UINT8 type;

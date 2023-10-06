@@ -1,25 +1,10 @@
 #pragma once
-#include <shaiya/common.h>
-#include <shaiya/include/CGameData.h>
+#include <include/shaiya/common.h>
+#include <include/shaiya/include/CGameData.h>
 
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct CraftName
-    {
-        char strength[2];
-        char dexterity[2];
-        char recovery[2];
-        char intelligence[2];
-        char wisdom[2];
-        char luck[2];
-        char health[2];
-        char mana[2];
-        char stamina[2];
-        char enchantStep[2];
-        char nullByte;
-    };
-
     enum struct MakeType : char
     {
         B = 66,
@@ -43,15 +28,15 @@ namespace shaiya
         PAD(1);
         UINT16 quality;            //0x44
         // or CloakBadge
-        UINT8 gems[6];             //0x46
+        Gems gems;                 //0x46
         CraftName craftName;       //0x4C
         PAD(3);
-        TickCount makeTime;        //0x64
+        ULONG makeTime;            //0x64
         MakeType makeType;         //0x68
         PAD(27);
         UINT16 craftStrength;      //0x84
         UINT16 craftDexterity;     //0x86
-        UINT16 craftRecovery;      //0x88
+        UINT16 craftReaction;      //0x88
         UINT16 craftIntelligence;  //0x8A
         UINT16 craftWisdom;        //0x8C
         UINT16 craftLuck;          //0x8E

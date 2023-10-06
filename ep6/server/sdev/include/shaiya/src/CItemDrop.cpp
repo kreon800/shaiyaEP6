@@ -1,4 +1,4 @@
-#include <shaiya/include/CItemDrop.h>
+#include <include/shaiya/include/CItemDrop.h>
 using namespace shaiya;
 
 CGameData::ItemInfo* CItemDrop::GetItem(int grade/*eax*/)

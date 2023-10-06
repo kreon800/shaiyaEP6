@@ -1,14 +1,14 @@
-#include <shaiya/include/CGameData.h>
+#include <include/shaiya/include/CGameData.h>
 using namespace shaiya;
 
-CGameData::ItemInfo* CGameData::GetItemInfo(int itemType/*eax*/, int itemTypeId/*ecx*/)
+CGameData::ItemInfo* CGameData::GetItemInfo(int _type/*eax*/, int typeId/*ecx*/)
 {
     Address u0x4059B0 = 0x4059B0;
 
     __asm
     {
-        mov ecx,itemTypeId
-        mov eax,itemType
+        mov ecx,typeId
+        mov eax,_type
         call u0x4059B0
     }
 }
@@ -59,7 +59,7 @@ int CGameData::GetKCStatusMaxKillCount(int country/*eax*/)
     }
 }
 
-CGameData::ProductInfo* CGameData::GetProductInfo(PCSTR productCode/*eax*/)
+CGameData::ProductInfo* CGameData::GetProductInfo(const char* productCode/*eax*/)
 {
     Address u0x47A5F0 = 0x47A5F0;
 

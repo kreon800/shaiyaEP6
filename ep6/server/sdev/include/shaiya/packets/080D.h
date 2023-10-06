@@ -1,5 +1,5 @@
 #pragma once
-#include <shaiya/common.h>
+#include <include/shaiya/common.h>
 
 namespace shaiya
 {
@@ -13,7 +13,7 @@ namespace shaiya
 
     struct RuneCombineRequest
     {
-        UINT16 opcode; // 0x80D
+        UINT16 opcode{ 0x80D };
         UINT8 runeBag;
         UINT8 runeSlot;
         UINT8 vialBag;
@@ -23,16 +23,16 @@ namespace shaiya
 
     struct RuneCombineResponse
     {
-        UINT16 opcode; // 0x80D
+        UINT16 opcode{ 0x80D };
         RuneCombineResult result;
         UINT8 bag;
         UINT8 slot;
         UINT8 type;
         UINT8 typeId;
         UINT16 quality;
-        UINT8 gems[6];
+        Gems gems;
         UINT8 count;
-        char craftName[21];
+        CraftName craftName;
     };
     #pragma pack(pop)
 }

@@ -29,20 +29,6 @@ void __declspec(naked) naked_0x4B8755()
     }
 }
 
-unsigned u0x594301 = 0x594301;
-void __declspec(naked) naked_0x5942FB()
-{
-    __asm
-    {
-        mov esi,[esp+0x4]
-        mov edx,[esp+0x8]
-        mov ecx,[esp+0xC]
-        // original
-        mov dword ptr ds:[0x914478],esi
-        jmp u0x594301
-    }
-}
-
 unsigned u0x59F8AF = 0x59F8AF;
 void __declspec(naked) naked_0x59F896()
 {
@@ -64,14 +50,100 @@ void __declspec(naked) naked_0x59F896()
     }
 }
 
+unsigned u0x5933FE = 0x5933FE;
+void __declspec(naked) naked_0x5933F8()
+{
+    __asm
+    {
+        // original
+        mov byte ptr[esi+0x1C9],al
+
+        xor eax,eax
+
+        // character->petType
+        cmp byte ptr[esi+0x1C7],0x0
+        jne dual_layer_clothes
+
+        // character->pet
+        mov [esi+0x430],eax
+
+        dual_layer_clothes:
+        cmp byte ptr[esi+0x1C8],0x0
+        jne wings
+
+        // character->enableClothes
+        mov [esi+0xAC],eax
+        mov eax,-0x1
+
+        // character->clothes
+        mov [esi+0xB0],eax
+        mov [esi+0xB4],eax
+        mov [esi+0xB8],eax
+        mov [esi+0xBC],eax
+        mov [esi+0xC0],eax
+        mov [esi+0xC4],eax
+        xor eax,eax
+
+        wings:
+        cmp byte ptr[esi+0x1C9],0x0
+        jne _0x5933FE
+
+        // character->wings
+        mov [esi+0x434],eax
+
+        _0x5933FE:
+        jmp u0x5933FE
+    }
+}
+
+unsigned u0x57C56A = 0x57C56A;
+void __declspec(naked) naked_0x57C565()
+{
+    __asm
+    {
+        // write "120"
+        mov byte ptr[esi+edi+0x2],0x31
+        mov byte ptr[esi+edi+0x3],0x32
+        mov byte ptr[esi+edi+0x4],0x30
+
+        // original
+        mov dx,word ptr[esi+edi+0x2]
+        jmp u0x57C56A
+    }
+}
+
+unsigned u0x47E084 = 0x47E084;
+void __declspec(naked) naked_0x47E07F()
+{
+    __asm
+    {
+        // write "120"
+        mov byte ptr[edi+esi+0x2],0x31
+        mov byte ptr[edi+esi+0x3],0x32
+        mov byte ptr[edi+esi+0x4],0x30
+        
+        // original
+        mov cx,word ptr[edi+esi+0x2]
+        jmp u0x47E084
+    }
+}
+
 void hook::gui()
 {
     // weapon enchant bug
     util::detour((void*)0x4B8755, naked_0x4B8755, 5);
-    // hp/mp/sp bug
-    util::detour((void*)0x5942FB, naked_0x5942FB, 6);
+    // disguise bug
+    util::detour((void*)0x5933F8, naked_0x5933F8, 6);
     // appearance/sex change bug
     util::detour((void*)0x59F896, naked_0x59F896, 6);
+
+    // chat color bug workaround
+    
+    // balloon
+    util::detour((void*)0x57C565, naked_0x57C565, 5);
+    // message box
+    util::detour((void*)0x47E07F, naked_0x47E07F, 5);
+
     // move when using cash shop
     std::array<std::uint8_t, 2> a00{ 0xEB, 0x2A };
     std::memcpy((void*)0x44565D, &a00, 2);
@@ -86,17 +158,4 @@ void hook::gui()
     // remove ep6 vehicles (auction board)
     std::array<std::uint8_t, 1> a04{ 0x07 };
     std::memcpy((void*)0x463FE0, &a04, 1);
-
-    // 0x2602 EP5 packet format
-
-    std::array<std::uint8_t, 3> a05{ 0x33, 0xD2, 0x90 };
-    std::array<std::uint8_t, 3> a06{ 0x33, 0xC0, 0x90 };
-    // ignore and null the dates
-    util::write_memory((void*)0x5A3DAC, &a05, 3);
-    util::write_memory((void*)0x5A3DB5, &a06, 3);
-
-    std::uint8_t item_def_size = 5;
-    // overwrite 13 with 5
-    util::write_memory((void*)0x5E9841, &item_def_size, 1);
-    util::write_memory((void*)0x5A3DE6, &item_def_size, 1);
 }

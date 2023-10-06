@@ -1,6 +1,6 @@
 #pragma once
-#include <shaiya/common.h>
-#include <shaiya/include/CUser.h>
+#include <include/shaiya/common.h>
+#include <include/shaiya/include/CUser.h>
 
 namespace shaiya
 {
@@ -14,10 +14,10 @@ namespace shaiya
 
     struct UserShape
     {
-        UINT16 opcode; // 0x303
+        UINT16 opcode{ 0x303 };
         ULONG charId;
         bool dead;
-        bool sitMode;
+        bool sitting;
         Country country;
         Family family;
         UINT8 hair;
@@ -28,10 +28,10 @@ namespace shaiya
         UINT8 partyType;
         Grow grow;
         UINT32 kills;
-        Equipment0303 equipment[17];
-        char charName[21];
+        Array<Equipment0303, ITEM_LIST_SIZE> equipment;
+        CharName charName;
         CloakBadge cloakBadge;
-        char guildName[25];
+        GuildName guildName;
     };
     #pragma pack(pop)
 }

@@ -1,7 +1,19 @@
-#include <shaiya/include/CGameData.h>
-#include <shaiya/include/CItem.h>
-#include <shaiya/include/CUser.h>
+#include <include/shaiya/include/CGameData.h>
+#include <include/shaiya/include/CItem.h>
+#include <include/shaiya/include/CUser.h>
 using namespace shaiya;
+
+void CUser::AddApplySkillBuff(CUser* user, CGameData::SkillInfo* skillInfo)
+{
+    typedef void(__stdcall* LPFN)(CUser*, CGameData::SkillInfo*);
+    (*(LPFN)0x494140)(user, skillInfo);
+}
+
+void CUser::AddApplySkillDebuff(CUser* user, CSkill* skill, CGameData::SkillInfo* skillInfo)
+{
+    typedef void(__stdcall* LPFN)(CUser*, CSkill*, CGameData::SkillInfo*);
+    (*(LPFN)0x494BD0)(user, skill, skillInfo);
+}
 
 void CUser::CancelActionExc(CUser* user/*edi*/)
 {
@@ -12,6 +24,26 @@ void CUser::CancelActionExc(CUser* user/*edi*/)
         mov edi,user
         call u0x456610
     }
+}
+
+bool CUser::DamageByKeepSkill(CUser* user/*edi*/, int _type, ULONG id/*CUser->id*/, CDamage* damage)
+{
+    Address u0x4583F0 = 0x4583F0;
+
+    __asm
+    {
+        push damage
+        push id
+        mov ecx,_type
+        mov edi,user
+        call u0x4583F0
+    }
+}
+
+void CUser::Death(CUser* user/*ecx*/, int type, ULONG id/*CUser->id*/, BOOL deathSkillPvP)
+{
+    typedef void(__thiscall* LPFN)(CUser*, int, ULONG, BOOL);
+    (*(LPFN)0x4654C0)(user, type, id, deathSkillPvP);
 }
 
 void CUser::ExchangeCancelReady(CUser* user/*ecx*/, CUser* exchangeUser/*esi*/)
@@ -64,6 +96,19 @@ bool CUser::ItemDelete(CUser* user, int type, int typeId)
     return (*(LPFN)0x46C6A0)(user, type, typeId);
 }
 
+void CUser::ItemEquipmentAdd(CUser* user/*edi*/, CItem* item/*eax*/, int slot)
+{
+    Address u0x461640 = 0x461640;
+
+    __asm
+    {
+        push slot
+        mov eax,item
+        mov edi,user
+        call u0x461640
+    }
+}
+
 void CUser::ItemEquipmentOptionAdd(CUser* user/*eax*/, CItem* item/*esi*/)
 {
     Address u0x462720 = 0x462720;
@@ -101,9 +146,9 @@ void CUser::ItemRemove(CUser* user/*ecx*/, int bag, int slot/*ebx*/)
     (*(LPFN)0x46C290)(user, bag);
 }
 
-void CUser::ItemUse(CUser* user, int bag, int slot, ULONG targetId, UINT32 byTargetType)
+void CUser::ItemUse(CUser* user, int bag, int slot, ULONG targetId, int byTargetType)
 {
-    typedef void(__stdcall* LPFN)(CUser*, int, int, ULONG, UINT32);
+    typedef void(__stdcall* LPFN)(CUser*, int, int, ULONG, int);
     (*(LPFN)0x472DA0)(user, bag, slot, targetId, byTargetType);
 }
 
@@ -111,6 +156,31 @@ void CUser::ItemUseNSend(CUser* user, int bag, int slot, BOOL moveMap)
 {
     typedef void(__thiscall* LPFN)(CUser*, int, int, BOOL);
     (*(LPFN)0x4728E0)(user, bag, slot, moveMap);
+}
+
+bool CUser::QuestAddItem(CUser* user, int type, int typeId/*ecx*/, int count, int* outBag, int* outSlot/*edx*/, CGameData::ItemInfo** outInfo)
+{
+    typedef bool(__fastcall* LPFN)(int, int*, CUser*, int, int, int*, CGameData::ItemInfo**);
+    return (*(LPFN)0x48D5E0)(typeId, outSlot, user, type, count, outBag, outInfo);
+}
+
+void CUser::RemApplySkillBuff(CUser* user/*ecx*/, CGameData::SkillInfo* skillInfo)
+{
+    typedef void(__thiscall* LPFN)(CUser*, CGameData::SkillInfo*);
+    (*(LPFN)0x494760)(user, skillInfo);
+}
+
+void CUser::RemApplySkillDebuff(CUser* user/*esi*/, CSkill* skill/*ebx*/, CGameData::SkillInfo* skillInfo/*edx*/)
+{
+    Address u0x494EB0 = 0x494EB0;
+
+    __asm
+    {
+        mov esi,user
+        mov ebx,skill
+        mov edx,skillInfo
+        call u0x494EB0
+    }
 }
 
 void CUser::SendAdminCmdError(CUser* user, UINT16 error/*ecx*/)
@@ -136,6 +206,17 @@ void CUser::SendCharacterHonor(CUser* user/*ecx*/)
     }
 }
 
+void CUser::SendDBExp(CUser* user/*eax*/)
+{
+    Address u0x47AAA0 = 0x47AAA0;
+
+    __asm
+    {
+        mov eax,user
+        call u0x47AAA0
+    }
+}
+
 void CUser::SendDBMoney(CUser* user/*eax*/)
 {
     Address u0x47AAE0 = 0x47AAE0;
@@ -144,6 +225,51 @@ void CUser::SendDBMoney(CUser* user/*eax*/)
     {
         mov eax,user
         call u0x47AAE0
+    }
+}
+
+// not implemented (sends user->money)
+void CUser::SendDBBankMoney(CUser* user/*eax*/)
+{
+    Address u0x47AB20 = 0x47AB20;
+
+    __asm
+    {
+        mov eax,user
+        call u0x47AB20
+    }
+}
+
+void CUser::SendDBStatusUp(CUser* user/*eax*/)
+{
+    Address u0x47AB60 = 0x47AB60;
+
+    __asm
+    {
+        mov eax,user
+        call u0x47AB60
+    }
+}
+
+void CUser::SendDBGrow(CUser* user/*eax*/)
+{
+    Address u0x47ABE0 = 0x47ABE0;
+
+    __asm
+    {
+        mov eax,user
+        call u0x47ABE0
+    }
+}
+
+void CUser::SendDBLevel(CUser* user/*eax*/)
+{
+    Address u0x47AC20 = 0x47AC20;
+
+    __asm
+    {
+        mov eax,user
+        call u0x47AC20
     }
 }
 
@@ -169,14 +295,14 @@ void CUser::SendDBStatPoint(CUser* user/*eax*/)
     }
 }
 
-void CUser::SendDBStatusUp(CUser* user/*eax*/)
+void CUser::SendDBAgentQuickSlot(CUser* user/*eax*/)
 {
-    Address u0x47AB60 = 0x47AB60;
+    Address u0x47ACE0 = 0x47ACE0;
 
     __asm
     {
         mov eax,user
-        call u0x47AB60
+        call u0x47ACE0
     }
 }
 
@@ -230,13 +356,6 @@ void CUser::SendMaxSP(CUser* user/*esi*/)
     }
 }
 
-void CUser::SendRecoverMe(CUser* user/*ecx*/, int health, int stamina, int mana)
-{
-    typedef void(__thiscall* LPFN)(CUser*, int, int, int);
-    (*(LPFN)0x490D60)(user, health, stamina, mana);
-}
-
-// note: __fastcall incompatible with the /clr option
 void CUser::SendRecoverAdd(CUser* user/*eax*/, int health/*ecx*/, int stamina/*edx*/, int mana)
 {
     Address u0x490DA0 = 0x490DA0;
@@ -251,7 +370,26 @@ void CUser::SendRecoverAdd(CUser* user/*eax*/, int health/*ecx*/, int stamina/*e
     }
 }
 
-// note: __fastcall incompatible with the /clr option
+void CUser::SendRecoverChange(CUser* user/*esi*/, int health/*ecx*/, int stamina, int mana/*edx*/)
+{
+    Address u0x491080 = 0x491080;
+
+    __asm
+    {
+        push stamina
+        mov edx,mana
+        mov ecx,health
+        mov esi,user
+        call u0x491080
+    }
+}
+
+void CUser::SendRecoverMe(CUser* user/*ecx*/, int health, int stamina, int mana)
+{
+    typedef void(__thiscall* LPFN)(CUser*, int, int, int);
+    (*(LPFN)0x490D60)(user, health, stamina, mana);
+}
+
 void CUser::SendRecoverSet(CUser* user/*esi*/, int health/*ecx*/, int stamina/*edx*/, int mana)
 {
     Address u0x4910F0 = 0x4910F0;
@@ -268,7 +406,7 @@ void CUser::SendRecoverSet(CUser* user/*esi*/, int health/*ecx*/, int stamina/*e
 
 void CUser::SendRunMode(CUser* user, BOOL runMode)
 {
-    user->runMode = runMode;
+    user->running = runMode;
 
     typedef void(__stdcall* LPFN)(CUser*, BOOL);
     (*(LPFN)0x491510)(user, runMode);
@@ -303,25 +441,56 @@ void CUser::SetAttack(CUser* user/*esi*/)
     }
 }
 
-void CUser::StatResetSkill(CUser* user/*eax*/, BOOL isEvent)
+void CUser::SetSkillAbility(CUser* user, int typeEffect/*edx*/, int _type/*ecx*/, int value/*eax*/)
+{
+    Address u0x495570 = 0x495570;
+
+    __asm
+    {
+        push user
+        mov edx,typeEffect
+        mov ecx,_type
+        mov eax,value
+        call u0x495570
+    }
+}
+
+bool SetMovePosition(CUser* user/*eax*/, int _type/*ecx*/, int mapId/*edx*/, ULONG time, float x, float y, float z)
+{
+    Address u0x49DD00 = 0x49DD00;
+
+    __asm
+    {
+        push z
+        push y
+        push x
+        push time
+        mov edx,mapId
+        mov ecx,_type
+        mov eax,user
+        call u0x49DD00
+    }
+}
+
+void CUser::StatResetSkill(CUser* user/*eax*/, BOOL event)
 {
     Address u0x48FBC0 = 0x48FBC0;
 
     __asm
     {
-        push isEvent
+        push event
         mov eax,user
         call u0x48FBC0
     }
 }
 
-void CUser::StatResetStatus(CUser* user/*edi*/, BOOL isEvent)
+void CUser::StatResetStatus(CUser* user/*edi*/, BOOL event)
 {
     Address u0x48F710 = 0x48F710;
 
     __asm
     {
-        push isEvent
+        push event
         mov edi,user
         call u0x48F710
     }

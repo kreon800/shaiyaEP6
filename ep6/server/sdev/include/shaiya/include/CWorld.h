@@ -1,5 +1,5 @@
 #pragma once
-#include <shaiya/common.h>
+#include <include/shaiya/common.h>
 
 namespace shaiya
 {
@@ -20,10 +20,10 @@ namespace shaiya
     struct CWorld
     {
         PAD(8);
-        Count maps;            //0x08
-        CMap* map;             //0x0C
+        UINT32 numMaps;               //0x08
+        CMap* map;                    //0x0C
         PAD(568);
-        KCStatus kcStatus[2];  //0x248
+        Array<KCStatus, 2> kcStatus;  //0x248
         // 0x350
 
         static CUser* FindUser(ULONG id/*CUser->id*/);
@@ -35,5 +35,5 @@ namespace shaiya
     #pragma pack(pop)
 
     //0x587960
-    static CWorld* g_pWorld = (CWorld*)0x10A2018; //0x587960
+    static CWorld* g_pWorld = (CWorld*)0x10A2018;
 }

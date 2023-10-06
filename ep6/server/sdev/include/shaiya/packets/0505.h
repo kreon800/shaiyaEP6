@@ -1,16 +1,16 @@
 #pragma once
-#include <shaiya/common.h>
+#include <include/shaiya/common.h>
 
 namespace shaiya
 {
     #pragma pack(push, 1)
     struct RecoverAdd
     {
-        UINT16 opcode; // 0x505
+        UINT16 opcode{ 0x505 };
         ULONG charId;
-        UINT32 health;
-        UINT32 mana;
-        UINT32 stamina;
+        int health;
+        int mana;
+        int stamina;
     };
     #pragma pack(pop)
 }

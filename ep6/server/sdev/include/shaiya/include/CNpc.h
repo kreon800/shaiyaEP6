@@ -1,6 +1,7 @@
 #pragma once
-#include <shaiya/common.h>
-#include <shaiya/include/SVector.h>
+#include <include/shaiya/common.h>
+#include <include/shaiya/include/SNode.h>
+#include <include/shaiya/include/SVector.h>
 
 namespace shaiya
 {
@@ -10,7 +11,7 @@ namespace shaiya
     #pragma pack(push, 1)
     struct CNpc
     {
-        PAD(8);
+        SNode node;     //0x00
         SVector pos;    //0x08
         ULONG id;       //0x14
         CMap* map;      //0x18
@@ -19,7 +20,7 @@ namespace shaiya
         UINT32 typeId;  //0x38
         PAD(20);
         // cast this
-        Npc* npcData;  //0x50
+        Npc* npcData;   //0x50
         //
     };
     #pragma pack(pop)

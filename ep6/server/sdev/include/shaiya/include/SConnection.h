@@ -1,10 +1,8 @@
 #pragma once
-#include <shaiya/common.h>
+#include "../common.h"
 
 namespace shaiya
 {
-    FWDDECL CUser;
-
     #pragma pack(push, 1)
     struct SConnection
     {
@@ -15,8 +13,8 @@ namespace shaiya
         PAD(92);
         // 0xD0
 
-        static void Send(CUser* user/*ecx*/, void* buf, int len);
-        static void Close(CUser* user/*ecx*/, int closeType, int closeErr);
+        static void Send(SConnection* connection/*ecx*/, void* buf, int len);
+        static void Close(SConnection* connection/*ecx*/, int closeType, int closeErr);
     };
     #pragma pack(pop)
 }

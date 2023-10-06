@@ -1,10 +1,10 @@
 #pragma once
-#include <shaiya/common.h>
+#include <include/shaiya/common.h>
 
 namespace shaiya
 {
     #pragma pack(push, 1)
-    enum struct UserMotion : UINT8
+    enum struct MotionType : UINT8
     {
         None,
         Walk,
@@ -131,15 +131,15 @@ namespace shaiya
 
     struct UserMotionRequest
     {
-        UINT16 opcode; // 0x506
-        UserMotion motion;
+        UINT16 opcode{ 0x506 };
+        MotionType motionType;
     };
 
     struct UserMotionResponse
     {
-        UINT16 opcode; // 0x506
+        UINT16 opcode{ 0x506 };
         ULONG charId;
-        UserMotion motion;
+        MotionType motionType;
     };
     #pragma pack(pop)
 }

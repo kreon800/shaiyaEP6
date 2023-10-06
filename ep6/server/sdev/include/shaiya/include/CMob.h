@@ -1,7 +1,7 @@
 #pragma once
-#include <shaiya/common.h>
-#include <shaiya/include/CGameData.h>
-#include <shaiya/include/SVector.h>
+#include <include/shaiya/common.h>
+#include <include/shaiya/include/CGameData.h>
+#include <include/shaiya/include/SVector.h>
 
 namespace shaiya
 {

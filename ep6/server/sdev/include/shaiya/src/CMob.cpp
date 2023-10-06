@@ -1,4 +1,4 @@
-#include <shaiya/include/CMob.h>
+#include <include/shaiya/include/CMob.h>
 using namespace shaiya;
 
 int CMob::GetCountry(CMob* mob/*eax*/)

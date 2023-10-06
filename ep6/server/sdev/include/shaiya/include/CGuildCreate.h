@@ -1,5 +1,5 @@
 #pragma once
-#include <shaiya/common.h>
+#include <include/shaiya/common.h>
 
 namespace shaiya
 {
@@ -10,9 +10,10 @@ namespace shaiya
     {
         PAD(36);
         UINT32 joinCount;  //0x24
-        UINT32 bossId;     //0x28
+        CharId bossId;     //0x28
         CUser* boss;       //0x2C
-        ULONG charId[7];   //0x30
+        // 0x30
+        Array<CharId, 7> userList;
         // 0x4C
         PAD(28);
         // 0x68

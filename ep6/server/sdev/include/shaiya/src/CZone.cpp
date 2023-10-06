@@ -1,7 +1,7 @@
-#include <shaiya/include/CMob.h>
-#include <shaiya/include/CNpc.h>
-#include <shaiya/include/CZone.h>
-#include <shaiya/include/SVector.h>
+#include <include/shaiya/include/CMob.h>
+#include <include/shaiya/include/CNpc.h>
+#include <include/shaiya/include/CZone.h>
+#include <include/shaiya/include/SVector.h>
 using namespace shaiya;
 
 CMob* CZone::FindMob(CZone* zone/*ecx*/, ULONG id/*CMob->id*/)
@@ -129,14 +129,20 @@ bool CZone::NpcRemove(CZone* zone, int npcType, int npcId, int count, int cellX/
     }
 }
 
+void CZone::PSendView(CZone* zone, void* data, int len, SVector* base, float radius, ULONG senderId, ULONG targetId, int priority)
+{
+    typedef void(__stdcall* LPFN)(CZone*, void*, int, SVector*, float, ULONG, ULONG, int);
+    (*(LPFN)0x427CF0)(zone, data, len, base, radius, senderId, targetId, priority);
+}
+
 void CZone::SendView(CZone* zone, void* data, int len, int cellX/*ecx*/, int cellZ/*eax*/)
 {
     Address u0x427470 = 0x427470;
 
     __asm
     {
-        mov ecx,cellZ
-        mov eax,cellX
+        mov eax,cellZ
+        mov ecx,cellX
 
         push len
         push data

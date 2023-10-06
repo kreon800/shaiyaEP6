@@ -1,4 +1,3 @@
-#pragma unmanaged
 #include <map>
 #include <random>
 #include <string>
@@ -7,81 +6,34 @@
 
 #include <include/main.h>
 #include <include/util.h>
-
-#include <shaiya/packets/0717.h>
-#include <shaiya/packets/0806.h>
-#include <shaiya/packets/0807.h>
-#include <shaiya/packets/080D.h>
-#include <shaiya/include/CGameData.h>
-#include <shaiya/include/CItem.h>
-#include <shaiya/include/CUser.h>
-#include <shaiya/include/CZone.h>
-#include <shaiya/include/SConnection.h>
-#include <shaiya/include/SConnectionTServerReconnect.h>
+#include <include/shaiya/packets/0806.h>
+#include <include/shaiya/packets/0807.h>
+#include <include/shaiya/packets/080D.h>
+#include <include/shaiya/packets/dbAgent/0717.h>
+#include <include/shaiya/include/CGameData.h>
+#include <include/shaiya/include/CItem.h>
+#include <include/shaiya/include/CUser.h>
+#include <include/shaiya/include/CZone.h>
+#include <include/shaiya/include/SConnection.h>
+#include <include/shaiya/include/SConnectionTServerReconnect.h>
 using namespace shaiya;
 
 namespace packet_gem
 {
-    typedef unsigned char EnchantStep;
-    typedef unsigned int ItemId;
-
-    constexpr int req_wis_out_of_range = 100;
-    constexpr int slot_out_of_range = 24;
-    constexpr ItemId weapon_lapisian_plus = 95004;
-    constexpr ItemId hot_time_lapisian = 95005;
-    constexpr ItemId armor_lapisian_plus = 95009;
-
-    const std::map<ItemId, EnchantStep> perfect_weapon_lapisian
+    enum struct PerfectLapisianType : UINT8
     {
-        {95022,0},
-        {95023,1},
-        {95024,2},
-        {95025,3},
-        {95026,4},
-        {95027,5},
-        {95028,6},
-        {95029,7},
-        {95030,8},
-        {95031,9},
-        {95032,10},
-        {95033,11},
-        {95034,12},
-        {95035,13},
-        {95036,14},
-        {95037,15},
-        {95038,16},
-        {95039,17},
-        {95040,18},
-        {95041,19}
+        Weapon,
+        Armor
     };
 
-    const std::map<ItemId, EnchantStep> perfect_armor_lapisian
-    {
-        {95042,0},
-        {95043,1},
-        {95044,2},
-        {95045,3},
-        {95046,4},
-        {95047,5},
-        {95048,6},
-        {95049,7},
-        {95050,8},
-        {95051,9},
-        {95052,10},
-        {95053,11},
-        {95054,12},
-        {95055,13},
-        {95056,14},
-        {95057,15},
-        {95058,16},
-        {95059,17},
-        {95060,18},
-        {95061,19}
-    };
+    constexpr int max_reqwis = 99;
+    constexpr int weapon_lapisian_plus = 95004;
+    constexpr int hot_time_lapisian = 95005;
+    constexpr int armor_lapisian_plus = 95009;
 
     int find_available_slot(CUser* user, int bag)
     {
-        for (int slot = 0; slot < slot_out_of_range; ++slot)
+        for (int slot = 0; slot < MAX_INVENTORY_SLOT; ++slot)
             if (!user->inventory[bag][slot])
                 return slot;
 
@@ -92,6 +44,7 @@ namespace packet_gem
     {
         auto enchant_step = CItem::GetEnchantStep(upgradeItem);
         auto item_id = lapisian->itemInfo->itemId;
+        auto lapisian_type = static_cast<PerfectLapisianType>(lapisian->itemInfo->country);
 
         if (CItem::IsWeapon(upgradeItem))
         {
@@ -99,10 +52,8 @@ namespace packet_gem
                 if (item_id == weapon_lapisian_plus || item_id == hot_time_lapisian)
                     return true;
 
-            auto it = perfect_weapon_lapisian.find(lapisian->itemInfo->itemId);
-            if (it != perfect_weapon_lapisian.end())
-                if (it->second == CItem::GetEnchantStep(upgradeItem))
-                    return true;
+            if (lapisian_type == PerfectLapisianType::Weapon && lapisian->itemInfo->range == enchant_step)
+                return true;
         }
         else
         {
@@ -110,10 +61,8 @@ namespace packet_gem
                 if (item_id == armor_lapisian_plus || item_id == hot_time_lapisian)
                     return true;
 
-            auto it = perfect_armor_lapisian.find(lapisian->itemInfo->itemId);
-            if (it != perfect_armor_lapisian.end())
-                if (it->second == CItem::GetEnchantStep(upgradeItem))
-                    return true;
+            if (lapisian_type == PerfectLapisianType::Armor && lapisian->itemInfo->range == enchant_step)
+                return true;
         }
 
         return false;
@@ -128,30 +77,30 @@ namespace packet_gem
         if (!CZone::FindNpc(user->zone, npc_id))
             return;
 
-        auto rune_bag_number = util::read_bytes<std::uint8_t>(packet, 2);
-        auto rune_slot_number = util::read_bytes<std::uint8_t>(packet, 3);
+        auto rune_bag = util::read_bytes<std::uint8_t>(packet, 2);
+        auto rune_slot = util::read_bytes<std::uint8_t>(packet, 3);
 
-        if (rune_bag_number > user->bagsUnlocked || rune_slot_number >= slot_out_of_range)
+        if (!rune_bag || rune_bag > user->bagsUnlocked || rune_slot >= MAX_INVENTORY_SLOT)
             return;
 
-        auto rune = user->inventory[rune_bag_number][rune_slot_number];
+        auto& rune = user->inventory[rune_bag][rune_slot];
         if (!rune)
             return;
 
         if (rune->count < 2 || rune->itemInfo->effect != CGameData::ItemEffect::ItemCompose)
         {
             RuneCombineResponse response{ 0x80D, RuneCombineResult::Failure };
-            SConnection::Send(user, &response, 3);
+            SConnection::Send(&user->connection, &response, 3);
             return;
         }
 
-        auto vial_bag_number = util::read_bytes<std::uint8_t>(packet, 4);
-        auto vial_slot_number = util::read_bytes<std::uint8_t>(packet, 5);
+        auto vial_bag = util::read_bytes<std::uint8_t>(packet, 4);
+        auto vial_slot = util::read_bytes<std::uint8_t>(packet, 5);
 
-        if (vial_bag_number > user->bagsUnlocked || vial_slot_number >= slot_out_of_range)
+        if (!vial_bag || vial_bag > user->bagsUnlocked || vial_slot >= MAX_INVENTORY_SLOT)
             return;
 
-        auto vial = user->inventory[vial_bag_number][vial_slot_number];
+        auto& vial = user->inventory[vial_bag][vial_slot];
         if (!vial)
             return;
 
@@ -179,7 +128,7 @@ namespace packet_gem
             break;
         default:
             RuneCombineResponse response{ 0x80D, RuneCombineResult::Failure };
-            SConnection::Send(user, &response, 3);
+            SConnection::Send(&user->connection, &response, 3);
             return;
         }
 
@@ -197,11 +146,11 @@ namespace packet_gem
                     if (!CUser::ItemCreate(user, info, response.count))
                         break;
 
-                    CUser::ItemUseNSend(user, rune_bag_number, rune_slot_number, false);
-                    CUser::ItemUseNSend(user, rune_bag_number, rune_slot_number, false);
-                    CUser::ItemUseNSend(user, vial_bag_number, vial_slot_number, false);
+                    CUser::ItemUseNSend(user, rune_bag, rune_slot, false);
+                    CUser::ItemUseNSend(user, rune_bag, rune_slot, false);
+                    CUser::ItemUseNSend(user, vial_bag, vial_slot, false);
 
-                    SConnection::Send(user, &response, sizeof(RuneCombineResponse));
+                    SConnection::Send(&user->connection, &response, sizeof(RuneCombineResponse));
                     break;
                 }
 
@@ -212,44 +161,44 @@ namespace packet_gem
 
     void item_compose_handler(CUser* user, Packet packet)
     {
-        auto rune_bag_number = util::read_bytes<std::uint8_t>(packet, 2);
-        auto rune_slot_number = util::read_bytes<std::uint8_t>(packet, 3);
+        auto rune_bag = util::read_bytes<std::uint8_t>(packet, 2);
+        auto rune_slot = util::read_bytes<std::uint8_t>(packet, 3);
 
-        if (rune_bag_number > user->bagsUnlocked || rune_slot_number >= slot_out_of_range)
+        if (!rune_bag || rune_bag > user->bagsUnlocked || rune_slot >= MAX_INVENTORY_SLOT)
             return;
 
-        auto rune = user->inventory[rune_bag_number][rune_slot_number];
+        auto& rune = user->inventory[rune_bag][rune_slot];
         if (!rune)
             return;
 
-        auto item_bag_number = util::read_bytes<std::uint8_t>(packet, 4);
-        auto item_slot_number = util::read_bytes<std::uint8_t>(packet, 5);
+        auto item_bag = util::read_bytes<std::uint8_t>(packet, 4);
+        auto item_slot = util::read_bytes<std::uint8_t>(packet, 5);
 
-        if (item_bag_number > user->bagsUnlocked || item_slot_number >= slot_out_of_range)
+        if (item_bag > user->bagsUnlocked || item_slot >= MAX_INVENTORY_SLOT)
             return;
 
-        auto item = user->inventory[item_bag_number][item_slot_number];
+        auto& item = user->inventory[item_bag][item_slot];
         if (!item)
             return;
 
-        if (item->itemInfo->realType > CGameData::ItemRealType::Loop)
+        if (item->itemInfo->realType > CGameData::ItemRealType::Bracelet)
         {
             ItemComposeResponse response{ 0x806, ItemComposeResult::Failure };
-            SConnection::Send(user, &response, 3);
+            SConnection::Send(&user->connection, &response, 3);
             return;
         }
 
         if (!item->itemInfo->maxOjCount)
         {
             ItemComposeResponse response{ 0x806, ItemComposeResult::Failure };
-            SConnection::Send(user, &response, 3);
+            SConnection::Send(&user->connection, &response, 3);
             return;
         }
 
-        if (item->itemInfo->reqWis <= 0 || item->itemInfo->reqWis >= req_wis_out_of_range)
+        if (item->itemInfo->reqWis <= 0 || item->itemInfo->reqWis > max_reqwis)
         {
             ItemComposeResponse response{ 0x806, ItemComposeResult::Failure };
-            SConnection::Send(user, &response, 3);
+            SConnection::Send(&user->connection, &response, 3);
             return;
         }
 
@@ -257,7 +206,7 @@ namespace packet_gem
         if (item->makeType == MakeType::Q)
         {
             ItemComposeResponse response{ 0x806, ItemComposeResult::Failure };
-            SConnection::Send(user, &response, 3);
+            SConnection::Send(&user->connection, &response, 3);
             return;
         }
 
@@ -278,7 +227,7 @@ namespace packet_gem
         switch (rune->itemInfo->effect)
         {
         case CGameData::ItemEffect::ItemCompose:
-            if (!item_bag_number)
+            if (!item_bag)
             {
                 CUser::ItemEquipmentOptionRem(user, item);
                 CItem::ReGenerationCraftExpansion(item, true);
@@ -307,13 +256,13 @@ namespace packet_gem
             if (!item->craftStrength)
                 return;
 
-            if (!item_bag_number)
+            if (!item_bag)
             {
                 CUser::ItemEquipmentOptionRem(user, item);
 
                 item->craftStrength = bonus;
-                item->craftName.strength[0] = text[0];
-                item->craftName.strength[1] = text[1];
+                item->craftName[0] = text[0];
+                item->craftName[1] = text[1];
 
                 CUser::ItemEquipmentOptionAdd(user, item);
 
@@ -334,21 +283,21 @@ namespace packet_gem
             }
 
             item->craftStrength = bonus;
-            item->craftName.strength[0] = text[0];
-            item->craftName.strength[1] = text[1];
+            item->craftName[0] = text[0];
+            item->craftName[1] = text[1];
 
             break;
         case CGameData::ItemEffect::ItemComposeDex:
             if (!item->craftDexterity)
                 return;
 
-            if (!item_bag_number)
+            if (!item_bag)
             {
                 CUser::ItemEquipmentOptionRem(user, item);
 
                 item->craftDexterity = bonus;
-                item->craftName.dexterity[0] = text[0];
-                item->craftName.dexterity[1] = text[1];
+                item->craftName[2] = text[0];
+                item->craftName[3] = text[1];
 
                 CUser::ItemEquipmentOptionAdd(user, item);
 
@@ -369,21 +318,21 @@ namespace packet_gem
             }
 
             item->craftDexterity = bonus;
-            item->craftName.dexterity[0] = text[0];
-            item->craftName.dexterity[1] = text[1];
+            item->craftName[2] = text[0];
+            item->craftName[3] = text[1];
 
             break;
         case CGameData::ItemEffect::ItemComposeInt:
             if (!item->craftIntelligence)
                 return;
 
-            if (!item_bag_number)
+            if (!item_bag)
             {
                 CUser::ItemEquipmentOptionRem(user, item);
 
                 item->craftIntelligence = bonus;
-                item->craftName.intelligence[0] = text[0];
-                item->craftName.intelligence[1] = text[1];
+                item->craftName[6] = text[0];
+                item->craftName[7] = text[1];
 
                 CUser::ItemEquipmentOptionAdd(user, item);
 
@@ -404,21 +353,21 @@ namespace packet_gem
             }
 
             item->craftIntelligence = bonus;
-            item->craftName.intelligence[0] = text[0];
-            item->craftName.intelligence[1] = text[1];
+            item->craftName[6] = text[0];
+            item->craftName[7] = text[1];
 
             break;
         case CGameData::ItemEffect::ItemComposeWis:
             if (!item->craftWisdom)
                 return;
 
-            if (!item_bag_number)
+            if (!item_bag)
             {
                 CUser::ItemEquipmentOptionRem(user, item);
 
                 item->craftWisdom = bonus;
-                item->craftName.wisdom[0] = text[0];
-                item->craftName.wisdom[1] = text[1];
+                item->craftName[8] = text[0];
+                item->craftName[9] = text[1];
 
                 CUser::ItemEquipmentOptionAdd(user, item);
 
@@ -439,21 +388,21 @@ namespace packet_gem
             }
 
             item->craftWisdom = bonus;
-            item->craftName.wisdom[0] = text[0];
-            item->craftName.wisdom[1] = text[1];
+            item->craftName[8] = text[0];
+            item->craftName[9] = text[1];
 
             break;
         case CGameData::ItemEffect::ItemComposeRec:
-            if (!item->craftRecovery)
+            if (!item->craftReaction)
                 return;
 
-            if (!item_bag_number)
+            if (!item_bag)
             {
                 CUser::ItemEquipmentOptionRem(user, item);
 
-                item->craftRecovery = bonus;
-                item->craftName.recovery[0] = text[0];
-                item->craftName.recovery[1] = text[1];
+                item->craftReaction = bonus;
+                item->craftName[4] = text[0];
+                item->craftName[5] = text[1];
 
                 CUser::ItemEquipmentOptionAdd(user, item);
 
@@ -473,22 +422,22 @@ namespace packet_gem
                 break;
             }
 
-            item->craftRecovery = bonus;
-            item->craftName.recovery[0] = text[0];
-            item->craftName.recovery[1] = text[1];
+            item->craftReaction = bonus;
+            item->craftName[4] = text[0];
+            item->craftName[5] = text[1];
 
             break;
         case CGameData::ItemEffect::ItemComposeLuc:
             if (!item->craftLuck)
                 return;
 
-            if (!item_bag_number)
+            if (!item_bag)
             {
                 CUser::ItemEquipmentOptionRem(user, item);
 
                 item->craftLuck = bonus;
-                item->craftName.luck[0] = text[0];
-                item->craftName.luck[1] = text[1];
+                item->craftName[10] = text[0];
+                item->craftName[11] = text[1];
 
                 CUser::ItemEquipmentOptionAdd(user, item);
 
@@ -509,25 +458,25 @@ namespace packet_gem
             }
 
             item->craftLuck = bonus;
-            item->craftName.luck[0] = text[0];
-            item->craftName.luck[1] = text[1];
+            item->craftName[10] = text[0];
+            item->craftName[11] = text[1];
 
             break;
         default:
             ItemComposeResponse response{ 0x806, ItemComposeResult::Failure };
-            SConnection::Send(user, &response, 3);
+            SConnection::Send(&user->connection, &response, 3);
             return;
         }
 
-        ItemComposeResponse response{ 0x806, ItemComposeResult::Success, item_bag_number, item_slot_number };
-        std::memcpy(response.craftName, &item->craftName, sizeof(CraftName));
-        SConnection::Send(user, &response, sizeof(ItemComposeResponse));
+        ItemComposeResponse response{ 0x806, ItemComposeResult::Success, item_bag, item_slot };
+        response.craftName = item->craftName;
+        SConnection::Send(&user->connection, &response, sizeof(ItemComposeResponse));
 
-        DBItemCraftName item_craft_name{ 0x717, user->userUid, item_bag_number, item_slot_number };
-        std::memcpy(item_craft_name.craftName, &item->craftName, sizeof(CraftName));
-        SConnectionTServerReconnect::Send(&item_craft_name, sizeof(DBItemCraftName));
+        SaveItemCraftName item_craft_name{ 0x717, user->userId, item_bag, item_slot };
+        item_craft_name.craftName = item->craftName;
+        SConnectionTServerReconnect::Send(g_pClientToDBAgent, &item_craft_name, sizeof(SaveItemCraftName));
 
-        CUser::ItemUseNSend(user, rune_bag_number, rune_slot_number, false);
+        CUser::ItemUseNSend(user, rune_bag, rune_slot, false);
     }
 }
 
@@ -539,13 +488,16 @@ void __declspec(naked) naked_0x479FB4()
         movzx eax,word ptr[esi]
         cmp eax,0x80D
         je case_0x80D
+        cmp eax,0x830
+        je case_0x830
+        cmp eax,0x832
+        je case_0x832
 
         // original
         add eax,-0x801
         jmp u0x479FBC
 
         case_0x80D:
-
         pushad
 
         push esi // packet
@@ -555,6 +507,15 @@ void __declspec(naked) naked_0x479FB4()
         
         popad
 
+        jmp exit_switch
+
+        // chaotic squares: not on to-do list
+
+        case_0x830:
+        jmp exit_switch
+
+        case_0x832:
+        exit_switch:
         pop edi
         pop esi
         pop ecx
