@@ -61,6 +61,7 @@
     <ClInclude Include="include\shaiya\include\CClientToMgr.h" />
     <ClInclude Include="include\shaiya\include\CDamage.h" />
     <ClInclude Include="include\shaiya\include\CDoor.h" />
+    <ClInclude Include="include\shaiya\include\CExchange.h" />
     <ClInclude Include="include\shaiya\include\CFriend.h" />
     <ClInclude Include="include\shaiya\include\CGameData.h" />
     <ClInclude Include="include\shaiya\include\CGuild.h" />
@@ -86,6 +87,8 @@
     <ClInclude Include="include\shaiya\include\SDatabasePool.h" />
     <ClInclude Include="include\shaiya\include\ServerTime.h" />
     <ClInclude Include="include\shaiya\include\SConnectionTServerReconnect.h" />
+    <ClInclude Include="include\shaiya\include\SNode.h" />
+    <ClInclude Include="include\shaiya\include\SSyncList.h" />
     <ClInclude Include="include\shaiya\include\SVector.h" />
     <ClInclude Include="include\shaiya\include\Synergy.h" />
     <ClInclude Include="include\shaiya\packets\0101.h" />

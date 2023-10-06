@@ -17,46 +17,46 @@ namespace packet_exchange
 {
     void reset_state(CUser* user)
     {
-        user->confirmExchangeState = 0;
+        user->exchange.confirmState = 0;
         ConfirmExchangeResponse confirm_response{ 0xA0A, 1, 0 };
         SConnection::Send(&user->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
 
         confirm_response.state1 = 2;
         SConnection::Send(&user->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
 
-        user->exchangeState = 0;
+        user->exchange.ready = false;
         ExchangeResponse exchange_response{ 0xA05, 3, 1 };
         SConnection::Send(&user->connection, &exchange_response, sizeof(ExchangeResponse));
 
-        user->exchangeUser->confirmExchangeState = 0;
+        user->exchange.user->exchange.confirmState = 0;
         confirm_response.state1 = 1;
         confirm_response.state2 = 0;
-        SConnection::Send(&user->exchangeUser->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
+        SConnection::Send(&user->exchange.user->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
 
         confirm_response.state1 = 2;
-        SConnection::Send(&user->exchangeUser->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
+        SConnection::Send(&user->exchange.user->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
 
-        user->exchangeUser->exchangeState = 0;
+        user->exchange.user->exchange.ready = false;
         confirm_response.state1 = 3;
         confirm_response.state2 = 1;
-        SConnection::Send(&user->exchangeUser->connection, &exchange_response, sizeof(ExchangeResponse));
+        SConnection::Send(&user->exchange.user->connection, &exchange_response, sizeof(ExchangeResponse));
     }
 
     void confirm_exchange_handler(CUser* user, Packet packet)
     {
-        if (!user->exchangeUser)
+        if (!user->exchange.user)
             return;
 
         auto state = util::read_bytes<std::uint8_t>(packet, 2);
 
         if (state)
         {
-            user->confirmExchangeState = 1;
+            user->exchange.confirmState = 1;
             ConfirmExchangeResponse confirm_response{ 0xA0A, 1, 1 };
             SConnection::Send(&user->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
 
             confirm_response.state1 = 2;
-            SConnection::Send(&user->exchangeUser->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
+            SConnection::Send(&user->exchange.user->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
         }
         else
         {
@@ -66,8 +66,8 @@ namespace packet_exchange
 
     void cancel_ready(CUser* user, CUser* exchangeUser)
     {
-        user->confirmExchangeState = 0;
-        exchangeUser->confirmExchangeState = 0;
+        user->exchange.confirmState = 0;
+        exchangeUser->exchange.confirmState = 0;
 
         ConfirmExchangeResponse confirm_response{ 0xA0A, 1, 0 };
         SConnection::Send(&user->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
@@ -90,8 +90,8 @@ namespace packet_exchange
 
     void maybe_reset_state(CUser* user)
     {
-        if (!user->confirmExchangeState)
-            if (!user->exchangeUser->confirmExchangeState)
+        if (!user->exchange.confirmState)
+            if (!user->exchange.user->exchange.confirmState)
                 return;
 
         reset_state(user);
@@ -179,15 +179,15 @@ void __declspec(naked) naked_0x47E253()
 {
     __asm
     {
-        // user->confirmExchangeState
+        // user->exchange.confirmState
         cmp byte ptr[ecx+0x15E5],al
         jne _0x47E263
 
-        // user->confirmExchangeState
+        // user->exchange.confirmState
         cmp byte ptr[esi+0x15E5],al
         jne _0x47E263
 
-        // user->exchangeState
+        // user->exchange.ready
         cmp byte ptr[ecx+0x15E4],al
         jne _0x47E263
         jmp u0x47E25B

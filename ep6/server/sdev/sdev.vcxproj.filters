@@ -410,5 +410,14 @@
     <ClInclude Include="include\util.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\shaiya\include\CExchange.h">
+      <Filter>include\shaiya\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\include\SNode.h">
+      <Filter>include\shaiya\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\include\SSyncList.h">
+      <Filter>include\shaiya\include</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

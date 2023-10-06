@@ -1,7 +1,9 @@
 #pragma once
 #include <include/shaiya/common.h>
+#include <include/shaiya/include/CExchange.h>
 #include <include/shaiya/include/CFriend.h>
 #include <include/shaiya/include/CMiniGame.h>
+#include <include/shaiya/include/CQuest.h>
 #include <include/shaiya/include/CSkill.h>
 #include <include/shaiya/include/MyShop.h>
 #include <include/shaiya/include/SConnection.h>
@@ -18,20 +20,6 @@ namespace shaiya
     FWDDECL CZone;
 
     #pragma pack(push, 1)
-    struct AdminInfo
-    {
-        ULONG questionId;          //0x580C
-        ULONG chatSendToId;        //0x5810
-        bool visible;              //0x5814
-        bool attackable;           //0x5815
-        PAD(2);
-        TickCount moveEnableTime;  //0x5818
-        TickCount chatEnableTime;  //0x581C
-        ULONG chatListenToId;      //0x5820
-        ULONG chatListenFromId;    //0x5824
-        PAD(4);
-    };
-
     enum struct AttackType : UINT32
     {
         None,
@@ -277,8 +265,7 @@ namespace shaiya
         UINT32 maxMana;                    //0x17C
         UINT32 maxStamina;                 //0x180
         CharName charName;                 //0x184
-        // 0x199
-        PAD(13);
+        Array<UINT8, 13> itemQualityLv;    //0x199
         Array<UINT16, 13> itemQuality;     //0x1A6
         // 0x1C0
         Array<Array<CItem*, 24>, 6> inventory;
@@ -290,7 +277,9 @@ namespace shaiya
         UINT32 quickSlotCount;             //0xEC0
         Array<QuickSlot, 128> quickSlot;   //0xEC4
         // 0x11C4
-        PAD(88);
+        SSyncList<CQuest> finishedQuestList;
+        // 0x11F0
+        SSyncList<CQuest> activeQuestList;
         UINT32 abilityStrength;          //0x121C
         UINT32 abilityDexterity;         //0x1220
         UINT32 abilityIntelligence;      //0x1224
@@ -444,17 +433,14 @@ namespace shaiya
         PAD(3);
         ToggleSkill toggleSkill;         //0x1538
         unsigned u0x1540;
-        // end custom
+        //
         PAD(16);
         TargetType targetType;           //0x1554
         // CUser->id, CMob->id
         ULONG targetId;                  //0x1558
-        PAD(104);
-        CUser* exchangeUser;             //0x15C4
-        PAD(28);
-        UINT8 exchangeState;             //0x15E4
-        UINT8 confirmExchangeState;      //0x15E5
-        PAD(78);
+        PAD(100);
+        CExchange exchange;              //0x15C0
+        CExchangePvP exchangePvP;        //0x15E8
         MyShop myShop;                   //0x1634
         CParty* party;                   //0x17F4
         ULONG partyInviteCharId;         //0x17F8
@@ -466,13 +452,13 @@ namespace shaiya
         CGuild* guild;                   //0x1810
         CGuildCreate* guildCreate;       //0x1814
         CMiniGame miniGame;              //0x1818
-        UINT32 numBuddies;               //0x1838
+        UINT32 buddyCount;               //0x1838
         Array<CFriend, 100> buddyList;   //0x183C
-        UINT32 numBans;                  //0x377C
+        UINT32 blockCount;               //0x377C
         Array<BlockList, 100> blockList; //0x3780
         ULONG buddyInviteCharId;         //0x5530
         PAD(76);
-        BOOL joinGuildDisable;           //0x5580
+        BOOL joinGuildDisabled;          //0x5580
         BOOL joinedGuildRankBattle;      //0x5584
         PAD(4);
         BattleState battleState;         //0x558C
@@ -486,7 +472,18 @@ namespace shaiya
         UINT64 sessionId;                //0x5800
         Permission permission;           //0x5808
         PAD(3);
-        AdminInfo adminInfo;             //0x580C
+        // stAdminInfo
+        ULONG questionId;                //0x580C
+        ULONG chatSendToCharId;          //0x5810
+        bool visible;                    //0x5814
+        bool attackable;                 //0x5815
+        PAD(2);
+        TickCount enableMoveTime;        //0x5818
+        TickCount enableChatTime;        //0x581C
+        ULONG chatListenToCharId;        //0x5820
+        ULONG chatListenFromCharId;      //0x5824
+        PAD(4);
+        // end
         UserId userId;                   //0x582C
         PAD(4);
         Username username;               //0x5834
@@ -507,7 +504,7 @@ namespace shaiya
         PAD(8);
         bool isMessageToServer;          //0x58DC
         PAD(7);
-        TickCount shoutEnableTime;       //0x58E4
+        TickCount enableShoutTime;       //0x58E4
         UINT8 statResetCount;            //0x58E8
         UINT8 skillResetCount;           //0x58E9
         bool statResetEvent;             //0x58EA

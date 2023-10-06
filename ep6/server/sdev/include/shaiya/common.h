@@ -12,7 +12,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-// thanks Cups ^^
+// thanks, Cups ^^
 #define CONCAT(x, y) x ## y
 #define EXPAND(x, y) CONCAT(x, y)
 #define PAD(size) char EXPAND(pad, __LINE__)[size]
@@ -51,6 +51,7 @@ typedef Array<char, 21> ProductCode;
 typedef Array<char, 32> Username;
 typedef Array<char, 16> Password;
 
+#pragma pack(push, 1)
 enum struct Country : UINT8
 {
     Light,
@@ -261,3 +262,4 @@ enum SkillId
     FrenziedFinesse,
     FrenziedFortune
 };
+#pragma pack(pop)
