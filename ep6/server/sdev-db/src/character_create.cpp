@@ -41,11 +41,11 @@ namespace character_create
             return false;
         }
 
-        SQLINTEGER row_count = -1;
-        SQLRowCount(db->stmt, &row_count);
+        SQLINTEGER rowCount = -1;
+        SQLRowCount(db->stmt, &rowCount);
 
         SDatabasePool::FreeDB(db);
-        return !row_count; // expect 0 or -1
+        return !rowCount;
     }
 
     void name_available_handler(CUser* user, SQLPOINTER name)

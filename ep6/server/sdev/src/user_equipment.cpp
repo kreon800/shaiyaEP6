@@ -68,6 +68,8 @@ namespace user_equipment
 
     void send_inspect(CUser* user, CUser* target)
     {
+        constexpr int packet_size_without_list = 3;
+
         InspectResponse response{};
         response.itemCount = 0;
 
@@ -77,23 +79,22 @@ namespace user_equipment
             if (!item)
                 continue;
 
-            Item0307 inspect_item{};
-            inspect_item.slot = slot;
-            inspect_item.type = item->type;
-            inspect_item.typeId = item->typeId;
+            Item0307 item0307{};
+            item0307.slot = slot;
+            item0307.type = item->type;
+            item0307.typeId = item->typeId;
 
             if (slot < EquipmentSlot::Vehicle)
-                inspect_item.quality = item->quality;
+                item0307.quality = item->quality;
 
-            inspect_item.gems = item->gems;
-            inspect_item.craftName = item->craftName;
-            std::memcpy(&response.itemList[response.itemCount], &inspect_item, sizeof(Item0307));
+            item0307.gems = item->gems;
+            item0307.craftName = item->craftName;
+            std::memcpy(&response.itemList[response.itemCount], &item0307, sizeof(Item0307));
             ++response.itemCount;
         }
 
-        constexpr int packet_size_without_list = 3;
-        int packet_size = packet_size_without_list + (response.itemCount * sizeof(Item0307));
-        SConnection::Send(&user->connection, &response, packet_size);
+        int length = packet_size_without_list + (response.itemCount * sizeof(Item0307));
+        SConnection::Send(&user->connection, &response, length);
     }
 }
 

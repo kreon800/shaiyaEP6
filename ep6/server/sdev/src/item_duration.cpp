@@ -16,20 +16,20 @@ namespace item_duration
 {
     constexpr int warehouse_bag = 100;
 
-    void remove_item(CUser* user, CItem* item, int bag, int slot)
+    void remove_item_and_send_notice(CUser* user, CItem* item, int bag, int slot)
     {
         CUser::ItemRemove(user, bag, slot);
 
-        ItemExpireNotice item_expire_notice{};
-        item_expire_notice.type = item->type;
-        item_expire_notice.typeId = item->typeId;
+        ItemExpireNotice packet{};
+        packet.type = item->type;
+        packet.typeId = item->typeId;
 
         if (bag == warehouse_bag)
-            item_expire_notice.noticeType = ItemExpireNoticeType::DeletedFromWarehouse;
+            packet.noticeType = ItemExpireNoticeType::DeletedFromWarehouse;
         else
-            item_expire_notice.noticeType = ItemExpireNoticeType::DeletedFromInventory;
+            packet.noticeType = ItemExpireNoticeType::DeletedFromInventory;
 
-        SConnection::Send(&user->connection, &item_expire_notice, sizeof(ItemExpireNotice));
+        SConnection::Send(&user->connection, &packet, sizeof(ItemExpireNotice));
     }
 
     void maybe_send_notice(CUser* user, CItem* item, int bag, int slot)
@@ -37,46 +37,46 @@ namespace item_duration
         if (!item->itemInfo->range)
             return;
 
-        auto expire_time = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
-        if (!expire_time)
+        auto expireTime = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
+        if (!expireTime)
             return;
 
         SYSTEMTIME st{};
-        ServerTime::ServerTimeToSystemTime(expire_time, &st);
+        ServerTime::ServerTimeToSystemTime(expireTime, &st);
         Duration duration(&st);
 
         if (duration.expired())
         {
-            remove_item(user, item, bag, slot);
+            remove_item_and_send_notice(user, item, bag, slot);
             return;
         }
 
         if (!duration.days)
         {
-            ItemExpireNotice item_expire_notice{};
-            item_expire_notice.type = item->type;
-            item_expire_notice.typeId = item->typeId;
+            ItemExpireNotice packet{};
+            packet.type = item->type;
+            packet.typeId = item->typeId;
 
             if (!duration.hours)
             {
-                item_expire_notice.timeValue = static_cast<std::uint8_t>(duration.minutes);
+                packet.timeValue = static_cast<std::uint8_t>(duration.minutes);
 
                 if (bag == warehouse_bag)
-                    item_expire_notice.noticeType = ItemExpireNoticeType::MinutesLeftWarehouse;
+                    packet.noticeType = ItemExpireNoticeType::MinutesLeftWarehouse;
                 else
-                    item_expire_notice.noticeType = ItemExpireNoticeType::MinutesLeftInventory;
+                    packet.noticeType = ItemExpireNoticeType::MinutesLeftInventory;
             }
             else
             {
-                item_expire_notice.timeValue = static_cast<std::uint8_t>(duration.hours);
+                packet.timeValue = static_cast<std::uint8_t>(duration.hours);
 
                 if (bag == warehouse_bag)
-                    item_expire_notice.noticeType = ItemExpireNoticeType::HoursLeftWarehouse;
+                    packet.noticeType = ItemExpireNoticeType::HoursLeftWarehouse;
                 else
-                    item_expire_notice.noticeType = ItemExpireNoticeType::HoursLeftInventory;
+                    packet.noticeType = ItemExpireNoticeType::HoursLeftInventory;
             }
 
-            SConnection::Send(&user->connection, &item_expire_notice, sizeof(ItemExpireNotice));
+            SConnection::Send(&user->connection, &packet, sizeof(ItemExpireNotice));
         }
     }
 
@@ -90,12 +90,12 @@ namespace item_duration
         case ItemType::Pet:
         case ItemType::Costume:
         {
-            ItemDuration item_duration{};
-            item_duration.bag = bag;
-            item_duration.slot = slot;
-            item_duration.fromDate = item->makeTime;
-            item_duration.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
-            SConnection::Send(&user->connection, &item_duration, sizeof(ItemDuration));
+            ItemDuration packet{};
+            packet.bag = bag;
+            packet.slot = slot;
+            packet.fromDate = item->makeTime;
+            packet.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
+            SConnection::Send(&user->connection, &packet, sizeof(ItemDuration));
 
             maybe_send_notice(user, item, bag, slot);
             break;
@@ -129,9 +129,9 @@ namespace item_duration
         }
     }
 
-    void send_bag_to_bank(CUser* user, Packet packet)
+    void send_bag_to_bank(CUser* user, Packet buffer)
     {
-        auto slot = util::read_bytes<std::uint8_t>(packet, 37);
+        auto slot = util::read_bytes<std::uint8_t>(buffer, 37);
         if (slot >= MAX_WAREHOUSE_SLOT)
             return;
 
@@ -142,26 +142,26 @@ namespace item_duration
         auto type = static_cast<ItemType>(item->type);
         if (type == ItemType::Pet || type == ItemType::Costume)
         {
-            ItemDuration item_duration{};
-            item_duration.bag = warehouse_bag;
-            item_duration.slot = slot;
-            item_duration.fromDate = item->makeTime;
-            item_duration.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
-            SConnection::Send(&user->connection, &item_duration, sizeof(ItemDuration));
+            ItemDuration packet{};
+            packet.bag = warehouse_bag;
+            packet.slot = slot;
+            packet.fromDate = item->makeTime;
+            packet.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
+            SConnection::Send(&user->connection, &packet, sizeof(ItemDuration));
         }
     }
 
-    void send_item_create(CUser* user, CItem* item, Packet packet)
+    void send_item_create(CUser* user, CItem* item, Packet buffer)
     {
         auto type = static_cast<ItemType>(item->type);
         if (type == ItemType::Pet || type == ItemType::Costume)
         {
-            ItemDuration item_duration{};
-            item_duration.bag = util::read_bytes<std::uint8_t>(packet, 2);
-            item_duration.slot = util::read_bytes<std::uint8_t>(packet, 3);
-            item_duration.fromDate = item->makeTime;
-            item_duration.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
-            SConnection::Send(&user->connection, &item_duration, sizeof(ItemDuration));
+            ItemDuration packet{};
+            packet.bag = util::read_bytes<std::uint8_t>(buffer, 2);
+            packet.slot = util::read_bytes<std::uint8_t>(buffer, 3);
+            packet.fromDate = item->makeTime;
+            packet.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
+            SConnection::Send(&user->connection, &packet, sizeof(ItemDuration));
         }
     }
 }

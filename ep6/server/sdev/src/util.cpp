@@ -45,8 +45,8 @@ void util::log(const std::string& text)
 
 std::string util::read_pascal_string(std::ifstream& ifs)
 {
-    auto length_prefix = util::read_number<std::int32_t>(ifs);
-    return util::read_string(ifs, length_prefix);
+    auto lengthPrefix = util::read_number<std::int32_t>(ifs);
+    return util::read_string(ifs, lengthPrefix);
 }
 
 std::string util::read_string(std::ifstream& ifs, std::size_t count)

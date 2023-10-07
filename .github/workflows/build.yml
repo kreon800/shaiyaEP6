@@ -12,11 +12,3 @@ jobs:
         with:
           arch: x86
       - run: msbuild ep6/server/sdev.sln /p:configuration=debug /p:platform="x86"
-      - uses: actions/upload-artifact@v1
-        with:
-          name: sdev.dll
-          path: ep6/server/debug/sdev.dll
-      - uses: actions/upload-artifact@v1
-        with:
-          name: sdev-db.dll
-          path: ep6/server/debug/sdev-db.dll

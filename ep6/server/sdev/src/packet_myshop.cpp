@@ -15,45 +15,44 @@ namespace packet_myshop
 {
     void send_item_list(CUser* user, MyShop* myShop)
     {
-        constexpr int max_shop_slot = 20;
+        constexpr int packet_size_without_list = 3;
 
-        MyShopViewResponse myshop{};
-        myshop.itemCount = 0;
+        MyShopItemList packet{};
+        packet.itemCount = 0;
 
-        for (int slot = 0; slot < max_shop_slot; ++slot)
+        for (int slot = 0; slot < MAX_MYSHOP_SLOT; ++slot)
         {
-            auto src_bag = myShop->srcBag[slot];
-            auto src_slot = myShop->srcSlot[slot];
+            auto srcBag = myShop->srcBag[slot];
+            auto srcSlot = myShop->srcSlot[slot];
 
-            if (!src_bag)
+            if (!srcBag)
                 continue;
 
-            auto& item = myShop->user->inventory[src_bag][src_slot];
+            auto& item = myShop->user->inventory[srcBag][srcSlot];
             if (!item)
                 continue;
 
-            Item230B myshop_item{};
-            myshop_item.slot = slot;
-            myshop_item.price = myShop->price[slot];
-            myshop_item.type = item->type;
-            myshop_item.typeId = item->typeId;
-            myshop_item.count = item->count;
-            myshop_item.quality = item->quality;
-            myshop_item.gems = item->gems;
+            Item230B item230B{};
+            item230B.slot = slot;
+            item230B.price = myShop->price[slot];
+            item230B.type = item->type;
+            item230B.typeId = item->typeId;
+            item230B.count = item->count;
+            item230B.quality = item->quality;
+            item230B.gems = item->gems;
 
             #ifdef SHAIYA_EP6
-            myshop_item.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
-            myshop_item.fromDate = myshop_item.toDate ? item->makeTime : 0;
+            item230B.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
+            item230B.fromDate = item230B.toDate ? item->makeTime : 0;
             #endif
 
-            myshop_item.craftName = item->craftName;
-            std::memcpy(&myshop.itemList[myshop.itemCount], &myshop_item, sizeof(Item230B));
-            ++myshop.itemCount;
+            item230B.craftName = item->craftName;
+            std::memcpy(&packet.itemList[packet.itemCount], &item230B, sizeof(Item230B));
+            ++packet.itemCount;
         }
 
-        constexpr int packet_size_without_list = 3;
-        int packet_size = packet_size_without_list + (myshop.itemCount * sizeof(Item230B));
-        SConnection::Send(&user->connection, &myshop, packet_size);
+        int length = packet_size_without_list + (packet.itemCount * sizeof(Item230B));
+        SConnection::Send(&user->connection, &packet, length);
     }
 }
 

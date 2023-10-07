@@ -4,7 +4,7 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct DamageByKeepSkill
+    struct KeepSkill
     {
         UINT16 opcode{ 0x50F };
         ULONG charId;

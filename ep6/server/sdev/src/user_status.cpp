@@ -14,7 +14,7 @@ using namespace shaiya;
 
 namespace user_status
 {
-    void send_status(CUser* user)
+    void send(CUser* user)
     {
         UserStatus packet{};
 
@@ -42,7 +42,7 @@ namespace user_status
         luck -= user->luck;
         packet.luck = luck;
 
-        auto attack_power = user->minMeleeAtkPower;
+        auto attackPower = user->minMeleeAtkPower;
 
         auto& weapon = user->inventory[0][EquipmentSlot::Weapon];
         if (weapon)
@@ -52,26 +52,26 @@ namespace user_status
             case CGameData::ItemRealType::Javelin:
             case CGameData::ItemRealType::Bow:
             case CGameData::ItemRealType::Crossbow:
-                attack_power = user->minRangeAtkPower;
+                attackPower = user->minRangeAtkPower;
                 break;
             default:
                 break;
             }
         }
 
-        packet.minAttackPower = attack_power;
-        attack_power += user->maxAddAtkPower;
-        packet.maxAttackPower = attack_power;
+        packet.minAttackPower = attackPower;
+        attackPower += user->maxAddAtkPower;
+        packet.maxAttackPower = attackPower;
 
-        auto magic_power = user->minMagicPower;
-        packet.minMagicPower = magic_power;
-        magic_power += user->maxAddAtkPower;
-        packet.maxMagicPower = magic_power;
+        auto magicPower = user->minMagicPower;
+        packet.minMagicPower = magicPower;
+        magicPower += user->maxAddAtkPower;
+        packet.maxMagicPower = magicPower;
 
         packet.defense = user->meleeDefense;
         packet.resistance = user->magicResistance;
 
-        SConnection::Send(&user->connection, &packet, sizeof(packet));
+        SConnection::Send(&user->connection, &packet, sizeof(UserStatus));
     }
 
     void send_recover_set(CUser* user)
@@ -87,7 +87,7 @@ void __declspec(naked) naked_0x461005()
         pushad
 
         push esi // user
-        call user_status::send_status
+        call user_status::send
         add esp,0x4
 
         popad

@@ -66,30 +66,28 @@ namespace toggle_skill
         if (!user->toggleSkill.triggered || now < user->toggleSkill.keepTime)
             return;
 
-        auto skill_info = CGameData::GetSkillInfo(user->toggleSkill.skillId, user->toggleSkill.skillLv);
-        if (!skill_info)
+        auto skillInfo = CGameData::GetSkillInfo(user->toggleSkill.skillId, user->toggleSkill.skillLv);
+        if (!skillInfo)
             return;
 
-        auto percentage = (user->health * skill_info->ability[0].value) / 100;
+        auto percentage = (user->health * skillInfo->ability[0].value) / 100;
         user->health -= percentage;
         CUser::SendRecoverSet(user, user->health, user->stamina, user->mana);
 
-        user->toggleSkill.keepTime = now + (skill_info->keepTime * 1000);
-
-        // note: if the skill heals, use CZone::PSendView to send a 0x50F packet
+        user->toggleSkill.keepTime = now + (skillInfo->keepTime * 1000);
     }
 
-    void maybe_send_state(CUser* sender, CUser* target, CGameData::SkillInfo* skillInfo, Packet packet)
+    void maybe_send_state(CUser* sender, CUser* target, CGameData::SkillInfo* skillInfo, Packet buffer)
     {
         UseSkillResponse response{};
-        response.targetType = util::read_bytes<std::uint8_t>(packet, 2);
+        response.targetType = util::read_bytes<std::uint8_t>(buffer, 2);
         response.senderId = sender->id;
         response.targetId = target->id;
-        response.skillId = util::read_bytes<std::uint16_t>(packet, 11);
-        response.skillLv = util::read_bytes<std::uint8_t>(packet, 13);
-        response.health = util::read_bytes<std::uint16_t>(packet, 14);
-        response.stamina = util::read_bytes<std::uint16_t>(packet, 16);
-        response.mana = util::read_bytes<std::uint16_t>(packet, 18);
+        response.skillId = util::read_bytes<std::uint16_t>(buffer, 11);
+        response.skillLv = util::read_bytes<std::uint8_t>(buffer, 13);
+        response.health = util::read_bytes<std::uint16_t>(buffer, 14);
+        response.stamina = util::read_bytes<std::uint16_t>(buffer, 16);
+        response.mana = util::read_bytes<std::uint16_t>(buffer, 18);
 
         switch (response.skillId)
         {
@@ -138,7 +136,7 @@ void __declspec(naked) naked_0x45CCE3()
         lea eax,[esp+0x3C]
 
         push eax // packet
-        push esi // skill_info
+        push esi // skillInfo
         push edi // target
         push ebp // user
         call toggle_skill::maybe_send_state

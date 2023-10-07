@@ -18,45 +18,43 @@ namespace packet_exchange
     void reset_state(CUser* user)
     {
         user->exchange.confirmState = 0;
-        ConfirmExchangeResponse confirm_response{ 0xA0A, 1, 0 };
-        SConnection::Send(&user->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
+        ExchangeConfirmResponse response{ 0xA0A, 1, 0 };
+        SConnection::Send(&user->connection, &response, sizeof(ExchangeConfirmResponse));
 
-        confirm_response.state1 = 2;
-        SConnection::Send(&user->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
+        response.state1 = 2;
+        SConnection::Send(&user->connection, &response, sizeof(ExchangeConfirmResponse));
 
         user->exchange.ready = false;
-        ExchangeResponse exchange_response{ 0xA05, 3, 1 };
-        SConnection::Send(&user->connection, &exchange_response, sizeof(ExchangeResponse));
+        ExchangeResponse response2{ 0xA05, 3, 1 };
+        SConnection::Send(&user->connection, &response2, sizeof(ExchangeResponse));
 
         user->exchange.user->exchange.confirmState = 0;
-        confirm_response.state1 = 1;
-        confirm_response.state2 = 0;
-        SConnection::Send(&user->exchange.user->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
+        response.state1 = 1;
+        response.state2 = 0;
+        SConnection::Send(&user->exchange.user->connection, &response, sizeof(ExchangeConfirmResponse));
 
-        confirm_response.state1 = 2;
-        SConnection::Send(&user->exchange.user->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
+        response.state1 = 2;
+        SConnection::Send(&user->exchange.user->connection, &response, sizeof(ExchangeConfirmResponse));
 
         user->exchange.user->exchange.ready = false;
-        confirm_response.state1 = 3;
-        confirm_response.state2 = 1;
-        SConnection::Send(&user->exchange.user->connection, &exchange_response, sizeof(ExchangeResponse));
+        SConnection::Send(&user->exchange.user->connection, &response2, sizeof(ExchangeResponse));
     }
 
-    void confirm_exchange_handler(CUser* user, Packet packet)
+    void exchange_confirm_handler(CUser* user, Packet buffer)
     {
         if (!user->exchange.user)
             return;
 
-        auto state = util::read_bytes<std::uint8_t>(packet, 2);
+        auto state = util::read_bytes<std::uint8_t>(buffer, 2);
 
         if (state)
         {
             user->exchange.confirmState = 1;
-            ConfirmExchangeResponse confirm_response{ 0xA0A, 1, 1 };
-            SConnection::Send(&user->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
+            ExchangeConfirmResponse response{ 0xA0A, 1, 1 };
+            SConnection::Send(&user->connection, &response, sizeof(ExchangeConfirmResponse));
 
-            confirm_response.state1 = 2;
-            SConnection::Send(&user->exchange.user->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
+            response.state1 = 2;
+            SConnection::Send(&user->exchange.user->connection, &response, sizeof(ExchangeConfirmResponse));
         }
         else
         {
@@ -69,23 +67,23 @@ namespace packet_exchange
         user->exchange.confirmState = 0;
         exchangeUser->exchange.confirmState = 0;
 
-        ConfirmExchangeResponse confirm_response{ 0xA0A, 1, 0 };
-        SConnection::Send(&user->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
+        ExchangeConfirmResponse response{ 0xA0A, 1, 0 };
+        SConnection::Send(&user->connection, &response, sizeof(ExchangeConfirmResponse));
 
-        confirm_response.state1 = 2;
-        SConnection::Send(&user->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
+        response.state1 = 2;
+        SConnection::Send(&user->connection, &response, sizeof(ExchangeConfirmResponse));
 
-        confirm_response.state1 = 1;
-        SConnection::Send(&exchangeUser->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
+        response.state1 = 1;
+        SConnection::Send(&exchangeUser->connection, &response, sizeof(ExchangeConfirmResponse));
 
-        confirm_response.state1 = 2;
-        SConnection::Send(&exchangeUser->connection, &confirm_response, sizeof(ConfirmExchangeResponse));
+        response.state1 = 2;
+        SConnection::Send(&exchangeUser->connection, &response, sizeof(ExchangeConfirmResponse));
 
         // original code
 
-        ExchangeResponse exchange_response{ 0xA05, 3, 1 };
-        SConnection::Send(&user->connection, &exchange_response, sizeof(ExchangeResponse));
-        SConnection::Send(&exchangeUser->connection, &exchange_response, sizeof(ExchangeResponse));
+        ExchangeResponse response2{ 0xA05, 3, 1 };
+        SConnection::Send(&user->connection, &response2, sizeof(ExchangeResponse));
+        SConnection::Send(&exchangeUser->connection, &response2, sizeof(ExchangeResponse));
     }
 
     void maybe_reset_state(CUser* user)
@@ -97,54 +95,64 @@ namespace packet_exchange
         reset_state(user);
     }
 
-    void send_exchange_item(CUser* user, CUser* exchangeUser, Packet packet)
+    void send_exchange_item(CUser* user, CUser* exchangeUser, Packet buffer)
     {
-        ExchangeItem exchange_item{};
-        exchange_item.destSlot = util::read_bytes<std::uint8_t>(packet, 5);
+        ExchangeItem packet{};
+        packet.destSlot = util::read_bytes<std::uint8_t>(buffer, 5);
 
-        auto src_bag = util::read_bytes<std::uint8_t>(packet, 2);
-        auto src_slot = util::read_bytes<std::uint8_t>(packet, 3);
+        auto bag = util::read_bytes<std::uint8_t>(buffer, 2);
+        auto slot = util::read_bytes<std::uint8_t>(buffer, 3);
 
-        // bag, slot, etc. have already been tested
-        auto& item = exchangeUser->inventory[src_bag][src_slot];
-        exchange_item.type = item->type;
-        exchange_item.typeId = item->typeId;
-        exchange_item.count = util::read_bytes<std::uint8_t>(packet, 4);
-        exchange_item.quality = item->quality;
-        exchange_item.gems = item->gems;
+        if (bag > exchangeUser->bagsUnlocked || slot >= MAX_INVENTORY_SLOT)
+            return;
+
+        auto& item = exchangeUser->inventory[bag][slot];
+        if (!item)
+            return;
+
+        packet.type = item->type;
+        packet.typeId = item->typeId;
+        packet.count = util::read_bytes<std::uint8_t>(buffer, 4);
+        packet.quality = item->quality;
+        packet.gems = item->gems;
 
         #ifdef SHAIYA_EP6
-        exchange_item.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
-        exchange_item.fromDate = exchange_item.toDate ? item->makeTime : 0;
+        packet.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
+        packet.fromDate = packet.toDate ? item->makeTime : 0;
         #endif
 
-        exchange_item.craftName = item->craftName;
-        SConnection::Send(&user->connection, &exchange_item, sizeof(ExchangeItem));
+        packet.craftName = item->craftName;
+        SConnection::Send(&user->connection, &packet, sizeof(ExchangeItem));
     }
 
-    void send_battle_exchange_item(CUser* user, CUser* exchangeUser, Packet packet)
+    void send_exchange_pvp_item(CUser* user, CUser* exchangeUser, Packet buffer)
     {
-        BattleExchangeItem exchange_item{};
-        exchange_item.destSlot = util::read_bytes<std::uint8_t>(packet, 5);
+        ExchangePvPItem packet{};
+        packet.destSlot = util::read_bytes<std::uint8_t>(buffer, 5);
 
-        auto src_bag = util::read_bytes<std::uint8_t>(packet, 2);
-        auto src_slot = util::read_bytes<std::uint8_t>(packet, 3);
+        auto bag = util::read_bytes<std::uint8_t>(buffer, 2);
+        auto slot = util::read_bytes<std::uint8_t>(buffer, 3);
 
-        // bag, slot, etc. have already been tested
-        auto& item = exchangeUser->inventory[src_bag][src_slot];
-        exchange_item.type = item->type;
-        exchange_item.typeId = item->typeId;
-        exchange_item.count = util::read_bytes<std::uint8_t>(packet, 4);
-        exchange_item.quality = item->quality;
-        exchange_item.gems = item->gems;
+        if (bag > exchangeUser->bagsUnlocked || slot >= MAX_INVENTORY_SLOT)
+            return;
+
+        auto& item = exchangeUser->inventory[bag][slot];
+        if (!item)
+            return;
+
+        packet.type = item->type;
+        packet.typeId = item->typeId;
+        packet.count = util::read_bytes<std::uint8_t>(buffer, 4);
+        packet.quality = item->quality;
+        packet.gems = item->gems;
 
         #ifdef SHAIYA_EP6
-        exchange_item.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
-        exchange_item.fromDate = exchange_item.toDate ? item->makeTime : 0;
+        packet.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
+        packet.fromDate = packet.toDate ? item->makeTime : 0;
         #endif
 
-        exchange_item.craftName = item->craftName;
-        SConnection::Send(&user->connection, &exchange_item, sizeof(ExchangeItem));
+        packet.craftName = item->craftName;
+        SConnection::Send(&user->connection, &packet, sizeof(ExchangePvPItem));
     }
 }
 
@@ -162,9 +170,9 @@ void __declspec(naked) naked_0x47D964()
         case_0xA0A:
         pushad
 
-        push edi // packet
+        push edi // buffer
         push ebx // user
-        call packet_exchange::confirm_exchange_handler
+        call packet_exchange::exchange_confirm_handler
         add esp,0x8
 
         popad
@@ -283,7 +291,7 @@ void __declspec(naked) naked_0x48C69A()
         push edi // packet
         push ebp // exchange user
         push esi // user
-        call packet_exchange::send_battle_exchange_item
+        call packet_exchange::send_exchange_pvp_item
         add esp,0xC
 
         popad

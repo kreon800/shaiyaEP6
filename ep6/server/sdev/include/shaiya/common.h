@@ -30,6 +30,7 @@
 #define MAX_CHARACTER_SLOT 5
 #define MAX_INVENTORY_BAG 6
 #define MAX_INVENTORY_SLOT 24
+#define MAX_MYSHOP_SLOT 20
 #define MAX_WAREHOUSE_SLOT 240
 
 typedef unsigned Address;
@@ -221,6 +222,16 @@ enum struct Permission : UINT8
     AdminD = 4,
     AdminE = 5,
     Normal = 11
+};
+
+enum PortalId
+{
+    DeepDesertLight = 1010,
+    DeepDesertFury = 1020,
+    StableErdeLight = 1011,
+    StableErdeFury = 1021,
+    KanosIliumLight = 1060,
+    KanosIliumFury = 1061
 };
 
 enum struct Race : UINT8

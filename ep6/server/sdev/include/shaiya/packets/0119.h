@@ -4,13 +4,13 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct CharNameAvailableRequest
+    struct NameAvailableRequest
     {
         UINT16 opcode{ 0x119 };
         Array<char, 19> name;
     };
 
-    struct CharNameAvailableResponse
+    struct NameAvailableResponse
     {
         UINT16 opcode{ 0x119 };
         bool available;

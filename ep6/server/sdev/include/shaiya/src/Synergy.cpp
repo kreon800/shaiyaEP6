@@ -38,16 +38,16 @@ void Synergy::init()
             Synergy synergy{};
             synergy.id = util::read_number<std::int16_t>(ifs);
 
-            int length_prefix = util::read_number<std::int32_t>(ifs);
-            ifs.ignore(length_prefix);
+            int lengthPrefix = util::read_number<std::int32_t>(ifs);
+            ifs.ignore(lengthPrefix);
 
             for (int i = 0; i < 13; ++i)
             {
                 short type = util::read_number<std::int16_t>(ifs);
-                short type_id = util::read_number<std::int16_t>(ifs);
+                short typeId = util::read_number<std::int16_t>(ifs);
 
-                int item_id = (type * 1000) + type_id;
-                synergy.set[i] = item_id;
+                int itemId = (type * 1000) + typeId;
+                synergy.set[i] = itemId;
             }
 
             for (int i = 0; i < 13; ++i)
@@ -65,6 +65,8 @@ void Synergy::init()
 
 void Synergy::parseAbility(std::ifstream& ifs, SynergyAbility& ability)
 {
+    constexpr int expected_size = sizeof(SynergyAbility) / sizeof(int);
+
     auto text = util::read_pascal_string(ifs);
     if (text == "0" || text.empty())
         return;
@@ -74,7 +76,6 @@ void Synergy::parseAbility(std::ifstream& ifs, SynergyAbility& ability)
     for (std::string str; std::getline(iss, str, ','); )
         vec.push_back(std::atoi(str.c_str()));
 
-    auto expected_size = sizeof(SynergyAbility) / sizeof(int);
     if (vec.size() != expected_size)
         return;
 
@@ -168,15 +169,15 @@ void Synergy::getWornSynergies(CUser* user, std::vector<SynergyAbility>& synergi
 
     for (auto& synergy : g_synergies)
     {
-        int worn_count = 0;
+        int wornCount = 0;
         for (const auto& item_id : synergy.set)
             if (equipment.count(item_id))
-                ++worn_count;
+                ++wornCount;
 
-        if (worn_count < 2)
+        if (wornCount < 2)
             continue;
 
-        for (int i = worn_count - 1; i > 0; --i)
+        for (int i = wornCount - 1; i > 0; --i)
         {
             if (synergy.ability[i].isNull())
                 continue;

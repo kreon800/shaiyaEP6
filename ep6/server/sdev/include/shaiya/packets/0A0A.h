@@ -4,13 +4,13 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct ConfirmExchangeRequest
+    struct ExchangeConfirmRequest
     {
         UINT16 opcode{ 0xA0A };
         UINT8 state;
     };
 
-    struct ConfirmExchangeResponse
+    struct ExchangeConfirmResponse
     {
         UINT16 opcode{ 0xA0A };
         UINT8 state1;

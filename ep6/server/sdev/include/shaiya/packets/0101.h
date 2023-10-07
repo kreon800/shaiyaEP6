@@ -10,7 +10,7 @@ namespace shaiya
         Array<UINT8, ITEM_LIST_SIZE> typeId;
     };
 
-    struct CharacterList
+    struct Character0101
     {
         UINT16 opcode{ 0x101 };
         UINT8 slot;

@@ -4,7 +4,7 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    enum struct ProductItemPurchaseResult : UINT8
+    enum struct ProductPurchaseResult : UINT8
     {
         Success,
         // or g_bDisableShop == true
@@ -13,7 +13,7 @@ namespace shaiya
         InventoryFull
     };
 
-    struct ProductItemPurchaseRequest
+    struct ProductPurchaseRequest
     {
         UINT16 opcode{ 0x2602 };
         ProductCode productCode;
@@ -32,10 +32,10 @@ namespace shaiya
         #endif
     };
 
-    struct ProductItemPurchaseResponse
+    struct ProductPurchaseResponse
     {
         UINT16 opcode{ 0x2602 };
-        ProductItemPurchaseResult result;
+        ProductPurchaseResult result;
         UINT32 points;
         ProductCode productCode;
         ULONG purchaseDate;

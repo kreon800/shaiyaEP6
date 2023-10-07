@@ -24,92 +24,59 @@ namespace item_effect
         {
         case CGameData::ItemEffect::TownTeleportScroll:
         {
+            NpcGateKeeper* gateKeeper = nullptr;
+
             switch (item->itemInfo->itemId)
             {
             case 101102:
             {
-                auto npc = CNpcData<NpcGateKeeper*>::GetNpc(2, 111);
-                if (!npc)
-                    return 0;
-
-                user->recallMapId = npc->gate[user->townScrollLocation].mapId;
-                user->recallPos = npc->gate[user->townScrollLocation].outPos;
+                gateKeeper = CNpcData<NpcGateKeeper*>::GetNpc(2, 111);
                 break;
             }
             case 101103:
             {
-                auto npc = CNpcData<NpcGateKeeper*>::GetNpc(2, 112);
-                if (!npc)
-                    return 0;
-
-                user->recallMapId = npc->gate[user->townScrollLocation].mapId;
-                user->recallPos = npc->gate[user->townScrollLocation].outPos;
+                gateKeeper = CNpcData<NpcGateKeeper*>::GetNpc(2, 112);
                 break;
             }
             case 101104:
             {
-                auto npc = CNpcData<NpcGateKeeper*>::GetNpc(2, 101);
-                if (!npc)
-                    return 0;
-
-                user->recallMapId = npc->gate[user->townScrollLocation].mapId;
-                user->recallPos = npc->gate[user->townScrollLocation].outPos;
+                gateKeeper = CNpcData<NpcGateKeeper*>::GetNpc(2, 101);
                 break;
             }
             case 101105:
             {
-                auto npc = CNpcData<NpcGateKeeper*>::GetNpc(2, 102);
-                if (!npc)
-                    return 0;
-
-                user->recallMapId = npc->gate[user->townScrollLocation].mapId;
-                user->recallPos = npc->gate[user->townScrollLocation].outPos;
+                gateKeeper = CNpcData<NpcGateKeeper*>::GetNpc(2, 102);
                 break;
             }
             case 101106:
             {
-                auto npc = CNpcData<NpcGateKeeper*>::GetNpc(2, 103);
-                if (!npc)
-                    return 0;
-
-                user->recallMapId = npc->gate[user->townScrollLocation].mapId;
-                user->recallPos = npc->gate[user->townScrollLocation].outPos;
+                gateKeeper = CNpcData<NpcGateKeeper*>::GetNpc(2, 103);
                 break;
             }
             case 101107:
             {
-                auto npc = CNpcData<NpcGateKeeper*>::GetNpc(2, 104);
-                if (!npc)
-                    return 0;
-
-                user->recallMapId = npc->gate[user->townScrollLocation].mapId;
-                user->recallPos = npc->gate[user->townScrollLocation].outPos;
+                gateKeeper = CNpcData<NpcGateKeeper*>::GetNpc(2, 104);
                 break;
             }
             case 101108:
             {
-                auto npc = CNpcData<NpcGateKeeper*>::GetNpc(2, 105);
-                if (!npc)
-                    return 0;
-
-                user->recallMapId = npc->gate[user->townScrollLocation].mapId;
-                user->recallPos = npc->gate[user->townScrollLocation].outPos;
+                gateKeeper = CNpcData<NpcGateKeeper*>::GetNpc(2, 105);
                 break;
             }
             case 101109:
             {
-                auto npc = CNpcData<NpcGateKeeper*>::GetNpc(2, 106);
-                if (!npc)
-                    return 0;
-
-                user->recallMapId = npc->gate[user->townScrollLocation].mapId;
-                user->recallPos = npc->gate[user->townScrollLocation].outPos;
+                gateKeeper = CNpcData<NpcGateKeeper*>::GetNpc(2, 106);
                 break;
             }
             default:
                 return 0;
             }
 
+            if (!gateKeeper)
+                return 0;
+
+            user->recallMapId = gateKeeper->gate[user->townScrollLocation].mapId;
+            user->recallPos = gateKeeper->gate[user->townScrollLocation].outPos;
             user->recallType = RecallType::TownTeleportScroll;
             user->recallTime = GetTickCount() + town_scroll_cast_time;
 
@@ -122,7 +89,7 @@ namespace item_effect
         }
     }
 
-    void town_scroll_packet_handler(CUser* user, Packet packet)
+    void town_scroll_packet_handler(CUser* user, Packet buffer)
     {
         if (user->stateType == StateType::Death)
             return;
@@ -135,20 +102,11 @@ namespace item_effect
         if (user->unknown0x1358)
             return;
 
-        auto bag = util::read_bytes<std::uint8_t>(packet, 2);
-        auto slot = util::read_bytes<std::uint8_t>(packet, 3);
+        auto bag = util::read_bytes<std::uint8_t>(buffer, 2);
+        auto slot = util::read_bytes<std::uint8_t>(buffer, 3);
 
         if (!bag || bag > user->bagsUnlocked || slot >= MAX_INVENTORY_SLOT)
             return;
-
-        user->recallItemBag = bag;
-        user->recallItemSlot = slot;
-
-        auto location = util::read_bytes<std::uint8_t>(packet, 4);
-        if (location > town_scroll_max_location)
-            return;
-
-        user->townScrollLocation = location;
 
         auto& item = user->inventory[bag][slot];
         if (!item)
@@ -156,6 +114,14 @@ namespace item_effect
 
         if (item->itemInfo->effect != CGameData::ItemEffect::TownTeleportScroll)
             return;
+
+        auto location = util::read_bytes<std::uint8_t>(buffer, 4);
+        if (location > town_scroll_max_location)
+            return;
+
+        user->recallItemBag = bag;
+        user->recallItemSlot = slot;
+        user->townScrollLocation = location;
 
         CUser::CancelActionExc(user);
         MyShop::Ended(&user->myShop);

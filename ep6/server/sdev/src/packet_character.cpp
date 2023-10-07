@@ -44,28 +44,29 @@ namespace packet_character
         DBNameAvailableRequest request{};
         request.userId = user->userId;
 
-        std::string char_name(name);
-        if (char_name.length() < min_name_len || char_name.length() > max_name_len)
+        std::string charName(name);
+        if (charName.length() < min_name_len || charName.length() > max_name_len)
         {
-            CharNameAvailableResponse response{ 0x119, false };
-            SConnection::Send(&user->connection, &response, sizeof(CharNameAvailableResponse));
+            NameAvailableResponse response{ 0x119, false };
+            SConnection::Send(&user->connection, &response, sizeof(NameAvailableResponse));
             return;
         }
 
-        std::memcpy(request.charName.data(), char_name.data(), char_name.length());
-        int packet_size = packet_size_without_name + char_name.length() + 1;
-        SConnectionTServerReconnect::Send(g_pClientToDBAgent, &request, packet_size);
+        std::memcpy(request.charName.data(), charName.data(), charName.length());
+        int length = packet_size_without_name + charName.length() + 1;
+        SConnectionTServerReconnect::Send(g_pClientToDBAgent, &request, length);
     }
 
-    void send_name_available(CUser* user, Packet packet)
+    void send_name_available(CUser* user, Packet buffer)
     {
-        auto available = util::read_bytes<bool>(packet, 6);
-        CharNameAvailableResponse response{ 0x119, available };
-        SConnection::Send(&user->connection, &response, sizeof(CharNameAvailableResponse));
+        auto available = util::read_bytes<bool>(buffer, 6);
+        NameAvailableResponse response{ 0x119, available };
+        SConnection::Send(&user->connection, &response, sizeof(NameAvailableResponse));
     }
 
     void send_warehouse(CUser* user)
     {
+        constexpr int packet_size_without_list = 7;
         // the packet length within the loop
         // 
         // ep5: 1657 = 7 + (33 * 50)
@@ -74,7 +75,6 @@ namespace packet_character
         // 2057 bytes will crash ps_game (max is 2048)
         // shen1l changed 50 to 40
         constexpr int max_item_send_count = 40;
-        constexpr int packet_size_without_list = 7;
 
         StoredItemList warehouse{};
         warehouse.bankMoney = user->bankMoney;
@@ -86,29 +86,29 @@ namespace packet_character
             if (!item)
                 continue;
 
-            Item0711 warehouse_item{};
-            warehouse_item.slot = slot;
-            warehouse_item.type = item->type;
-            warehouse_item.typeId = item->typeId;
-            warehouse_item.quality = item->quality;
-            warehouse_item.gems = item->gems;
-            warehouse_item.count = item->count;
+            Item0711 item0711{};
+            item0711.slot = slot;
+            item0711.type = item->type;
+            item0711.typeId = item->typeId;
+            item0711.quality = item->quality;
+            item0711.gems = item->gems;
+            item0711.count = item->count;
 
             #ifdef SHAIYA_EP6
-            warehouse_item.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
-            warehouse_item.fromDate = warehouse_item.toDate ? item->makeTime : 0;
+            item0711.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
+            item0711.fromDate = item0711.toDate ? item->makeTime : 0;
             #endif
 
-            warehouse_item.craftName = item->craftName;
-            std::memcpy(&warehouse.itemList[warehouse.itemCount], &warehouse_item, sizeof(Item0711));
+            item0711.craftName = item->craftName;
+            std::memcpy(&warehouse.itemList[warehouse.itemCount], &item0711, sizeof(Item0711));
             ++warehouse.itemCount;
 
             if (warehouse.itemCount != max_item_send_count)
                 continue;
             else
             {
-                int packet_size = packet_size_without_list + (warehouse.itemCount * sizeof(Item0711));
-                SConnection::Send(&user->connection, &warehouse, packet_size);
+                int length = packet_size_without_list + (warehouse.itemCount * sizeof(Item0711));
+                SConnection::Send(&user->connection, &warehouse, length);
 
                 std::memset(&warehouse.itemList, 0, sizeof(warehouse.itemList));
                 warehouse.itemCount = 0;
@@ -118,13 +118,13 @@ namespace packet_character
         if (warehouse.itemCount <= 0)
             return;
 
-        int packet_size = packet_size_without_list + (warehouse.itemCount * sizeof(Item0711));
-        SConnection::Send(&user->connection, &warehouse, packet_size);
+        int length = packet_size_without_list + (warehouse.itemCount * sizeof(Item0711));
+        SConnection::Send(&user->connection, &warehouse, length);
     }
 
     void send_character(CUser* user, Character0403* dbCharacter)
     {
-        CharacterList character{};
+        Character0101 character{};
         character.slot = dbCharacter->slot;
         character.charId = dbCharacter->id;
         character.regDate = dbCharacter->regDate;
@@ -151,7 +151,7 @@ namespace packet_character
         character.deleted = dbCharacter->deleted;
         character.nameChange = dbCharacter->nameChange;
         character.cloakBadge = dbCharacter->cloakBadge;
-        SConnection::Send(&user->connection, &character, sizeof(character));
+        SConnection::Send(&user->connection, &character, sizeof(Character0101));
     }
 }
 
@@ -256,8 +256,8 @@ void hook::packet_character()
     // CUser::PacketUserDBChar
     util::detour((void*)0x47B3E7, naked_0x47B3E7, 5);
 
-    std::uint8_t character_data_size = 104;
+    std::uint8_t character_0403_size = 104;
     // CUser::PacketUserDBChar
-    util::write_memory((void*)0x47B4EC, &character_data_size, 1);
-    util::write_memory((void*)0x47B9C9, &character_data_size, 1);
+    util::write_memory((void*)0x47B4EC, &character_0403_size, 1);
+    util::write_memory((void*)0x47B9C9, &character_0403_size, 1);
 }

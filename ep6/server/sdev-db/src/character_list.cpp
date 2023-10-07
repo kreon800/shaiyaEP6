@@ -12,10 +12,12 @@ using namespace shaiya;
 
 namespace character_list
 {
-    inline std::map<UserId, std::array<Equipment0403, 5>> equipment_map{};
+    inline std::map<UserId, std::array<Equipment0403, 5>> g_equipment{};
 
     void send(CUser* user, bool sendCountry)
     {
+        constexpr int packet_size_without_list = 8;
+
         CharacterList packet{};
         packet.userId = user->userId;
         packet.sendCountry = sendCountry;
@@ -51,8 +53,8 @@ namespace character_list
             character.mapId = user->characterList[slot].mapId;
             character.nameChange = user->characterList[slot].nameChange;
 
-            auto it = equipment_map.find(user->userId);
-            if (it != equipment_map.end())
+            auto it = g_equipment.find(user->userId);
+            if (it != g_equipment.end())
                 std::memcpy(&character.equipment, &it->second[slot], sizeof(Equipment0403));
             else
                 std::memcpy(&character.equipment, &user->characterList[slot].equipment, sizeof(Equipment));
@@ -67,23 +69,22 @@ namespace character_list
         if (!user->connection)
             return;
 
-        constexpr int packet_size_without_list = 8;
-        int packet_size = packet_size_without_list + (packet.characterCount * sizeof(Character0403));
-        SConnection::Send(user->connection, &packet, packet_size);
+        int length = packet_size_without_list + (packet.characterCount * sizeof(Character0403));
+        SConnection::Send(user->connection, &packet, length);
 
-        equipment_map.erase(user->userId);
+        g_equipment.erase(user->userId);
     }
 
     void make_equipment(CUser* user)
     {
         std::array<Equipment0403, 5> equipment{};
-        equipment_map.insert_or_assign(user->userId, equipment);
+        g_equipment.insert_or_assign(user->userId, equipment);
     }
 
     void init_equipment(CUser* user, int characterSlot, int equipmentSlot, int type, int typeId)
     {
-        auto it = equipment_map.find(user->userId);
-        if (it != equipment_map.end())
+        auto it = g_equipment.find(user->userId);
+        if (it != g_equipment.end())
         {
             it->second[characterSlot].type[equipmentSlot] = type;
             it->second[characterSlot].typeId[equipmentSlot] = typeId;
@@ -166,6 +167,6 @@ void hook::character_list()
     util::detour((void*)0x421AA5, naked_0x421AA5, 6);
     util::detour((void*)0x4223F7, naked_0x4223F7, 7);
 
-    std::uint8_t read_items_slot_param = ITEM_LIST_SIZE;
-    util::write_memory((void*)0x42220B, &read_items_slot_param, 1);
+    std::uint8_t read_char_items_slot = ITEM_LIST_SIZE;
+    util::write_memory((void*)0x42220B, &read_char_items_slot, 1);
 }

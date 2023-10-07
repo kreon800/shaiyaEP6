@@ -28,7 +28,7 @@ struct PacketBuffer0105
     void* p0x04;
     ULONG u0x08;
     ULONG u0x0C;
-    bool enable;   // ebx+0x02
+    bool enable;  // ebx+0x02
     // 0x11
 };
 
@@ -104,8 +104,8 @@ namespace packet_shop
         // 00 00 03 1B
         packet.u0x0C = 0x1B030000;
         packet.userId = user->userId;
-        std::memcpy(&packet.productCode, productCode, sizeof(packet.productCode));
-        std::memcpy(&packet.targetName, targetName, sizeof(packet.targetName));
+        std::memcpy(&packet.productCode, productCode, packet.productCode.size());
+        std::memcpy(&packet.targetName, targetName, packet.targetName.size());
         packet.itemPrice = itemPrice;
         packet.points = user->points;
         CClientToMgr::OnRecv(&packet);
@@ -132,45 +132,45 @@ namespace packet_shop
             }).detach();
     }
 
-    void send_purchase(CUser* user, Packet packet)
+    void send_purchase(CUser* user, Packet buffer)
     {
+        constexpr int packet_size_without_list = 37;
         constexpr int item_size_without_dates = 5;
 
-        ProductItemPurchaseResponse response{};
-        response.opcode = util::read_bytes<std::uint16_t>(packet, 0);
-        response.result = util::read_bytes<ProductItemPurchaseResult>(packet, 2);
-        response.points = util::read_bytes<std::uint32_t>(packet, 3);
-        std::memcpy(&response.productCode, &packet[7], sizeof(response.productCode));
-        response.purchaseDate = util::read_bytes<std::uint32_t>(packet, 28);
-        response.itemPrice = util::read_bytes<std::uint32_t>(packet, 32);
-        response.itemCount = util::read_bytes<std::uint8_t>(packet, 36);
+        ProductPurchaseResponse response{};
+        response.opcode = util::read_bytes<std::uint16_t>(buffer, 0);
+        response.result = util::read_bytes<ProductPurchaseResult>(buffer, 2);
+        response.points = util::read_bytes<std::uint32_t>(buffer, 3);
+        std::memcpy(&response.productCode, &buffer[7], response.productCode.size());
+        response.purchaseDate = util::read_bytes<std::uint32_t>(buffer, 28);
+        response.itemPrice = util::read_bytes<std::uint32_t>(buffer, 32);
+        response.itemCount = util::read_bytes<std::uint8_t>(buffer, 36);
 
         int offset = 0;
         for (int i = 0; i < response.itemCount; ++i)
         {
-            Item2602 product_item{};
-            product_item.bag = util::read_bytes<std::uint8_t>(packet, 37 + offset);
-            product_item.slot = util::read_bytes<std::uint8_t>(packet, 38 + offset);
-            product_item.type = util::read_bytes<std::uint8_t>(packet, 39 + offset);
-            product_item.typeId = util::read_bytes<std::uint8_t>(packet, 40 + offset);
-            product_item.count = util::read_bytes<std::uint8_t>(packet, 41 + offset);
+            Item2602 item2602{};
+            item2602.bag = util::read_bytes<std::uint8_t>(buffer, 37 + offset);
+            item2602.slot = util::read_bytes<std::uint8_t>(buffer, 38 + offset);
+            item2602.type = util::read_bytes<std::uint8_t>(buffer, 39 + offset);
+            item2602.typeId = util::read_bytes<std::uint8_t>(buffer, 40 + offset);
+            item2602.count = util::read_bytes<std::uint8_t>(buffer, 41 + offset);
 
             #ifdef SHAIYA_EP6
-            auto itemInfo = CGameData::GetItemInfo(product_item.type, product_item.typeId);
+            auto itemInfo = CGameData::GetItemInfo(item2602.type, item2602.typeId);
             if (itemInfo)
             {
-                product_item.toDate = ServerTime::GetItemExpireTime(response.purchaseDate, itemInfo);
-                product_item.fromDate = product_item.toDate ? response.purchaseDate : 0;
+                item2602.toDate = ServerTime::GetItemExpireTime(response.purchaseDate, itemInfo);
+                item2602.fromDate = item2602.toDate ? response.purchaseDate : 0;
             }
             #endif
 
-            std::memcpy(&response.itemList[i], &product_item, sizeof(Item2602));
+            std::memcpy(&response.itemList[i], &item2602, sizeof(Item2602));
             offset += item_size_without_dates;
         }
 
-        constexpr int packet_size_without_list = 37;
-        int packet_size = packet_size_without_list + (response.itemCount * sizeof(Item2602));
-        SConnection::Send(&user->connection, &response, packet_size);
+        int length = packet_size_without_list + (response.itemCount * sizeof(Item2602));
+        SConnection::Send(&user->connection, &response, length);
     }
 }
 
