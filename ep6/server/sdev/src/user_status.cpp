@@ -218,16 +218,4 @@ void hook::user_status()
     util::detour((void*)0x48F9BE, naked_0x48F9BE, 7);
     // CUser::StatResetSkill
     util::detour((void*)0x48FCD3, naked_0x48FCD3, 7);
-
-    // remove subtractions
-
-    std::array<std::uint8_t, 2> a00{ 0x90, 0x90 };
-    // CUser::SendRecoverAdd
-    util::write_memory((void*)0x490E35, &a00, 2);
-    util::write_memory((void*)0x490E41, &a00, 2);
-    util::write_memory((void*)0x490E5D, &a00, 2);
-    // CUser::SendRecoverAddSet
-    util::write_memory((void*)0x490F52, &a00, 2);
-    util::write_memory((void*)0x490F5E, &a00, 2);
-    util::write_memory((void*)0x490F7A, &a00, 2);
 }
