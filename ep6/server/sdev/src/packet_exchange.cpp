@@ -103,7 +103,7 @@ namespace packet_exchange
         auto bag = util::read_bytes<std::uint8_t>(buffer, 2);
         auto slot = util::read_bytes<std::uint8_t>(buffer, 3);
 
-        if (bag > exchangeUser->bagsUnlocked || slot >= MAX_INVENTORY_SLOT)
+        if (!bag || bag > exchangeUser->bagsUnlocked || slot >= MAX_INVENTORY_SLOT)
             return;
 
         auto& item = exchangeUser->inventory[bag][slot];
@@ -127,13 +127,13 @@ namespace packet_exchange
 
     void send_exchange_pvp_item(CUser* user, CUser* exchangeUser, Packet buffer)
     {
-        ExchangePvPItem packet{};
+        BattleExchangeItem packet{};
         packet.destSlot = util::read_bytes<std::uint8_t>(buffer, 5);
 
         auto bag = util::read_bytes<std::uint8_t>(buffer, 2);
         auto slot = util::read_bytes<std::uint8_t>(buffer, 3);
 
-        if (bag > exchangeUser->bagsUnlocked || slot >= MAX_INVENTORY_SLOT)
+        if (!bag || bag > exchangeUser->bagsUnlocked || slot >= MAX_INVENTORY_SLOT)
             return;
 
         auto& item = exchangeUser->inventory[bag][slot];
@@ -152,7 +152,7 @@ namespace packet_exchange
         #endif
 
         packet.craftName = item->craftName;
-        SConnection::Send(&user->connection, &packet, sizeof(ExchangePvPItem));
+        SConnection::Send(&user->connection, &packet, sizeof(BattleExchangeItem));
     }
 }
 

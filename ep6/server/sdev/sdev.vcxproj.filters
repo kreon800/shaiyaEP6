@@ -419,5 +419,17 @@
     <ClInclude Include="include\shaiya\include\SSyncList.h">
       <Filter>include\shaiya\include</Filter>
     </ClInclude>
+    <ClInclude Include="include\shaiya\packets\2401.h">
+      <Filter>include\shaiya\packets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\2402.h">
+      <Filter>include\shaiya\packets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\2501.h">
+      <Filter>include\shaiya\packets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\2502.h">
+      <Filter>include\shaiya\packets</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

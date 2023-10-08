@@ -133,7 +133,11 @@
     <ClInclude Include="include\shaiya\packets\220B.h" />
     <ClInclude Include="include\shaiya\packets\220E.h" />
     <ClInclude Include="include\shaiya\packets\230B.h" />
+    <ClInclude Include="include\shaiya\packets\2401.h" />
+    <ClInclude Include="include\shaiya\packets\2402.h" />
     <ClInclude Include="include\shaiya\packets\240D.h" />
+    <ClInclude Include="include\shaiya\packets\2501.h" />
+    <ClInclude Include="include\shaiya\packets\2502.h" />
     <ClInclude Include="include\shaiya\packets\2602.h" />
     <ClInclude Include="include\shaiya\packets\2605.h" />
     <ClInclude Include="include\shaiya\packets\dbAgent\0602.h" />

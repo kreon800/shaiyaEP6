@@ -3,12 +3,6 @@
 
 namespace shaiya
 {
-    #ifdef SHAIYA_EP6
-    constexpr int list_size_0307 = ITEM_LIST_SIZE;
-    #else
-    constexpr int list_size_0307 = 12;
-    #endif
-
     #pragma pack(push, 1)
     struct Item0307
     {
@@ -31,7 +25,11 @@ namespace shaiya
     {
         UINT16 opcode{ 0x307 };
         UINT8 itemCount;
-        Array<Item0307, list_size_0307> itemList;
+        #ifdef SHAIYA_EP6
+        Array<Item0307, ITEM_LIST_SIZE> itemList;
+        #else
+        Array<Item0307, 12> itemList;
+        #endif
     };
     #pragma pack(pop)
 }
