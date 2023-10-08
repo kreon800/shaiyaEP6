@@ -35,6 +35,7 @@
 
 typedef unsigned Address;
 typedef unsigned long CharId;
+typedef unsigned long GuildId;
 typedef unsigned int ItemId;
 typedef unsigned char* Packet;
 typedef int Socket;

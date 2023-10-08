@@ -25,13 +25,13 @@ namespace shaiya
     {
         SNode node;                 //0x00
         ULONG id;                   //0x08
-        UINT32 bossIndex;           //0x0C
+        UINT32 leaderIndex;         //0x0C
         UINT32 numMembers;          //0x10
         Array<PartySlot, 30> slot;  //0x14
         ItemDivType itemDivType;    //0x104
         UINT32 itemDivSeq;          //0x108
         UINT32 level;               //0x10C
-        UINT32 subBossIndex;        //0x110
+        UINT32 subLeaderIndex;      //0x110
         bool isUnion;               //0x114
         bool isAutoJoin;            //0x115
         PAD(2);

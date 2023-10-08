@@ -40,12 +40,6 @@ bool CUser::DamageByKeepSkill(CUser* user/*edi*/, int _type, ULONG id/*CUser->id
     }
 }
 
-void CUser::Death(CUser* user/*ecx*/, int type, ULONG id/*CUser->id*/, BOOL deathSkillPvP)
-{
-    typedef void(__thiscall* LPFN)(CUser*, int, ULONG, BOOL);
-    (*(LPFN)0x4654C0)(user, type, id, deathSkillPvP);
-}
-
 void CUser::ExchangeCancelReady(CUser* user/*ecx*/, CUser* exchangeUser/*esi*/)
 {
     typedef void(__thiscall* LPFN)(CUser*);
@@ -455,42 +449,25 @@ void CUser::SetSkillAbility(CUser* user, int typeEffect/*edx*/, int _type/*ecx*/
     }
 }
 
-bool SetMovePosition(CUser* user/*eax*/, int _type/*ecx*/, int mapId/*edx*/, ULONG time, float x, float y, float z)
-{
-    Address u0x49DD00 = 0x49DD00;
-
-    __asm
-    {
-        push z
-        push y
-        push x
-        push time
-        mov edx,mapId
-        mov ecx,_type
-        mov eax,user
-        call u0x49DD00
-    }
-}
-
-void CUser::StatResetSkill(CUser* user/*eax*/, BOOL event)
+void CUser::StatResetSkill(CUser* user/*eax*/, BOOL _event)
 {
     Address u0x48FBC0 = 0x48FBC0;
 
     __asm
     {
-        push event
+        push _event
         mov eax,user
         call u0x48FBC0
     }
 }
 
-void CUser::StatResetStatus(CUser* user/*edi*/, BOOL event)
+void CUser::StatResetStatus(CUser* user/*edi*/, BOOL _event)
 {
     Address u0x48F710 = 0x48F710;
 
     __asm
     {
-        push event
+        push _event
         mov edi,user
         call u0x48F710
     }

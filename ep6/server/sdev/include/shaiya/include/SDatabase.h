@@ -4,7 +4,7 @@
 #include <sql.h>
 #include <sqlext.h>
 
-#include "../common.h"
+#include <sdev/include/shaiya/common.h>
 
 namespace shaiya
 {
