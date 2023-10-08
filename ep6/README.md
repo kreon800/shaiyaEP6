@@ -32,8 +32,10 @@ I worked at two private servers that used the [pet](https://www.elitepvpers.com/
 
 This is a list of projects that have been used as reference material.
 
+[Eden](https://github.com/tristonplummer/Eden)
+
 [Teos](https://github.com/ShaiyaTeos/Teos)
 
-[Imgeneus](https://github.com/AlaiyaNetwork/Imgeneus)
+[Imgeneus](https://github.com/vbasik08/SH.Imgeneus)
 
 [Parsec](https://github.com/matigramirez/Parsec)
