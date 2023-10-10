@@ -1,10 +1,9 @@
 #pragma once
 #include <include/shaiya/common.h>
+#include <include/shaiya/include/CFriend.h>
 
 namespace shaiya
 {
-    typedef Array<char, 51> Memo;
-
     #pragma pack(push, 1)
     struct FriendSaveMemoRequest
     {

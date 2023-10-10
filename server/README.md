@@ -26,19 +26,23 @@ dd 01
 dd 00
 ```
 
-To use this library with episode 5 clients, comment the episode 6 macros. `sdev-db` is not required for episode 5 projects.
+To use this library with episode 5 clients, comment the episode 6 macros. `sdev-db` is not required for clients prior to episode 6.3.
 
 ```cpp
 // sdev/include/shaiya/common.h
+//#define SHAIYA_EP6
 //#define SHAIYA_EP6_3
+//#define SHAIYA_EP6_3_PT
 //#define SHAIYA_EP6_4
 ```
 
-For episode 6.3 clients, expose the `SHAIYA_EP6_3` macro. See `client/0x13120600` for more information.
+For episode 6.3 clients, expose the `SHAIYA_EP6_3` macro or the `SHAIYA_EP6_3_PT` macro. See `client/0x13120600` for more information.
 
 ```cpp
 // sdev/include/shaiya/common.h
-#define SHAIYA_EP6_3
+//#define SHAIYA_EP6
+//#define SHAIYA_EP6_3
+#define SHAIYA_EP6_3_PT
 //#define SHAIYA_EP6_4
 ```
 
@@ -46,7 +50,9 @@ For episode 6.4 clients, expose the `SHAIYA_EP6_4` macro.
 
 ```cpp
 // sdev/include/shaiya/common.h
+//#define SHAIYA_EP6
 //#define SHAIYA_EP6_3
+//#define SHAIYA_EP6_3_PT
 #define SHAIYA_EP6_4
 ```
 

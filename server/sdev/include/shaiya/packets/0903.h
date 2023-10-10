@@ -1,5 +1,4 @@
 #pragma once
-#include <vector>
 #include <include/shaiya/common.h>
 
 namespace shaiya
@@ -30,7 +29,7 @@ namespace shaiya
         UINT8 rewardIndex;
         UINT32 exp;
         UINT32 gold;
-        #ifdef SHAIYA_EP6_4
+        #ifdef WITH_EXTENDED_QUEST_RESULT
         Array<Item0903, 3> itemList;
         #else
         UINT8 bag;

@@ -420,6 +420,7 @@ void hook::user_shape()
     util::detour((void*)0x491B13, naked_0x491B13, 7);
     // CUser::CheckTargetUser case 2
     util::detour((void*)0x45A365, naked_0x45A365, 7);
+
     #ifdef SHAIYA_EP6_4
     // CUser::SendShape
     util::detour((void*)0x491490, naked_0x491490, 6);

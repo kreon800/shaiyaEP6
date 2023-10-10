@@ -3,7 +3,9 @@
 
 namespace shaiya
 {
-    #undef SHAIYA_EP6_4 // temporary
+    // temporary
+    #undef WITH_EXTENDED_QUEST_RESULT
+
     static Address g_QuestData = 0x4093300;
 
     typedef Array<char, 256> QuestName;
@@ -16,7 +18,7 @@ namespace shaiya
         UINT8 count;
     };
 
-    #ifdef SHAIYA_EP6_4
+    #ifdef WITH_EXTENDED_QUEST_RESULT
     struct QuestResult
     {
         PAD(20);
@@ -83,7 +85,7 @@ namespace shaiya
         UINT8 mobCount1;        //0x15A
         UINT8 mobCount2;        //0x15B
         PAD(4);
-        #ifdef SHAIYA_EP6_4
+        #ifdef WITH_EXTENDED_QUEST_RESULT
         // 0x160
         Array<QuestResult, 6> reward;
         // 0x268

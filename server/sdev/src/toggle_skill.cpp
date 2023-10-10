@@ -26,7 +26,9 @@ namespace toggle_skill
         if (!user->toggleSkill.triggered)
         {
             response.targetType = static_cast<std::uint8_t>(skillInfo->targetType);
+            #ifdef WITH_EXTENDED_0511
             response.toggleState = ToggleState::Triggered;
+            #endif
 
             user->toggleSkill.triggered = true;
             user->toggleSkill.skillId = response.skillId;
@@ -44,7 +46,9 @@ namespace toggle_skill
         else
         {
             response.targetType = static_cast<std::uint8_t>(skillInfo->targetType);
+            #ifdef WITH_EXTENDED_0511
             response.toggleState = ToggleState::Stopped;
+            #endif
 
             user->toggleSkill.triggered = false;
             user->toggleSkill.skillId = 0;

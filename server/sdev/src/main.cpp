@@ -14,7 +14,9 @@ void enter_world_hook(CUser* user)
 
 void leave_world_hook(CUser* user)
 {
+    #ifdef WITH_SET_ITEM
     g_appliedSynergies.erase(user->id);
+    #endif
 }
 
 unsigned u0x455B06 = 0x455B06;
@@ -89,21 +91,39 @@ void Main(HMODULE hModule)
     hook::packet_exchange();
     hook::packet_shop();
 
-    #ifdef SHAIYA_EP6
-    hook::item_duration();
-    hook::item_effect();
-    hook::packet_character();
+    #ifdef SHAIYA_EP6_4
     hook::packet_gem();
-    hook::packet_myshop();
-    hook::user_equipment();
-    hook::user_shape();
+    hook::packet_market();
+    #endif
+
+    #ifdef SHAIYA_EP6_COMMON
     hook::user_status();
     #endif
 
-    #ifdef SHAIYA_EP6_4
-    hook::npc_quest();
-    hook::packet_market();
+    #ifdef WITH_EXTENDED_0511
     hook::toggle_skill();
+    #endif
+
+    #ifdef WITH_EXTENDED_EQUIPMENT
+    hook::packet_character();
+    hook::user_equipment();
+    hook::user_shape();
+    #endif
+
+    #ifdef WITH_EXTENDED_QUEST_RESULT
+    hook::npc_quest();
+    #endif
+
+    #ifdef WITH_ITEM_DURATION
+    hook::item_duration();
+    hook::packet_myshop();
+    #endif
+
+    #ifdef WITH_SET_ITEM
     Synergy::init();
+    #endif
+
+    #ifdef WITH_TOWN_TELEPORT_SCROLL
+    hook::item_effect();
     #endif
 }

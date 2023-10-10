@@ -4,7 +4,7 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct MiniMapRaidPing
+    struct RaidMiniMapPing
     {
         UINT16 opcode{ 0xB1C };
         UINT32 x;

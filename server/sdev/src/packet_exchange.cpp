@@ -116,7 +116,7 @@ namespace packet_exchange
         packet.quality = item->quality;
         packet.gems = item->gems;
 
-        #ifdef SHAIYA_EP6
+        #ifdef WITH_ITEM_DURATION
         packet.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
         packet.fromDate = packet.toDate ? item->makeTime : 0;
         #endif
@@ -146,7 +146,7 @@ namespace packet_exchange
         packet.quality = item->quality;
         packet.gems = item->gems;
 
-        #ifdef SHAIYA_EP6
+        #ifdef WITH_ITEM_DURATION
         packet.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
         packet.fromDate = packet.toDate ? item->makeTime : 0;
         #endif
@@ -313,7 +313,7 @@ void hook::packet_exchange()
     // CUser::PacketExchange case 0xA07
     util::detour((void*)0x47DFC0, naked_0x47DFC0, 5);
 
-    #ifdef SHAIYA_EP6
+    #ifdef WITH_ITEM_DURATION
     // CUser::PacketExchange case 0xA06
     util::detour((void*)0x47DE7B, naked_0x47DE7B, 8);
     // CUser::PacketPvP case 0x240A

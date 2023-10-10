@@ -13,7 +13,7 @@ namespace shaiya
         // or CloakBadge
         Gems gems;
         UINT8 count;
-        #ifdef SHAIYA_EP6
+        #ifdef WITH_ITEM_DURATION
         ULONG fromDate;
         ULONG toDate;
         #endif
@@ -25,7 +25,7 @@ namespace shaiya
         UINT16 opcode{ 0x711 };
         UINT32 bankMoney;
         UINT8 itemCount;
-        #ifdef SHAIYA_EP6
+        #ifdef WITH_ITEM_DURATION
         Array<Item0711, 40> itemList;
         #else
         Array<Item0711, 50> itemList;

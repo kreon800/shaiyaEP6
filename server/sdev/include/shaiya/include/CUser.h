@@ -90,7 +90,7 @@ namespace shaiya
         GuildName guildName;
         // 6.4: 0x7F, 6.3: 0x7C, 5.4: 0x64
         UINT8 packetLength;
-        #ifdef SHAIYA_EP6_3
+        #ifdef SHAIYA_EP6_3_COMMON
         PAD(3);
         #endif
         // 6.4, 6.3: 0x80, 5.4: 0x68

@@ -431,5 +431,11 @@
     <ClInclude Include="include\shaiya\packets\2502.h">
       <Filter>include\shaiya\packets</Filter>
     </ClInclude>
+    <ClInclude Include="include\shaiya\packets\0B0F.h">
+      <Filter>include\shaiya\packets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\0B10.h">
+      <Filter>include\shaiya\packets</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

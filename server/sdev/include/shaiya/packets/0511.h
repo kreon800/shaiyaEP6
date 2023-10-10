@@ -21,7 +21,7 @@ namespace shaiya
         UINT16 health;
         UINT16 stamina;
         UINT16 mana;
-        #ifdef SHAIYA_EP6_4
+        #ifdef WITH_EXTENDED_0511
         ToggleState toggleState;
         #endif
     };

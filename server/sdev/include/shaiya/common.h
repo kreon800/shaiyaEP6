@@ -1,11 +1,64 @@
 #pragma once
 #pragma warning(disable: 28159) // GetTickCount
+//#define SHAIYA_EP6
 //#define SHAIYA_EP6_3
+//#define SHAIYA_EP6_3_PT
 #define SHAIYA_EP6_4
-#define SHAIYA_EP6 defined SHAIYA_EP6_3 || defined SHAIYA_EP6_4
 
-#if !defined SHAIYA_EP6_3 && !defined SHAIYA_EP6_4
-#undef SHAIYA_EP6
+#if \
+defined SHAIYA_EP6 || \
+defined SHAIYA_EP6_3 || \
+defined SHAIYA_EP6_3_PT || \
+defined SHAIYA_EP6_4
+#define SHAIYA_EP6_COMMON
+#endif
+
+#if \
+defined SHAIYA_EP6_3 || \
+defined SHAIYA_EP6_3_PT
+#define SHAIYA_EP6_3_COMMON
+#endif
+
+#if \
+defined SHAIYA_EP6 || \
+defined SHAIYA_EP6_3 || \
+defined SHAIYA_EP6_4
+#define WITH_EXTENDED_0511
+#endif
+
+#if \
+defined SHAIYA_EP6_3 || \
+defined SHAIYA_EP6_3_PT || \
+defined SHAIYA_EP6_4
+#define WITH_EXTENDED_EQUIPMENT
+#endif
+
+#if \
+defined SHAIYA_EP6 || \
+defined SHAIYA_EP6_3 || \
+defined SHAIYA_EP6_4
+#define WITH_EXTENDED_QUEST_RESULT
+#endif
+
+#if \
+defined SHAIYA_EP6_3 || \
+defined SHAIYA_EP6_3_PT || \
+defined SHAIYA_EP6_4
+#define WITH_ITEM_DURATION
+#endif
+
+#if \
+defined SHAIYA_EP6 || \
+defined SHAIYA_EP6_3 || \
+defined SHAIYA_EP6_4
+#define WITH_SET_ITEM
+#endif
+
+#if \
+defined SHAIYA_EP6 || \
+defined SHAIYA_EP6_3 || \
+defined SHAIYA_EP6_4
+#define WITH_TOWN_TELEPORT_SCROLL
 #endif
 
 #include <array>
@@ -20,9 +73,9 @@
 // forward declaration
 #define FWDDECL struct
 
-#if defined SHAIYA_EP6_4
+#ifdef SHAIYA_EP6_4
 #define ITEM_LIST_SIZE 17
-#elif defined SHAIYA_EP6_3
+#elif defined SHAIYA_EP6_3 || defined SHAIYA_EP6_3_PT
 #define ITEM_LIST_SIZE 16
 #else
 #define ITEM_LIST_SIZE 8

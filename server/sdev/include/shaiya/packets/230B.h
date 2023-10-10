@@ -12,7 +12,7 @@ namespace shaiya
         UINT8 typeId;
         UINT8 count;
         UINT16 quality;
-        #ifdef SHAIYA_EP6
+        #ifdef WITH_ITEM_DURATION
         ULONG fromDate;
         ULONG toDate;
         #endif

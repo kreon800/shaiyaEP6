@@ -214,8 +214,11 @@ void hook::user_status()
     util::detour((void*)0x490FA6, naked_0x490FA6, 5);
     // CUser::SendRecoverChange
     util::detour((void*)0x4910CF, naked_0x4910CF, 5);
+
+    #ifdef WITH_SET_ITEM
     // CUser::StatResetStatus
     util::detour((void*)0x48F9BE, naked_0x48F9BE, 7);
     // CUser::StatResetSkill
     util::detour((void*)0x48FCD3, naked_0x48FCD3, 7);
+    #endif
 }

@@ -40,7 +40,7 @@ namespace shaiya
         CloakBadge cloakBadge;
         // 6.4: 0x53, 6.3: 0x51, 5.4: 0x41
         CharName name;
-        #ifdef SHAIYA_EP6_3
+        #ifdef SHAIYA_EP6_3_COMMON
         PAD(2);
         #endif
         // 6.4, 6.3: 0x68, 5.4: 0x56

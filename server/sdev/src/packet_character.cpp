@@ -94,7 +94,7 @@ namespace packet_character
             item0711.gems = item->gems;
             item0711.count = item->count;
 
-            #ifdef SHAIYA_EP6
+            #ifdef WITH_ITEM_DURATION
             item0711.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
             item0711.fromDate = item0711.toDate ? item->makeTime : 0;
             #endif

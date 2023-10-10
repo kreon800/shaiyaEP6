@@ -25,7 +25,7 @@ namespace shaiya
     {
         UINT16 opcode{ 0x307 };
         UINT8 itemCount;
-        #ifdef SHAIYA_EP6
+        #ifdef WITH_EXTENDED_EQUIPMENT
         Array<Item0307, ITEM_LIST_SIZE> itemList;
         #else
         Array<Item0307, 12> itemList;

@@ -156,7 +156,7 @@ namespace packet_shop
             item2602.typeId = util::read_bytes<std::uint8_t>(buffer, 40 + offset);
             item2602.count = util::read_bytes<std::uint8_t>(buffer, 41 + offset);
 
-            #ifdef SHAIYA_EP6
+            #ifdef WITH_ITEM_DURATION
             auto itemInfo = CGameData::GetItemInfo(item2602.type, item2602.typeId);
             if (itemInfo)
             {
@@ -287,7 +287,7 @@ void hook::packet_shop()
     // fake a 0x105 event
     packet_shop::set_pay_letter_enable_async(true);
 
-    #ifdef SHAIYA_EP6
+    #ifdef WITH_ITEM_DURATION
     // CUser::PacketShop case 0x2602
     util::detour((void*)0x4886E0, naked_0x4886E0, 5);
     #endif

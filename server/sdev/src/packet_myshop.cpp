@@ -41,7 +41,7 @@ namespace packet_myshop
             item230B.quality = item->quality;
             item230B.gems = item->gems;
 
-            #ifdef SHAIYA_EP6
+            #ifdef WITH_ITEM_DURATION
             item230B.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
             item230B.fromDate = item230B.toDate ? item->makeTime : 0;
             #endif
