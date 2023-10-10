@@ -1,30 +1,22 @@
-#### Build Version
+# Build Version
 
 `0x13120600`
 
-#### OEP
+## OEP
 
 `0x61E5E8`
 
-#### Sections
+## Sections
 
-`.text`
+`.text` (application machine code)
 
-`.rsrc`
+`.rsrc` (resources)
 
-`.code`
+`.code` (IAT, entry point, and PE header)
 
-* The `.text` section contains the application machine code
+# Notes
 
-* The `.rsrc` section contains resources
-
-* The `.code` section contains the IAT, entry point, and a PE header
-
-* The remaining sections left over from packing/unpacking have been filled with null bytes
-
-#### Notes
-
-This is a 6.3 PT client. The auction house board seems to be non-existent. A call to LoadLibraryA was added near the entry point.
+This is a 6.3 PT client. The auction house board seems to be non-existent. The remaining sections left over from packing/unpacking have been filled with null bytes. A call to LoadLibraryA was added near the entry point.
 
 ```
 02AF1600  60             PUSHAD
@@ -44,7 +36,22 @@ This is a 6.3 PT client. The auction house board seems to be non-existent. A cal
 02AF1632  E9 B1CFB2FD    JMP game.0061E5E8 // OEP
 ```
 
-#### sdev.dll
+## SData Specifications
+
+| Name          | Format   |
+|---------------|----------|
+| Item          | EP6      |
+| Monster       | EP5      |
+| NpcQuest      | EP5      |
+| NpcSkill      | EP5      |
+| Skill         | EP5      |
+
+## Features
+
+* Pets and Costumes
+* Item Duration
+
+# sdev.dll
 
 The project addresses the following issues:
 

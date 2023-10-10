@@ -1,7 +1,20 @@
-#### Build Version
+# Build Version
 
 `0x12092000`
 
-#### Notes
+# Notes
 
-See the [wiki](https://github.com/kurtekat/shaiya-episode-6/wiki/Client-0x12092000) for more information.
+## SData Specifications
+
+| Name          | Format   |
+|---------------|----------|
+| Item          | EP5      |
+| Monster       | EP5      |
+| NpcQuest      | EP6      |
+| NpcSkill      | EP6      |
+| Skill         | EP6      |
+
+## Features
+
+* Synergies
+* Toggleable Skills
