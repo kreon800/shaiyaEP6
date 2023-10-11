@@ -14,7 +14,7 @@ namespace character_create
 {
     #pragma pack(push, 1)
     // custom
-    struct NameAvailableResponse
+    struct NameAvailableOutgoing
     {
         UINT16 opcode{ 0x40D };
         UserId userId;
@@ -50,12 +50,12 @@ namespace character_create
 
     void name_available_handler(CUser* user, SQLPOINTER name)
     {
-        NameAvailableResponse response{ 0x40D, user->userId, is_name_available(name) };
+        NameAvailableOutgoing packet{ 0x40D, user->userId, is_name_available(name) };
 
         if (!user->connection)
             return;
 
-        SConnection::Send(user->connection, &response, sizeof(NameAvailableResponse));
+        SConnection::Send(user->connection, &packet, sizeof(NameAvailableOutgoing));
     }
 }
 

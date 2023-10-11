@@ -4,14 +4,14 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    enum struct RuneCombineResult : UINT8
+    enum struct ItemRuneCombineResult : UINT8
     {
         Success,
         NotImplemented,
         Failure
     };
 
-    struct RuneCombineRequest
+    struct ItemRuneCombineIncoming
     {
         UINT16 opcode{ 0x80D };
         UINT8 runeBag;
@@ -21,10 +21,10 @@ namespace shaiya
         ULONG npcId;
     };
 
-    struct RuneCombineResponse
+    struct ItemRuneCombineOutgoing
     {
         UINT16 opcode{ 0x80D };
-        RuneCombineResult result;
+        ItemRuneCombineResult result;
         UINT8 bag;
         UINT8 slot;
         UINT8 type;

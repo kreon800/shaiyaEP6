@@ -10,7 +10,7 @@ namespace shaiya
         Failure
     };
 
-    struct ItemComposeResponse
+    struct ItemComposeOutgoing
     {
         UINT16 opcode{ 0x806 };
         ItemComposeResult result;

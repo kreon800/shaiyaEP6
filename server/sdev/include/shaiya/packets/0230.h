@@ -4,12 +4,10 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct FriendAddOutgoing
+    struct SendCharacterHonor
     {
-        UINT16 opcode{ 0x2204 };
-        ULONG charId;
-        Job job;
-        CharName charName;
+        UINT16 opcode{ 0x230 };
+        UINT16 honor;
     };
     #pragma pack(pop)
 }

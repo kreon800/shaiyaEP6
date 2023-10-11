@@ -5,7 +5,7 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct BlockSaveMemoRequest
+    struct BlockSaveMemoIncoming
     {
         UINT16 opcode{ 0x220B };
         ULONG charId;
@@ -14,7 +14,7 @@ namespace shaiya
         Memo memo;
     };
 
-    struct BlockSaveMemoResponse
+    struct BlockSaveMemoOutgoing
     {
         UINT16 opcode{ 0x220B };
         ULONG charId;

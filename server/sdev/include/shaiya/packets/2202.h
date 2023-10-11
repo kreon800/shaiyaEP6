@@ -4,7 +4,7 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct FriendAddRequest
+    struct FriendAddIncoming
     {
         UINT16 opcode{ 0x2202 };
         CharName charName;

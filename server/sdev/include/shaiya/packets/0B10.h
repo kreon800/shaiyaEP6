@@ -4,13 +4,13 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct RaidSetAutoJoinRequest
+    struct RaidConfigAutoJoinIncoming
     {
         UINT16 opcode{ 0xB10 };
         bool isAutoJoin;
     };
 
-    struct RaidSetAutoJoinResponse
+    struct RaidConfigAutoJoinOutgoing
     {
         UINT16 opcode{ 0xB10 };
         bool isAutoJoin;

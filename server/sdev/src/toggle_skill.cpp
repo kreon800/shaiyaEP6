@@ -3,9 +3,7 @@
 
 #include <include/main.h>
 #include <include/util.h>
-#include <include/shaiya/packets/050F.h>
 #include <include/shaiya/packets/0511.h>
-#include <include/shaiya/include/CDamage.h>
 #include <include/shaiya/include/CGameData.h>
 #include <include/shaiya/include/CSkill.h>
 #include <include/shaiya/include/CUser.h>
@@ -17,25 +15,25 @@ namespace toggle_skill
 {
     void send_frenzied_state(CUser* user, CGameData::SkillInfo* skillInfo)
     {
-        UseSkillResponse response{};
-        response.senderId = user->id;
-        response.targetId = user->id;
-        response.skillId = skillInfo->skillId;
-        response.skillLv = skillInfo->skillLv;
+        SkillUseOutgoing packet{};
+        packet.senderId = user->id;
+        packet.targetId = user->id;
+        packet.skillId = skillInfo->skillId;
+        packet.skillLv = skillInfo->skillLv;
 
         if (!user->toggleSkill.triggered)
         {
-            response.targetType = static_cast<std::uint8_t>(skillInfo->targetType);
+            packet.targetType = static_cast<std::uint8_t>(skillInfo->targetType);
             #ifdef WITH_EXTENDED_0511
-            response.toggleState = ToggleState::Triggered;
+            packet.toggleState = ToggleState::Triggered;
             #endif
 
             user->toggleSkill.triggered = true;
-            user->toggleSkill.skillId = response.skillId;
-            user->toggleSkill.skillLv = response.skillLv;
+            user->toggleSkill.skillId = packet.skillId;
+            user->toggleSkill.skillLv = packet.skillLv;
             user->toggleSkill.keepTime = GetTickCount() + (skillInfo->keepTime * 1000);
 
-            SConnection::Send(&user->connection, &response, sizeof(UseSkillResponse));
+            SConnection::Send(&user->connection, &packet, sizeof(SkillUseOutgoing));
             CUser::AddApplySkillBuff(user, skillInfo);
 
             auto percentage = (user->health * skillInfo->ability[0].value) / 100;
@@ -45,9 +43,9 @@ namespace toggle_skill
         }
         else
         {
-            response.targetType = static_cast<std::uint8_t>(skillInfo->targetType);
+            packet.targetType = static_cast<std::uint8_t>(skillInfo->targetType);
             #ifdef WITH_EXTENDED_0511
-            response.toggleState = ToggleState::Stopped;
+            packet.toggleState = ToggleState::Stopped;
             #endif
 
             user->toggleSkill.triggered = false;
@@ -55,7 +53,7 @@ namespace toggle_skill
             user->toggleSkill.skillLv = 0;
             user->toggleSkill.keepTime = 0;
 
-            SConnection::Send(&user->connection, &response, sizeof(UseSkillResponse));
+            SConnection::Send(&user->connection, &packet, sizeof(SkillUseOutgoing));
             CUser::RemApplySkillBuff(user, skillInfo);
             return;
         }
@@ -83,17 +81,17 @@ namespace toggle_skill
 
     void maybe_send_state(CUser* sender, CUser* target, CGameData::SkillInfo* skillInfo, Packet buffer)
     {
-        UseSkillResponse response{};
-        response.targetType = util::read_bytes<std::uint8_t>(buffer, 2);
-        response.senderId = sender->id;
-        response.targetId = target->id;
-        response.skillId = util::read_bytes<std::uint16_t>(buffer, 11);
-        response.skillLv = util::read_bytes<std::uint8_t>(buffer, 13);
-        response.health = util::read_bytes<std::uint16_t>(buffer, 14);
-        response.stamina = util::read_bytes<std::uint16_t>(buffer, 16);
-        response.mana = util::read_bytes<std::uint16_t>(buffer, 18);
+        SkillUseOutgoing packet{};
+        packet.targetType = util::read_bytes<std::uint8_t>(buffer, 2);
+        packet.senderId = sender->id;
+        packet.targetId = target->id;
+        packet.skillId = util::read_bytes<std::uint16_t>(buffer, 11);
+        packet.skillLv = util::read_bytes<std::uint8_t>(buffer, 13);
+        packet.health = util::read_bytes<std::uint16_t>(buffer, 14);
+        packet.stamina = util::read_bytes<std::uint16_t>(buffer, 16);
+        packet.mana = util::read_bytes<std::uint16_t>(buffer, 18);
 
-        switch (response.skillId)
+        switch (packet.skillId)
         {
         case SkillId::FrenziedForce:
         case SkillId::FrenziedFocus:
@@ -110,7 +108,7 @@ namespace toggle_skill
         if (!sender->zone)
             return;
 
-        CZone::PSendView(sender->zone, &response, sizeof(UseSkillResponse), &sender->pos, 60, sender->id, target->id, 5);
+        CZone::PSendView(sender->zone, &packet, sizeof(SkillUseOutgoing), &sender->pos, 60, sender->id, target->id, 5);
     }
 
     bool is_toggle_skill(CSkill* skill)

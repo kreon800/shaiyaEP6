@@ -4,13 +4,13 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct ExchangeRequest
+    struct ExchangeIncoming
     {
         UINT16 opcode{ 0xA05 };
         UINT8 state;
     };
 
-    struct ExchangeResponse
+    struct ExchangeOutgoing
     {
         UINT16 opcode{ 0xA05 };
         UINT8 state1;

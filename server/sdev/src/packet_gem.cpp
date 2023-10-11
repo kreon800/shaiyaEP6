@@ -87,12 +87,12 @@ namespace packet_gem
         if (!rune)
             return;
 
-        RuneCombineResponse response{};
-        response.result = RuneCombineResult::Failure;
+        ItemRuneCombineOutgoing packet{};
+        packet.result = ItemRuneCombineResult::Failure;
 
         if (rune->count < 2 || rune->itemInfo->effect != CGameData::ItemEffect::ItemCompose)
         {
-            SConnection::Send(&user->connection, &response, 3);
+            SConnection::Send(&user->connection, &packet, 3);
             return;
         }
 
@@ -129,37 +129,37 @@ namespace packet_gem
             itemInfo = CGameData::GetItemInfo(101, 6);
             break;
         default:
-            SConnection::Send(&user->connection, &response, 3);
+            SConnection::Send(&user->connection, &packet, 3);
             return;
         }
 
         if (itemInfo)
         {
-            response.result = RuneCombineResult::Success;
-            response.bag = 1;
-            response.slot = 0;
-            response.type = itemInfo->type;
-            response.typeId = itemInfo->typeId;
-            response.count = 1;
+            packet.result = ItemRuneCombineResult::Success;
+            packet.bag = 1;
+            packet.slot = 0;
+            packet.type = itemInfo->type;
+            packet.typeId = itemInfo->typeId;
+            packet.count = 1;
 
-            while (response.bag <= user->bagsUnlocked)
+            while (packet.bag <= user->bagsUnlocked)
             {
-                response.slot = find_available_slot(user, response.bag);
+                packet.slot = find_available_slot(user, packet.bag);
 
-                if (response.slot != -1)
+                if (packet.slot != -1)
                 {
-                    if (!CUser::ItemCreate(user, itemInfo, response.count))
+                    if (!CUser::ItemCreate(user, itemInfo, packet.count))
                         break;
 
                     CUser::ItemUseNSend(user, runeBag, runeSlot, false);
                     CUser::ItemUseNSend(user, runeBag, runeSlot, false);
                     CUser::ItemUseNSend(user, vialBag, vialSlot, false);
 
-                    SConnection::Send(&user->connection, &response, sizeof(RuneCombineResponse));
+                    SConnection::Send(&user->connection, &packet, sizeof(ItemRuneCombineOutgoing));
                     break;
                 }
 
-                ++response.bag;
+                ++packet.bag;
             }
         }
     }
@@ -186,31 +186,31 @@ namespace packet_gem
         if (!item)
             return;
 
-        ItemComposeResponse response{};
-        response.result = ItemComposeResult::Failure;
+        ItemComposeOutgoing packet{};
+        packet.result = ItemComposeResult::Failure;
 
         if (item->itemInfo->realType > CGameData::ItemRealType::Bracelet)
         {
-            SConnection::Send(&user->connection, &response, 3);
+            SConnection::Send(&user->connection, &packet, 3);
             return;
         }
 
         if (!item->itemInfo->maxOjCount)
         {
-            SConnection::Send(&user->connection, &response, 3);
+            SConnection::Send(&user->connection, &packet, 3);
             return;
         }
 
         if (item->itemInfo->reqWis <= 0 || item->itemInfo->reqWis > max_reqwis)
         {
-            SConnection::Send(&user->connection, &response, 3);
+            SConnection::Send(&user->connection, &packet, 3);
             return;
         }
 
         // optional
         if (item->makeType == MakeType::Q)
         {
-            SConnection::Send(&user->connection, &response, 3);
+            SConnection::Send(&user->connection, &packet, 3);
             return;
         }
 
@@ -467,19 +467,19 @@ namespace packet_gem
 
             break;
         default:
-            SConnection::Send(&user->connection, &response, 3);
+            SConnection::Send(&user->connection, &packet, 3);
             return;
         }
 
-        response.result = ItemComposeResult::Success;
-        response.bag = itemBag;
-        response.slot = itemSlot;
-        response.craftName = item->craftName;
+        packet.result = ItemComposeResult::Success;
+        packet.bag = itemBag;
+        packet.slot = itemSlot;
+        packet.craftName = item->craftName;
 
-        SConnection::Send(&user->connection, &response, sizeof(ItemComposeResponse));
+        SConnection::Send(&user->connection, &packet, sizeof(ItemComposeOutgoing));
 
-        SaveItemCraftName packet{ 0x717, user->userId, itemBag, itemSlot, item->craftName };
-        SConnectionTServerReconnect::Send(g_pClientToDBAgent, &packet, sizeof(SaveItemCraftName));
+        SaveItemCraftName packet2{ 0x717, user->userId, itemBag, itemSlot, item->craftName };
+        SConnectionTServerReconnect::Send(g_pClientToDBAgent, &packet2, sizeof(SaveItemCraftName));
 
         CUser::ItemUseNSend(user, runeBag, runeSlot, false);
     }

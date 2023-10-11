@@ -5,13 +5,13 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct RaidSetItemDivTypeRequest
+    struct RaidConfigLootIncoming
     {
         UINT16 opcode{ 0xB0F };
         ItemDivType itemDivType;
     };
 
-    struct RaidSetItemDivTypeResponse
+    struct RaidConfigLootOutgoing
     {
         UINT16 opcode{ 0xB0F };
         ItemDivType itemDivType;

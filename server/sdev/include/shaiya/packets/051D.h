@@ -9,7 +9,7 @@ namespace shaiya
         UINT16 opcode{ 0x51D };
         ULONG charId;
         ShapeType shapeType;
-        #ifdef SHAIYA_EP6_4
+        #ifdef SHAIYA_EP6_4_PT
         UINT32 vehicleType;
         UINT32 vehicleTypeId;
         #endif

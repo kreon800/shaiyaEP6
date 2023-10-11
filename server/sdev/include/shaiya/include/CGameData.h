@@ -149,7 +149,7 @@ namespace shaiya
             Cloak,
             Shield,
             Necklace,
-            #ifdef SHAIYA_EP6_4
+            #ifdef SHAIYA_EP6_4_PT
             Vehicle,
             #endif
             Ring,

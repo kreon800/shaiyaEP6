@@ -11,7 +11,7 @@ namespace shaiya
         NotAllowed
     };
 
-    struct ItemRemakeRequest
+    struct ItemRemakeIncoming
     {
         UINT16 opcode{ 0x807 };
         UINT8 bag1;
@@ -23,7 +23,7 @@ namespace shaiya
         ULONG npcId;
     };
 
-    struct ItemRemakeResponse
+    struct ItemRemakeOutgoing
     {
         UINT16 opcode{ 0x807 };
         ItemRemakeResult result;

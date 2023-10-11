@@ -4,13 +4,13 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct BlockRemoveRequest
+    struct BlockRemoveIncoming
     {
         UINT16 opcode{ 0x220A };
         ULONG charId;
     };
 
-    struct BlockRemoveResponse
+    struct BlockRemoveOutgoing
     {
         UINT16 opcode{ 0x220A };
         ULONG charId;

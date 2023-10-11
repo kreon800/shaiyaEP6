@@ -13,14 +13,14 @@ namespace shaiya
         UINT8 typeId;
     };
 
-    struct QuestEndRequest
+    struct QuestEndResultIncoming
     {
         UINT16 opcode{ 0x903 };
         ULONG npcId;
         UINT16 questId;
     };
 
-    struct QuestEndResponse
+    struct QuestEndResultOutgoing
     {
         UINT16 opcode{ 0x903 };
         ULONG npcId;

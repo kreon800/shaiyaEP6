@@ -5,7 +5,7 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct FriendSaveMemoRequest
+    struct FriendSaveMemoIncoming
     {
         UINT16 opcode{ 0x2206 };
         ULONG charId;
@@ -14,7 +14,7 @@ namespace shaiya
         Memo memo;
     };
 
-    struct FriendSaveMemoResponse
+    struct FriendSaveMemoOutgoing
     {
         UINT16 opcode{ 0x2206 };
         ULONG charId;

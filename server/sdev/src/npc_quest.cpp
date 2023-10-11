@@ -39,17 +39,17 @@ namespace npc_quest
 
     void send_admin_remove(CUser* user, CQuest* quest)
     {
-        Temp0903 response{};
-        response.questId = quest->id;
-        SConnection::Send(&user->connection, &response, sizeof(Temp0903));
+        Temp0903 packet{};
+        packet.questId = quest->id;
+        SConnection::Send(&user->connection, &packet, sizeof(Temp0903));
     }
 
     void send_failure_result(CUser* user, CQuest* quest, ULONG npcId)
     {
-        Temp0903 response{};
-        response.npcId = npcId;
-        response.questId = quest->id;
-        SConnection::Send(&user->connection, &response, sizeof(Temp0903));
+        Temp0903 packet{};
+        packet.npcId = npcId;
+        packet.questId = quest->id;
+        SConnection::Send(&user->connection, &packet, sizeof(Temp0903));
     }
 
     void send_success_result(CUser* user, CQuest* quest, Packet buffer)
@@ -63,14 +63,14 @@ namespace npc_quest
             return;
         }
 
-        Temp0903 response{};
-        response.npcId = npcId;
-        response.questId = quest->id;
-        response.success = true;
-        response.rewardIndex = rewardIndex;
+        Temp0903 packet{};
+        packet.npcId = npcId;
+        packet.questId = quest->id;
+        packet.success = true;
+        packet.rewardIndex = rewardIndex;
 
-        response.exp = quest->questInfo->reward[rewardIndex].exp;
-        response.gold = quest->questInfo->reward[rewardIndex].gold;
+        packet.exp = quest->questInfo->reward[rewardIndex].exp;
+        packet.gold = quest->questInfo->reward[rewardIndex].gold;
 
         // temporary
 
@@ -83,14 +83,14 @@ namespace npc_quest
         auto itemInfo = std::make_unique<CGameData::ItemInfo*>();
         if (CUser::QuestAddItem(user, type, typeId, itemCount, &bag, &slot, itemInfo.get()))
         {
-            response.count = itemCount;
-            response.bag = static_cast<std::uint8_t>(bag);
-            response.slot = static_cast<std::uint8_t>(slot);
-            response.type = (*itemInfo)->type;
-            response.typeId = (*itemInfo)->typeId;
+            packet.count = itemCount;
+            packet.bag = static_cast<std::uint8_t>(bag);
+            packet.slot = static_cast<std::uint8_t>(slot);
+            packet.type = (*itemInfo)->type;
+            packet.typeId = (*itemInfo)->typeId;
         }
 
-        SConnection::Send(&user->connection, &response, sizeof(Temp0903));
+        SConnection::Send(&user->connection, &packet, sizeof(Temp0903));
     }
 }
 

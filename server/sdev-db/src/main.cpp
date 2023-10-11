@@ -7,7 +7,7 @@
 void Main(HMODULE hModule)
 {
     DisableThreadLibraryCalls(hModule);
-    #ifdef SHAIYA_EP6_4
+    #ifdef SHAIYA_EP6_4_PT
     hook::character_create();
     #endif
     hook::character_list();

@@ -18,26 +18,26 @@ namespace packet_exchange
     void reset_state(CUser* user)
     {
         user->exchange.confirmState = 0;
-        ExchangeConfirmResponse response{ 0xA0A, 1, 0 };
-        SConnection::Send(&user->connection, &response, sizeof(ExchangeConfirmResponse));
+        ExchangeConfirmOutgoing packet{ 0xA0A, 1, 0 };
+        SConnection::Send(&user->connection, &packet, sizeof(ExchangeConfirmOutgoing));
 
-        response.state1 = 2;
-        SConnection::Send(&user->connection, &response, sizeof(ExchangeConfirmResponse));
+        packet.state1 = 2;
+        SConnection::Send(&user->connection, &packet, sizeof(ExchangeConfirmOutgoing));
 
         user->exchange.ready = false;
-        ExchangeResponse response2{ 0xA05, 3, 1 };
-        SConnection::Send(&user->connection, &response2, sizeof(ExchangeResponse));
+        ExchangeOutgoing packet2{ 0xA05, 3, 1 };
+        SConnection::Send(&user->connection, &packet2, sizeof(ExchangeOutgoing));
 
         user->exchange.user->exchange.confirmState = 0;
-        response.state1 = 1;
-        response.state2 = 0;
-        SConnection::Send(&user->exchange.user->connection, &response, sizeof(ExchangeConfirmResponse));
+        packet.state1 = 1;
+        packet.state2 = 0;
+        SConnection::Send(&user->exchange.user->connection, &packet, sizeof(ExchangeConfirmOutgoing));
 
-        response.state1 = 2;
-        SConnection::Send(&user->exchange.user->connection, &response, sizeof(ExchangeConfirmResponse));
+        packet.state1 = 2;
+        SConnection::Send(&user->exchange.user->connection, &packet, sizeof(ExchangeConfirmOutgoing));
 
         user->exchange.user->exchange.ready = false;
-        SConnection::Send(&user->exchange.user->connection, &response2, sizeof(ExchangeResponse));
+        SConnection::Send(&user->exchange.user->connection, &packet2, sizeof(ExchangeOutgoing));
     }
 
     void exchange_confirm_handler(CUser* user, Packet buffer)
@@ -50,11 +50,11 @@ namespace packet_exchange
         if (state)
         {
             user->exchange.confirmState = 1;
-            ExchangeConfirmResponse response{ 0xA0A, 1, 1 };
-            SConnection::Send(&user->connection, &response, sizeof(ExchangeConfirmResponse));
+            ExchangeConfirmOutgoing packet{ 0xA0A, 1, 1 };
+            SConnection::Send(&user->connection, &packet, sizeof(ExchangeConfirmOutgoing));
 
-            response.state1 = 2;
-            SConnection::Send(&user->exchange.user->connection, &response, sizeof(ExchangeConfirmResponse));
+            packet.state1 = 2;
+            SConnection::Send(&user->exchange.user->connection, &packet, sizeof(ExchangeConfirmOutgoing));
         }
         else
         {
@@ -67,23 +67,23 @@ namespace packet_exchange
         user->exchange.confirmState = 0;
         exchangeUser->exchange.confirmState = 0;
 
-        ExchangeConfirmResponse response{ 0xA0A, 1, 0 };
-        SConnection::Send(&user->connection, &response, sizeof(ExchangeConfirmResponse));
+        ExchangeConfirmOutgoing packet{ 0xA0A, 1, 0 };
+        SConnection::Send(&user->connection, &packet, sizeof(ExchangeConfirmOutgoing));
 
-        response.state1 = 2;
-        SConnection::Send(&user->connection, &response, sizeof(ExchangeConfirmResponse));
+        packet.state1 = 2;
+        SConnection::Send(&user->connection, &packet, sizeof(ExchangeConfirmOutgoing));
 
-        response.state1 = 1;
-        SConnection::Send(&exchangeUser->connection, &response, sizeof(ExchangeConfirmResponse));
+        packet.state1 = 1;
+        SConnection::Send(&exchangeUser->connection, &packet, sizeof(ExchangeConfirmOutgoing));
 
-        response.state1 = 2;
-        SConnection::Send(&exchangeUser->connection, &response, sizeof(ExchangeConfirmResponse));
+        packet.state1 = 2;
+        SConnection::Send(&exchangeUser->connection, &packet, sizeof(ExchangeConfirmOutgoing));
 
         // original code
 
-        ExchangeResponse response2{ 0xA05, 3, 1 };
-        SConnection::Send(&user->connection, &response2, sizeof(ExchangeResponse));
-        SConnection::Send(&exchangeUser->connection, &response2, sizeof(ExchangeResponse));
+        ExchangeOutgoing packet2{ 0xA05, 3, 1 };
+        SConnection::Send(&user->connection, &packet2, sizeof(ExchangeOutgoing));
+        SConnection::Send(&exchangeUser->connection, &packet2, sizeof(ExchangeOutgoing));
     }
 
     void maybe_reset_state(CUser* user)

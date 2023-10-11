@@ -278,9 +278,6 @@
     <ClInclude Include="include\shaiya\packets\0307.h">
       <Filter>include\shaiya\packets</Filter>
     </ClInclude>
-    <ClInclude Include="include\shaiya\packets\0403.h">
-      <Filter>include\shaiya\packets</Filter>
-    </ClInclude>
     <ClInclude Include="include\shaiya\include\CObject.h">
       <Filter>include\shaiya\include</Filter>
     </ClInclude>
@@ -435,6 +432,24 @@
       <Filter>include\shaiya\packets</Filter>
     </ClInclude>
     <ClInclude Include="include\shaiya\packets\0B10.h">
+      <Filter>include\shaiya\packets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\0003.h">
+      <Filter>include\shaiya\packets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\0218.h">
+      <Filter>include\shaiya\packets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\0230.h">
+      <Filter>include\shaiya\packets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\dbAgent\0403.h">
+      <Filter>include\shaiya\packets\dbAgent</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\0219.h">
+      <Filter>include\shaiya\packets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\021A.h">
       <Filter>include\shaiya\packets</Filter>
     </ClInclude>
   </ItemGroup>

@@ -13,7 +13,7 @@ namespace shaiya
         InventoryFull
     };
 
-    struct ProductPurchaseRequest
+    struct ProductPurchaseIncoming
     {
         UINT16 opcode{ 0x2602 };
         ProductCode productCode;
@@ -32,7 +32,7 @@ namespace shaiya
         #endif
     };
 
-    struct ProductPurchaseResponse
+    struct ProductPurchaseOutgoing
     {
         UINT16 opcode{ 0x2602 };
         ProductPurchaseResult result;

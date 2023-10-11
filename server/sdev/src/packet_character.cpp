@@ -6,8 +6,8 @@
 #include <include/util.h>
 #include <include/shaiya/packets/0101.h>
 #include <include/shaiya/packets/0119.h>
-#include <include/shaiya/packets/0403.h>
 #include <include/shaiya/packets/0711.h>
+#include <include/shaiya/packets/dbAgent/0403.h>
 #include <include/shaiya/include/CItem.h>
 #include <include/shaiya/include/CUser.h>
 #include <include/shaiya/include/SConnection.h>
@@ -47,8 +47,8 @@ namespace packet_character
         std::string charName(name);
         if (charName.length() < min_name_len || charName.length() > max_name_len)
         {
-            NameAvailableResponse response{ 0x119, false };
-            SConnection::Send(&user->connection, &response, sizeof(NameAvailableResponse));
+            NameAvailableOutgoing packet{ 0x119, false };
+            SConnection::Send(&user->connection, &packet, sizeof(NameAvailableOutgoing));
             return;
         }
 
@@ -60,8 +60,8 @@ namespace packet_character
     void send_name_available(CUser* user, Packet buffer)
     {
         auto available = util::read_bytes<bool>(buffer, 6);
-        NameAvailableResponse response{ 0x119, available };
-        SConnection::Send(&user->connection, &response, sizeof(NameAvailableResponse));
+        NameAvailableOutgoing packet{ 0x119, available };
+        SConnection::Send(&user->connection, &packet, sizeof(NameAvailableOutgoing));
     }
 
     void send_warehouse(CUser* user)
@@ -76,7 +76,7 @@ namespace packet_character
         // shen1l changed 50 to 40
         constexpr int max_item_send_count = 40;
 
-        StoredItemList warehouse{};
+        UserStoredItemList warehouse{};
         warehouse.bankMoney = user->bankMoney;
         warehouse.itemCount = 0;
 

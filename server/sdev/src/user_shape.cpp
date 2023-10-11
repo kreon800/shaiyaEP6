@@ -14,7 +14,7 @@ using namespace shaiya;
 namespace user_shape
 {
     constexpr int max_equipment_slot = ITEM_LIST_SIZE;
-    #ifdef SHAIYA_EP6_4
+    #ifdef SHAIYA_EP6_4_PT
     constexpr int packet_size_without_cloak = 118;
     constexpr int packet_size_with_cloak = 124;
     #else
@@ -234,7 +234,7 @@ namespace user_shape
         packet.charId = user->id;
         packet.shapeType = util::read_bytes<ShapeType>(buffer, 6);
         
-        #ifdef SHAIYA_EP6_4
+        #ifdef SHAIYA_EP6_4_PT
         auto& vehicle = user->inventory[0][EquipmentSlot::Vehicle];
         if (vehicle)
         {
@@ -255,7 +255,7 @@ namespace user_shape
         packet.charId = user->id;
         packet.shapeType = shapeType;
 
-        #ifdef SHAIYA_EP6_4
+        #ifdef SHAIYA_EP6_4_PT
         auto& vehicle = user->inventory[0][EquipmentSlot::Vehicle];
         if (vehicle)
         {
@@ -421,7 +421,7 @@ void hook::user_shape()
     // CUser::CheckTargetUser case 2
     util::detour((void*)0x45A365, naked_0x45A365, 7);
 
-    #ifdef SHAIYA_EP6_4
+    #ifdef SHAIYA_EP6_4_PT
     // CUser::SendShape
     util::detour((void*)0x491490, naked_0x491490, 6);
     //

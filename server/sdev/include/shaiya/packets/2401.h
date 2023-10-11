@@ -4,13 +4,13 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct BattleOutgoingRequest
+    struct BattleRequestIncoming
     {
         UINT16 opcode{ 0x2401 };
         CharId senderId;
     };
 
-    struct BattleIncomingRequest
+    struct BattleRequestOutgoing
     {
         UINT16 opcode{ 0x2401 };
         CharId senderId;

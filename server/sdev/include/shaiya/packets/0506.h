@@ -129,13 +129,13 @@ namespace shaiya
         Provoke
     };
 
-    struct UserMotionRequest
+    struct UserMotionIncoming
     {
         UINT16 opcode{ 0x506 };
         MotionType motionType;
     };
 
-    struct UserMotionResponse
+    struct UserMotionOutgoing
     {
         UINT16 opcode{ 0x506 };
         ULONG charId;

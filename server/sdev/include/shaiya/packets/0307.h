@@ -15,13 +15,13 @@ namespace shaiya
         CraftName craftName;
     };
 
-    struct InspectRequest
+    struct UserInspectIncoming
     {
         UINT16 opcode{ 0x307 };
         ULONG charId;
     };
 
-    struct InspectResponse
+    struct UserInspectOutgoing
     {
         UINT16 opcode{ 0x307 };
         UINT8 itemCount;

@@ -4,13 +4,13 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct GuildVsGuildOutgoingRequest
+    struct GvGRequestIncoming
     {
         UINT16 opcode{ 0x2501 };
         CharId senderId;
     };
 
-    struct GuildVsGuildIncomingRequest
+    struct GvGRequestOutgoing
     {
         UINT16 opcode{ 0x2501 };
         CharId senderId;

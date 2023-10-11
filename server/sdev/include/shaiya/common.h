@@ -3,13 +3,13 @@
 //#define SHAIYA_EP6
 //#define SHAIYA_EP6_3
 //#define SHAIYA_EP6_3_PT
-#define SHAIYA_EP6_4
+#define SHAIYA_EP6_4_PT
 
 #if \
 defined SHAIYA_EP6 || \
 defined SHAIYA_EP6_3 || \
 defined SHAIYA_EP6_3_PT || \
-defined SHAIYA_EP6_4
+defined SHAIYA_EP6_4_PT
 #define SHAIYA_EP6_COMMON
 #endif
 
@@ -22,42 +22,41 @@ defined SHAIYA_EP6_3_PT
 #if \
 defined SHAIYA_EP6 || \
 defined SHAIYA_EP6_3 || \
-defined SHAIYA_EP6_4
+defined SHAIYA_EP6_4_PT
 #define WITH_EXTENDED_0511
 #endif
 
 #if \
 defined SHAIYA_EP6_3 || \
 defined SHAIYA_EP6_3_PT || \
-defined SHAIYA_EP6_4
+defined SHAIYA_EP6_4_PT
 #define WITH_EXTENDED_EQUIPMENT
 #endif
 
 #if \
 defined SHAIYA_EP6 || \
 defined SHAIYA_EP6_3 || \
-defined SHAIYA_EP6_4
+defined SHAIYA_EP6_4_PT
 #define WITH_EXTENDED_QUEST_RESULT
 #endif
 
 #if \
 defined SHAIYA_EP6_3 || \
 defined SHAIYA_EP6_3_PT || \
-defined SHAIYA_EP6_4
+defined SHAIYA_EP6_4_PT
 #define WITH_ITEM_DURATION
 #endif
 
 #if \
 defined SHAIYA_EP6 || \
 defined SHAIYA_EP6_3 || \
-defined SHAIYA_EP6_4
+defined SHAIYA_EP6_4_PT
 #define WITH_SET_ITEM
 #endif
 
 #if \
-defined SHAIYA_EP6 || \
 defined SHAIYA_EP6_3 || \
-defined SHAIYA_EP6_4
+defined SHAIYA_EP6_4_PT
 #define WITH_TOWN_TELEPORT_SCROLL
 #endif
 
@@ -73,7 +72,7 @@ defined SHAIYA_EP6_4
 // forward declaration
 #define FWDDECL struct
 
-#ifdef SHAIYA_EP6_4
+#ifdef SHAIYA_EP6_4_PT
 #define ITEM_LIST_SIZE 17
 #elif defined SHAIYA_EP6_3 || defined SHAIYA_EP6_3_PT
 #define ITEM_LIST_SIZE 16

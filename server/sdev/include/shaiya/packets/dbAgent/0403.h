@@ -1,8 +1,5 @@
 #pragma once
 #include <include/shaiya/common.h>
-#include <include/shaiya/include/CUser.h>
-
-// see CUser::SendCharacterList (0x40AA20)
 
 namespace shaiya
 {

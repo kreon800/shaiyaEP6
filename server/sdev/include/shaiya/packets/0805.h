@@ -4,7 +4,7 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct LapisianAddRequest
+    struct ItemLapisianAddIncoming
     {
         UINT16 opcode{ 0x805 };
         UINT8 lapisianBag;

@@ -4,7 +4,7 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct WorldNotice
+    struct NoticeWorld
     {
         UINT16 opcode{ 0xF90B };
         UINT8 length;

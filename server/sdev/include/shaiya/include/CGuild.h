@@ -9,7 +9,7 @@ namespace shaiya
     typedef Array<char, 66> GuildRemark;
 
     #pragma pack(push, 1)
-    enum struct GuildVsGuildState : UINT32
+    enum struct GvGState : UINT32
     {
         None,
         RequestSent,
@@ -48,7 +48,7 @@ namespace shaiya
         CRITICAL_SECTION cs0x464;     //0x464
         Array<GuildNpcLv, 8> npcLv;   //0x47C
         CRITICAL_SECTION cs0x49C;     //0x49C
-        GuildVsGuildState gvgState;   //0x4B4
+        GvGState gvgState;            //0x4B4
         CharId gvgRequestSenderId;    //0x4B8
         GuildId gvgTargetId;          //0x4BC
         CharId gvgRequestTargetId;    //0x4C0

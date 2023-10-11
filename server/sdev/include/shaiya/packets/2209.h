@@ -4,13 +4,13 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct BlockAddRequest
+    struct BlockAddIncoming
     {
         UINT16 opcode{ 0x2209 };
         CharName charName;
     };
 
-    struct BlockAddResponse
+    struct BlockAddOutgoing
     {
         UINT16 opcode{ 0x2209 };
         ULONG charId;

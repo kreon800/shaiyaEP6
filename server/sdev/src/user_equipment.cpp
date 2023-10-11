@@ -70,8 +70,8 @@ namespace user_equipment
     {
         constexpr int packet_size_without_list = 3;
 
-        InspectResponse response{};
-        response.itemCount = 0;
+        UserInspectOutgoing packet{};
+        packet.itemCount = 0;
 
         for (int slot = 0; slot < EquipmentSlot::Wings; ++slot)
         {
@@ -89,12 +89,12 @@ namespace user_equipment
 
             item0307.gems = item->gems;
             item0307.craftName = item->craftName;
-            std::memcpy(&response.itemList[response.itemCount], &item0307, sizeof(Item0307));
-            ++response.itemCount;
+            std::memcpy(&packet.itemList[packet.itemCount], &item0307, sizeof(Item0307));
+            ++packet.itemCount;
         }
 
-        int length = packet_size_without_list + (response.itemCount * sizeof(Item0307));
-        SConnection::Send(&user->connection, &response, length);
+        int length = packet_size_without_list + (packet.itemCount * sizeof(Item0307));
+        SConnection::Send(&user->connection, &packet, length);
     }
 }
 

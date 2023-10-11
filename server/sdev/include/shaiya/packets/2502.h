@@ -4,7 +4,7 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    enum struct GuildVsGuildResponseType : UINT8
+    enum struct GvGRequestResult : UINT8
     {
         Rejected,
         Accepted,
@@ -12,16 +12,16 @@ namespace shaiya
         DidNotRespond
     };
 
-    struct GuildVsGuildOutgoingResponse
+    struct GvGRequestResultIncoming
     {
         UINT16 opcode{ 0x2502 };
-        GuildVsGuildResponseType responseType;
+        GvGRequestResult result;
     };
 
-    struct GuildVsGuildIncomingResponse
+    struct GvGRequestResultOutgoing
     {
         UINT16 opcode{ 0x2502 };
-        GuildVsGuildResponseType responseType;
+        GvGRequestResult result;
         CharId targetId;
     };
     #pragma pack(pop)

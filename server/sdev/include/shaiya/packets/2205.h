@@ -4,13 +4,13 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct FriendRemoveRequest
+    struct FriendRemoveIncoming
     {
         UINT16 opcode{ 0x2205 };
         ULONG charId;
     };
 
-    struct FriendRemoveResponse
+    struct FriendRemoveOutgoing
     {
         UINT16 opcode{ 0x2205 };
         ULONG charId;

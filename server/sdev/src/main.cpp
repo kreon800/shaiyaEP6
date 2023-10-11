@@ -91,7 +91,7 @@ void Main(HMODULE hModule)
     hook::packet_exchange();
     hook::packet_shop();
 
-    #ifdef SHAIYA_EP6_4
+    #ifdef SHAIYA_EP6_4_PT
     hook::packet_gem();
     hook::packet_market();
     #endif
@@ -104,14 +104,18 @@ void Main(HMODULE hModule)
     hook::toggle_skill();
     #endif
 
+    #ifdef WITH_EXTENDED_QUEST_RESULT
+    hook::npc_quest();
+    #endif
+
     #ifdef WITH_EXTENDED_EQUIPMENT
     hook::packet_character();
     hook::user_equipment();
     hook::user_shape();
     #endif
 
-    #ifdef WITH_EXTENDED_QUEST_RESULT
-    hook::npc_quest();
+    #ifdef WITH_TOWN_TELEPORT_SCROLL
+    hook::item_effect();
     #endif
 
     #ifdef WITH_ITEM_DURATION
@@ -121,9 +125,5 @@ void Main(HMODULE hModule)
 
     #ifdef WITH_SET_ITEM
     Synergy::init();
-    #endif
-
-    #ifdef WITH_TOWN_TELEPORT_SCROLL
-    hook::item_effect();
     #endif
 }

@@ -137,17 +137,17 @@ namespace packet_shop
         constexpr int packet_size_without_list = 37;
         constexpr int item_size_without_dates = 5;
 
-        ProductPurchaseResponse response{};
-        response.opcode = util::read_bytes<std::uint16_t>(buffer, 0);
-        response.result = util::read_bytes<ProductPurchaseResult>(buffer, 2);
-        response.points = util::read_bytes<std::uint32_t>(buffer, 3);
-        std::memcpy(&response.productCode, &buffer[7], response.productCode.size());
-        response.purchaseDate = util::read_bytes<std::uint32_t>(buffer, 28);
-        response.itemPrice = util::read_bytes<std::uint32_t>(buffer, 32);
-        response.itemCount = util::read_bytes<std::uint8_t>(buffer, 36);
+        ProductPurchaseOutgoing packet{};
+        packet.opcode = util::read_bytes<std::uint16_t>(buffer, 0);
+        packet.result = util::read_bytes<ProductPurchaseResult>(buffer, 2);
+        packet.points = util::read_bytes<std::uint32_t>(buffer, 3);
+        std::memcpy(&packet.productCode, &buffer[7], packet.productCode.size());
+        packet.purchaseDate = util::read_bytes<std::uint32_t>(buffer, 28);
+        packet.itemPrice = util::read_bytes<std::uint32_t>(buffer, 32);
+        packet.itemCount = util::read_bytes<std::uint8_t>(buffer, 36);
 
         int offset = 0;
-        for (int i = 0; i < response.itemCount; ++i)
+        for (int i = 0; i < packet.itemCount; ++i)
         {
             Item2602 item2602{};
             item2602.bag = util::read_bytes<std::uint8_t>(buffer, 37 + offset);
@@ -160,17 +160,17 @@ namespace packet_shop
             auto itemInfo = CGameData::GetItemInfo(item2602.type, item2602.typeId);
             if (itemInfo)
             {
-                item2602.toDate = ServerTime::GetItemExpireTime(response.purchaseDate, itemInfo);
-                item2602.fromDate = item2602.toDate ? response.purchaseDate : 0;
+                item2602.toDate = ServerTime::GetItemExpireTime(packet.purchaseDate, itemInfo);
+                item2602.fromDate = item2602.toDate ? packet.purchaseDate : 0;
             }
             #endif
 
-            std::memcpy(&response.itemList[i], &item2602, sizeof(Item2602));
+            std::memcpy(&packet.itemList[i], &item2602, sizeof(Item2602));
             offset += item_size_without_dates;
         }
 
-        int length = packet_size_without_list + (response.itemCount * sizeof(Item2602));
-        SConnection::Send(&user->connection, &response, length);
+        int length = packet_size_without_list + (packet.itemCount * sizeof(Item2602));
+        SConnection::Send(&user->connection, &packet, length);
     }
 }
 

@@ -10,7 +10,7 @@ namespace shaiya
         Stopped = 3
     };
 
-    struct UseSkillResponse
+    struct SkillUseOutgoing
     {
         UINT16 opcode{ 0x511 };
         UINT8 targetType;

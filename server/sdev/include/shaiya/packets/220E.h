@@ -3,17 +3,17 @@
 
 namespace shaiya
 {
-    enum struct BlockAddResultType : UINT8
+    enum struct BlockAddResult : UINT8
     {
         Failure,
         Success
     };
 
     #pragma pack(push, 1)
-    struct BlockAddResult
+    struct BlockAddResultOutgoing
     {
         UINT16 opcode{ 0x220E };
-        BlockAddResultType result;
+        BlockAddResult result;
     };
     #pragma pack(pop)
 }

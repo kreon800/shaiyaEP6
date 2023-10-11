@@ -3,7 +3,7 @@
 
 namespace shaiya
 {
-    enum struct FriendAddResultType : UINT8
+    enum struct FriendAddResult : UINT8
     {
         Rejected,
         Accepted,
@@ -11,10 +11,10 @@ namespace shaiya
     };
 
     #pragma pack(push, 1)
-    struct FriendAddResult
+    struct FriendAddResultOutgoing
     {
         UINT16 opcode{ 0x2203 };
-        FriendAddResultType result;
+        FriendAddResult result;
     };
     #pragma pack(pop)
 }
