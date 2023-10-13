@@ -18,7 +18,7 @@ namespace hook
     void packet_market();
     void packet_myshop();
     void user_equipment();
+    void user_apply_skill();
     void user_shape();
     void user_status();
-    void toggle_skill();
 }

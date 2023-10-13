@@ -11,7 +11,7 @@
 #include <include/shaiya/include/SConnection.h>
 using namespace shaiya;
 
-namespace toggle_skill
+namespace user_apply_skill
 {
     void send_frenzied_state(CUser* user, CGameData::SkillInfo* skillInfo)
     {
@@ -21,17 +21,17 @@ namespace toggle_skill
         packet.skillId = skillInfo->skillId;
         packet.skillLv = skillInfo->skillLv;
 
-        if (!user->toggleSkill.triggered)
+        if (!user->activableSkill.triggered)
         {
             packet.targetType = static_cast<std::uint8_t>(skillInfo->targetType);
             #ifdef WITH_EXTENDED_0511
-            packet.toggleState = ToggleState::Triggered;
+            packet.state = SkillUseState::Triggered;
             #endif
 
-            user->toggleSkill.triggered = true;
-            user->toggleSkill.skillId = packet.skillId;
-            user->toggleSkill.skillLv = packet.skillLv;
-            user->toggleSkill.keepTime = GetTickCount() + (skillInfo->keepTime * 1000);
+            user->activableSkill.triggered = true;
+            user->activableSkill.skillId = packet.skillId;
+            user->activableSkill.skillLv = packet.skillLv;
+            user->activableSkill.keepTime = GetTickCount() + (skillInfo->keepTime * 1000);
 
             SConnection::Send(&user->connection, &packet, sizeof(SkillUseOutgoing));
             CUser::AddApplySkillBuff(user, skillInfo);
@@ -45,13 +45,13 @@ namespace toggle_skill
         {
             packet.targetType = static_cast<std::uint8_t>(skillInfo->targetType);
             #ifdef WITH_EXTENDED_0511
-            packet.toggleState = ToggleState::Stopped;
+            packet.state = SkillUseState::Stopped;
             #endif
 
-            user->toggleSkill.triggered = false;
-            user->toggleSkill.skillId = 0;
-            user->toggleSkill.skillLv = 0;
-            user->toggleSkill.keepTime = 0;
+            user->activableSkill.triggered = false;
+            user->activableSkill.skillId = 0;
+            user->activableSkill.skillLv = 0;
+            user->activableSkill.keepTime = 0;
 
             SConnection::Send(&user->connection, &packet, sizeof(SkillUseOutgoing));
             CUser::RemApplySkillBuff(user, skillInfo);
@@ -59,16 +59,16 @@ namespace toggle_skill
         }
     }
 
-    void maybe_send_damage(CUser* user)
+    void maybe_send_keep_damage(CUser* user)
     {
         if (!user)
             return;
 
         auto now = GetTickCount();
-        if (!user->toggleSkill.triggered || now < user->toggleSkill.keepTime)
+        if (!user->activableSkill.triggered || now < user->activableSkill.keepTime)
             return;
 
-        auto skillInfo = CGameData::GetSkillInfo(user->toggleSkill.skillId, user->toggleSkill.skillLv);
+        auto skillInfo = CGameData::GetSkillInfo(user->activableSkill.skillId, user->activableSkill.skillLv);
         if (!skillInfo)
             return;
 
@@ -76,7 +76,7 @@ namespace toggle_skill
         user->health -= percentage;
         CUser::SendRecoverSet(user, user->health, user->stamina, user->mana);
 
-        user->toggleSkill.keepTime = now + (skillInfo->keepTime * 1000);
+        user->activableSkill.keepTime = now + (skillInfo->keepTime * 1000);
     }
 
     void maybe_send_state(CUser* sender, CUser* target, CGameData::SkillInfo* skillInfo, Packet buffer)
@@ -111,7 +111,7 @@ namespace toggle_skill
         CZone::PSendView(sender->zone, &packet, sizeof(SkillUseOutgoing), &sender->pos, 60, sender->id, target->id, 5);
     }
 
-    bool is_toggle_skill(CSkill* skill)
+    bool is_activable(CSkill* skill)
     {
         switch (skill->skillId)
         {
@@ -125,6 +125,24 @@ namespace toggle_skill
         }
 
         return false;
+    }
+
+    void remove_activable_skill(CUser* user)
+    {
+        if (user->activableSkill.triggered)
+        {
+            auto skillInfo = CGameData::GetSkillInfo(user->activableSkill.skillId, user->activableSkill.skillLv);
+            if (!skillInfo)
+                return;
+
+            user->activableSkill.triggered = false;
+            user->activableSkill.skillId = 0;
+            user->activableSkill.skillLv = 0;
+            user->activableSkill.keepTime = 0;
+
+            CUser::RemApplySkillBuff(user, skillInfo);
+            return;
+        }
     }
 }
 
@@ -141,7 +159,7 @@ void __declspec(naked) naked_0x45CCE3()
         push esi // skillInfo
         push edi // target
         push ebp // user
-        call toggle_skill::maybe_send_state
+        call user_apply_skill::maybe_send_state
         add esp,0x10
 
         popad
@@ -159,7 +177,7 @@ void __declspec(naked) naked_0x493BC6()
         pushad
 
         push ebx // skill
-        call toggle_skill::is_toggle_skill
+        call user_apply_skill::is_activable
         add esp,0x4
         test al,al
 
@@ -190,7 +208,7 @@ void __declspec(naked) naked_0x428AD5()
 
         lea edx,[esi-0xD0]
         push edx // user
-        call toggle_skill::maybe_send_damage
+        call user_apply_skill::maybe_send_keep_damage
         add esp,0x4
 
         popad
@@ -199,7 +217,26 @@ void __declspec(naked) naked_0x428AD5()
     }
 }
 
-void hook::toggle_skill()
+unsigned u0x498623 = 0x498623;
+void __declspec(naked) naked_0x49861D()
+{
+    __asm
+    {
+        pushad
+
+        push esi // user
+        call user_apply_skill::remove_activable_skill
+        add esp,0x4
+
+        popad
+
+        // original
+        mov eax,[esi+0x1C4]
+        jmp u0x498623
+    }
+}
+
+void hook::user_apply_skill()
 {
     // CUser::SkillAttackRange
     util::detour((void*)0x45CCE3, naked_0x45CCE3, 6);
@@ -207,4 +244,6 @@ void hook::toggle_skill()
     util::detour((void*)0x493BC6, naked_0x493BC6, 9);
     // CZone::UpdateApplySkill
     util::detour((void*)0x428AD5, naked_0x428AD5, 5);
+    // CUser::ClearApplySkillByDeath
+    util::detour((void*)0x49861D, naked_0x49861D, 6);
 }

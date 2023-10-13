@@ -193,7 +193,7 @@ namespace shaiya
     };
 
     // custom
-    struct ToggleSkill
+    struct ActivableSkill
     {
         UINT16 skillId;
         UINT8 skillLv;
@@ -432,7 +432,7 @@ namespace shaiya
         // custom
         UINT8 townScrollLocation;          //0x1534
         PAD(3);
-        ToggleSkill toggleSkill;           //0x1538
+        ActivableSkill activableSkill;     //0x1538
         unsigned u0x1540;
         //
         PAD(16);

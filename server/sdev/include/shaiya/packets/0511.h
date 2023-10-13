@@ -4,7 +4,7 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    enum struct ToggleState : UINT8
+    enum struct SkillUseState : UINT8
     {
         Triggered = 1,
         Stopped = 3
@@ -22,7 +22,7 @@ namespace shaiya
         UINT16 stamina;
         UINT16 mana;
         #ifdef WITH_EXTENDED_0511
-        ToggleState toggleState;
+        SkillUseState state;
         #endif
     };
     #pragma pack(pop)

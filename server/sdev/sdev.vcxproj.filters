@@ -129,7 +129,7 @@
     <ClCompile Include="include\shaiya\src\Synergy.cpp">
       <Filter>include\shaiya\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\toggle_skill.cpp">
+    <ClCompile Include="src\user_apply_skill.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\util.cpp">

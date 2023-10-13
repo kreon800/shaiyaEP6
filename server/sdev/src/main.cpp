@@ -101,7 +101,7 @@ void Main(HMODULE hModule)
     #endif
 
     #ifdef WITH_EXTENDED_0511
-    hook::toggle_skill();
+    hook::user_apply_skill();
     #endif
 
     #ifdef WITH_EXTENDED_QUEST_RESULT
