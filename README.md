@@ -1,6 +1,6 @@
 # Shaiya Episode 6
 
-An open-source effort to make episode 5 servers compatible with episode 6 clients.
+An open source effort to make episode 5 servers compatible with episode 6 clients.
 
 ## Environment
 
@@ -12,7 +12,7 @@ C++ 20
 
 ## Inspiration
 
-This project would not exist without the open-source contributions of these developers. 
+This project would not exist without the contributions of these developers. 
 
 [Cups](https://www.elitepvpers.com/forum/shaiya-pserver-guides-releases/4653021-shaiya-library.html)
 

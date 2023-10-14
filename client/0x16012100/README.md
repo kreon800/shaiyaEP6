@@ -1,30 +1,22 @@
-#### Build Version
+# Build Version
 
 `0x16012100`
 
-#### OEP
+## OEP
 
 `0x637B38`
 
-#### Sections
+## Sections
 
-`.text`
+`.text` (application machine code)
 
-`.rsrc`
+`.rsrc` (resources)
 
-`.code`
+`.code` (IAT, entry point, and PE header)
 
-* The `.text` section contains the application machine code
+# Notes
 
-* The `.rsrc` section contains resources
-
-* The `.code` section contains the IAT, entry point, and a PE header
-
-* The remaining sections left over from packing/unpacking have been filled with null bytes
-
-#### Notes
-
-A call to LoadLibraryA was added near the entry point.
+This is a 6.4 PT client. The sections left over from packing/unpacking have been filled with null bytes. A call to LoadLibraryA was added near the entry point.
 
 ```
 02B61600  60             PUSHAD
@@ -44,7 +36,27 @@ A call to LoadLibraryA was added near the entry point.
 02B61632  E9 0165ADFD    JMP game.00637B38 // OEP
 ```
 
-#### sdev.dll
+## SData Specifications
+
+| Name          | Format   |
+|---------------|----------|
+| Item          | EP6      |
+| Monster       | EP5      |
+| NpcQuest      | EP6      |
+| NpcSkill      | EP6      |
+| Skill         | EP6      |
+
+## Features
+
+* Pets, Costumes, and Wings
+* Item Duration
+* Synergies
+* Toggleable Skills
+* Chaotic Squares
+* Town Teleport Scrolls
+* Rune Combination
+
+# sdev.dll
 
 The project addresses the following issues:
 

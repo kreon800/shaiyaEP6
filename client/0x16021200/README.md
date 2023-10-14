@@ -36,6 +36,16 @@ This is a 6.4 PT client that arrived in patch 182. The sections left over from p
 02B11632  E9 3166B2FD    JMP game.00637C68 // OEP
 ```
 
+## SData Specifications
+
+| Name          | Format   |
+|---------------|----------|
+| Item          | EP6      |
+| Monster       | EP5      |
+| NpcQuest      | EP6      |
+| NpcSkill      | EP6      |
+| Skill         | EP6      |
+
 ## Features
 
 * Pets, Costumes, and Wings
