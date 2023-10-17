@@ -29,14 +29,7 @@ namespace NpcQuestTool
 
             if (option == '1')
             {
-                Console.WriteLine();
-                Console.WriteLine("Please choose a format");
-                Console.WriteLine("1. EP5");
-                Console.WriteLine("2. EP6");
-                option = Console.ReadKey().KeyChar;
-                Episode episode = option == '1' ? Episode.EP5 : Episode.EP6;
-
-                var data = ParsecReader.FromFile<NpcQuest>("NpcQuest.SData", episode, encoding);
+                var data = ParsecReader.FromFile<NpcQuest>("NpcQuest.SData", Episode.EP6, encoding);
                 data.WriteJson("NpcQuest.json");
             }
             else

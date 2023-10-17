@@ -3,9 +3,6 @@
 
 namespace shaiya
 {
-    // temporary
-    #undef WITH_EXTENDED_QUEST_RESULT
-
     static Address g_QuestData = 0x4093300;
 
     typedef Array<char, 256> QuestName;
@@ -21,25 +18,43 @@ namespace shaiya
     #ifdef WITH_EXTENDED_QUEST_RESULT
     struct QuestResult
     {
-        PAD(20);
-        UINT32 exp;            //0x14
-        UINT32 gold;           //0x18
+        UINT16 mobId;        //0x00
+        UINT8 mobCount;      //0x02
+        UINT8 itemTypeId;    //0x03
+        UINT8 itemCount;     //0x04
+        PAD(3);
+        UINT32 time;         //0x08
+        UINT16 hg;           //0x0C
+        UINT16 vg;           //0x0E
+        UINT8 og;            //0x10
+        PAD(3);
+        UINT32 exp;          //0x14
+        UINT32 gold;         //0x18
         // 0x1C
         Array<QuestItem, 3> item;
         PAD(1);
-        UINT16 unlockQuestId;  //0x26
+        UINT16 nextQuestId;  //0x26
         PAD(4);
         // 0x2C = size
     };
     #else
     struct QuestResult
     {
-        PAD(20);
-        UINT32 exp;            //0x14
-        UINT32 gold;           //0x18
-        UINT8 type;            //0x1C
-        UINT8 typeId;          //0x1D
-        UINT16 unlockQuestId;  //0x1E
+        UINT16 mobId;        //0x00
+        UINT8 mobCount;      //0x02
+        UINT8 itemTypeId;    //0x03
+        UINT8 itemCount;     //0x04
+        PAD(3);
+        UINT32 time;         //0x08
+        UINT16 hg;           //0x0C
+        UINT16 vg;           //0x0E
+        UINT8 og;            //0x10
+        PAD(3);
+        UINT32 exp;          //0x14
+        UINT32 gold;         //0x18
+        UINT8 type;          //0x1C
+        UINT8 typeId;        //0x1D
+        UINT16 nextQuestId;  //0x1E
         // 0x20 = size
     };
     #endif
@@ -52,48 +67,43 @@ namespace shaiya
         UINT16 maxLevel;        //0x104
         Country country;        //0x106
         Grow grow;              //0x107
-        PAD(2);
+        bool male;              //0x108
+        bool female;            //0x109
         bool attackFighter;     //0x10A
         bool defenseFighter;    //0x10B
         bool patrolRogue;       //0x10C
         bool shootRogue;        //0x10D
         bool attackMage;        //0x10E
         bool defenseMage;       //0x10F
-        UINT16 prevQuestId1;    //0x110
-        UINT16 prevQuestId2;    //0x112
-        PAD(4);
-        UINT16 prevQuestId3;    //0x118
-        PAD(14);
-        UINT16 timeLimit;       //0x128
-        PAD(10);
+        PAD(36);
         BOOL repeatable;        //0x134
-        UINT8 recvQuestType;    //0x138
-        UINT8 giveNpcType;      //0x139
-        UINT16 giveNpcTypeId;   //0x13A
+        UINT8 startType;        //0x138
+        UINT8 startNpcType;     //0x139
+        UINT16 startNpcTypeId;  //0x13A
         PAD(2);
         // 0x13E
-        Array<QuestItem, 3> recvItem;
-        UINT8 questType;        //0x147
-        UINT8 recvNpcType;      //0x148
+        Array<QuestItem, 3> reqItem;
+        UINT8 endType;          //0x147
+        UINT8 endNpcType;       //0x148
         PAD(1);
-        UINT16 recvNpcTypeId;   //0x14A
+        UINT16 endNpcTypeId;    //0x14A
         // 0x14C
         Array<QuestItem, 3> farmItem;
-        UINT8 killCount;        //0x155
-        UINT16 mobId1;          //0x156
-        UINT16 mobId2;          //0x158
-        UINT8 mobCount1;        //0x15A
-        UINT8 mobCount2;        //0x15B
+        UINT8 pvpKillCount;     //0x155
+        UINT16 reqMobId1;       //0x156
+        UINT16 reqMobId2;       //0x158
+        UINT8 reqMobCount1;     //0x15A
+        UINT8 reqMobCount2;     //0x15B
         PAD(4);
         #ifdef WITH_EXTENDED_QUEST_RESULT
         // 0x160
-        Array<QuestResult, 6> reward;
+        Array<QuestResult, 6> result;
         // 0x268
         PAD(28);
         // 0x284 = size
         #else
         // 0x160
-        Array<QuestResult, 3> reward;
+        Array<QuestResult, 3> result;
         // 0x1C0
         PAD(16);
         // 0x1D0 = size

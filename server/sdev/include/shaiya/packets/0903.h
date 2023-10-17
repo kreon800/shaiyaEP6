@@ -26,7 +26,7 @@ namespace shaiya
         ULONG npcId;
         UINT16 questId;
         bool success;
-        UINT8 rewardIndex;
+        UINT8 resultIndex;
         UINT32 exp;
         UINT32 gold;
         #ifdef WITH_EXTENDED_QUEST_RESULT

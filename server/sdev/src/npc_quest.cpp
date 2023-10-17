@@ -12,85 +12,66 @@
 #include <include/shaiya/include/SConnection.h>
 using namespace shaiya;
 
-// temporary
-#pragma pack(push, 1)
-struct Temp0903
-{
-    UINT16 opcode{ 0x903 };
-    ULONG npcId;
-    UINT16 questId;
-    bool success;
-    UINT8 rewardIndex;
-    UINT32 exp;
-    UINT32 gold;
-    UINT8 count;
-    UINT8 bag;
-    UINT8 slot;
-    UINT8 type;
-    UINT8 typeId;
-    PAD(10);
-};
-#pragma pack(pop)
-
 namespace npc_quest
 {
-    constexpr int max_reward_index = 2; // to-do: 5
-    constexpr int reward_list_size = 3;
+    constexpr int max_result_index = 5;
+    constexpr int result_list_size = 3;
 
     void send_admin_remove(CUser* user, CQuest* quest)
     {
-        Temp0903 packet{};
+        QuestEndResultOutgoing packet{};
         packet.questId = quest->id;
-        SConnection::Send(&user->connection, &packet, sizeof(Temp0903));
+        SConnection::Send(&user->connection, &packet, sizeof(QuestEndResultOutgoing));
     }
 
     void send_failure_result(CUser* user, CQuest* quest, ULONG npcId)
     {
-        Temp0903 packet{};
+        QuestEndResultOutgoing packet{};
         packet.npcId = npcId;
         packet.questId = quest->id;
-        SConnection::Send(&user->connection, &packet, sizeof(Temp0903));
+        SConnection::Send(&user->connection, &packet, sizeof(QuestEndResultOutgoing));
     }
 
     void send_success_result(CUser* user, CQuest* quest, Packet buffer)
     {
         auto npcId = util::read_bytes<std::uint32_t>(buffer, 2);
-        auto rewardIndex = util::read_bytes<std::uint8_t>(buffer, 9);
+        auto resultIndex = util::read_bytes<std::uint8_t>(buffer, 9);
 
-        if (rewardIndex > max_reward_index)
+        if (resultIndex > max_result_index)
         {
             send_failure_result(user, quest, npcId);
             return;
         }
 
-        Temp0903 packet{};
+        QuestEndResultOutgoing packet{};
         packet.npcId = npcId;
         packet.questId = quest->id;
         packet.success = true;
-        packet.rewardIndex = rewardIndex;
+        packet.resultIndex = resultIndex;
 
-        packet.exp = quest->questInfo->reward[rewardIndex].exp;
-        packet.gold = quest->questInfo->reward[rewardIndex].gold;
+        packet.exp = quest->questInfo->result[resultIndex].exp;
+        packet.gold = quest->questInfo->result[resultIndex].gold;
+        auto& result = quest->questInfo->result[resultIndex];
 
-        // temporary
-
-        int type = quest->questInfo->reward[rewardIndex].type;
-        int typeId = quest->questInfo->reward[rewardIndex].typeId;
-        // see ps_game.0x48DF68
-        std::uint8_t itemCount = 1;
-
-        int bag, slot;
-        auto itemInfo = std::make_unique<CGameData::ItemInfo*>();
-        if (CUser::QuestAddItem(user, type, typeId, itemCount, &bag, &slot, itemInfo.get()))
+        for (int i = 0; i < result_list_size; ++i)
         {
-            packet.count = itemCount;
-            packet.bag = static_cast<std::uint8_t>(bag);
-            packet.slot = static_cast<std::uint8_t>(slot);
-            packet.type = (*itemInfo)->type;
-            packet.typeId = (*itemInfo)->typeId;
+            int type = result.item[i].type;
+            int typeId = result.item[i].typeId;
+            int count = result.item[i].count;
+
+            int bag, slot;
+            auto itemInfo = std::make_unique<CGameData::ItemInfo*>();
+            if (CUser::QuestAddItem(user, type, typeId, count, &bag, &slot, itemInfo.get()))
+            {
+                packet.itemList[i].count = count;
+                packet.itemList[i].bag = static_cast<std::uint8_t>(bag);
+                packet.itemList[i].slot = static_cast<std::uint8_t>(slot);
+                packet.itemList[i].type = (*itemInfo)->type;
+                packet.itemList[i].typeId = (*itemInfo)->typeId;
+            }
         }
 
-        SConnection::Send(&user->connection, &packet, sizeof(Temp0903));
+        SConnection::Send(&user->connection, &packet, sizeof(QuestEndResultOutgoing));
     }
 }
 
