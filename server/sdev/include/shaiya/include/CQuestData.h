@@ -19,15 +19,10 @@ namespace shaiya
     struct QuestResult
     {
         UINT16 mobId;        //0x00
-        UINT8 mobCount;      //0x02
-        UINT8 itemTypeId;    //0x03
-        UINT8 itemCount;     //0x04
-        PAD(3);
-        UINT32 time;         //0x08
-        UINT16 hg;           //0x0C
-        UINT16 vg;           //0x0E
-        UINT8 og;            //0x10
-        PAD(3);
+        UINT8 minMobCount;   //0x02
+        PAD(1);
+        UINT8 minItemCount;  //0x04
+        PAD(15);
         UINT32 exp;          //0x14
         UINT32 gold;         //0x18
         // 0x1C
@@ -41,15 +36,10 @@ namespace shaiya
     struct QuestResult
     {
         UINT16 mobId;        //0x00
-        UINT8 mobCount;      //0x02
-        UINT8 itemTypeId;    //0x03
-        UINT8 itemCount;     //0x04
-        PAD(3);
-        UINT32 time;         //0x08
-        UINT16 hg;           //0x0C
-        UINT16 vg;           //0x0E
-        UINT8 og;            //0x10
-        PAD(3);
+        UINT8 minMobCount;   //0x02
+        PAD(1);
+        UINT8 minItemCount;  //0x04
+        PAD(15);
         UINT32 exp;          //0x14
         UINT32 gold;         //0x18
         UINT8 type;          //0x1C
@@ -75,7 +65,11 @@ namespace shaiya
         bool shootRogue;        //0x10D
         bool attackMage;        //0x10E
         bool defenseMage;       //0x10F
-        PAD(36);
+        PAD(8);
+        UINT16 prevQuestId;     //0x118
+        PAD(14);
+        UINT32 timeLimit;       //0x128
+        PAD(8);
         BOOL repeatable;        //0x134
         UINT8 startType;        //0x138
         UINT8 startNpcType;     //0x139

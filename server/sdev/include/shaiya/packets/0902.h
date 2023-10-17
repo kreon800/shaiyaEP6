@@ -10,5 +10,12 @@ namespace shaiya
         ULONG npcId;
         UINT16 questId;
     };
+
+    struct QuestStartOutgoing
+    {
+        UINT16 opcode{ 0x902 };
+        ULONG npcId;
+        UINT16 questId;
+    };
     #pragma pack(pop)
 }
