@@ -14,6 +14,14 @@ C# 7.3
 
 Open the project with Visual Studio. Go to the **Solution Explorer** tab, right-click the solution and choose **Restore NuGet Packages** to install [Parsec](https://github.com/matigramirez/Parsec). Build the project and copy **SetItem.SData** to the output directory (e.g. bin/Release). Run the application and follow the prompts.
 
+## Code Page Identifiers
+
+https://learn.microsoft.com/en-us/windows/win32/intl/code-page-identifiers
+
+## Client Format
+
+The output file will be encrypted.
+
 ## Server Format
 
 The application will extract the file to a format that is easy to read and edit.
