@@ -10,7 +10,7 @@ namespace shaiya
         float y;
         float z;
 
-        static double Distance2(SVector* pos1/*ecx*/, SVector* pos2/*eax*/);
+        static double EuclideanDistance(SVector* u, SVector* v);
     };
     #pragma pack(pop)
 }
