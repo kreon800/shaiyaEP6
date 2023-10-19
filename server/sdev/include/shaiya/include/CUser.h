@@ -534,8 +534,8 @@ namespace shaiya
         BOOL battlefieldRune;              //0x597C
         PAD(320);
         UINT32 points;                     //0x5AC0 
-        BOOL disableShop;                  //0x5AC4
-        PAD(4);
+        volatile UINT disableShop;         //0x5AC4
+        TickCount reloadPointTime;         //0x5AC8
         Array<BillingItem, 240> giftBox;   //0x5ACC
         // 0x5D9C
         PAD(1284);

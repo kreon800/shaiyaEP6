@@ -4,7 +4,12 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct CashPoint
+    struct CashPointIncoming
+    {
+        UINT16 opcode{ 0x2605 };
+    };
+
+    struct CashPointOutgoing
     {
         UINT16 opcode{ 0x2605 };
         UINT32 points;

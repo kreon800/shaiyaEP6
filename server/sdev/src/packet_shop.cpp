@@ -6,10 +6,13 @@
 #include <include/main.h>
 #include <include/util.h>
 #include <include/shaiya/packets/2602.h>
+#include <include/shaiya/packets/2605.h>
+#include <include/shaiya/packets/dbAgent/0E06.h>
 #include <include/shaiya/include/CClientToMgr.h>
 #include <include/shaiya/include/CGameData.h>
 #include <include/shaiya/include/CUser.h>
 #include <include/shaiya/include/SConnection.h>
+#include <include/shaiya/include/SConnectionTServerReconnect.h>
 #include <include/shaiya/include/ServerTime.h>
 using namespace shaiya;
 
@@ -132,6 +135,23 @@ namespace packet_shop
             }).detach();
     }
 
+    void send_reload_point(CUser* user)
+    {
+        ReloadPointIncoming packet{ 0xE06, user->userId };
+        SConnectionTServerReconnect::Send(g_pClientToDBAgent, &packet, sizeof(ReloadPointIncoming));
+    }
+
+    void reload_point_handler(CUser* user, UINT32 points)
+    {
+        if (InterlockedCompareExchange(&user->disableShop, 0, 0))
+            return;
+
+        InterlockedExchange(&user->points, points);
+
+        CashPointOutgoing packet{ 0x2605, user->points };
+        SConnection::Send(&user->connection, &packet, sizeof(CashPointOutgoing));
+    }
+
     void send_purchase(CUser* user, Packet buffer)
     {
         constexpr int packet_size_without_list = 37;
@@ -174,6 +194,27 @@ namespace packet_shop
     }
 }
 
+unsigned u0x4ED2D0 = 0x4ED2D0;
+unsigned u0x47A4A9 = 0x47A4A9;
+void __declspec(naked) naked_0x47A4A4()
+{
+    __asm
+    {
+        // original
+        call u0x4ED2D0
+
+        pushad
+
+        push esi // user
+        call packet_shop::send_reload_point
+        add esp,0x4
+
+        popad
+
+        jmp u0x47A4A9
+    }
+}
+
 unsigned u0x488D5F = 0x488D5F;
 void __declspec(naked) naked_0x48876F()
 {
@@ -189,20 +230,6 @@ void __declspec(naked) naked_0x48876F()
 
         // original
         jmp u0x488D5F
-    }
-}
-
-unsigned u0x47D163 = 0x47D163;
-void __declspec(naked) naked_0x47D151()
-{
-    __asm 
-    {
-        xor ebp,ebp
-        add ebx,0x5998
-        mov eax,[esi+0x6]
-        // user->points
-        mov[ecx+0x5AC0],eax
-        jmp u0x47D163
     }
 }
 
@@ -246,6 +273,37 @@ void __declspec(naked) naked_0x47D3D7()
     }
 }
 
+unsigned u0x47D52A = 0x47D52A;
+void __declspec(naked) naked_0x47D525()
+{
+    __asm
+    {
+        cmp word ptr[esi],0xE06
+        jne exit_switch
+
+        // case 0xE06
+
+        pushad
+
+        mov eax,[esi+0x6]
+
+        push eax // points
+        push ebx // user
+        call packet_shop::reload_point_handler
+        add esp,0x8
+
+        popad
+
+        exit_switch:
+        mov al,0x1
+        pop edi
+        pop ebp
+        pop ebx
+
+        jmp u0x47D52A
+    }
+}
+
 unsigned u0x488709 = 0x488709;
 void __declspec(naked) naked_0x4886E0()
 {
@@ -275,14 +333,16 @@ void __declspec(naked) naked_0x4886E0()
 
 void hook::packet_shop()
 {
+    // CUser::PacketCharacter case 0x104
+    util::detour((void*)0x47A4A4, naked_0x47A4A4, 5);
     // CUser::PacketShop case 0x2602
     util::detour((void*)0x48876F, naked_0x48876F, 5);
-    // CUser::PacketUserDBPoint case 0xE01
-    util::detour((void*)0x47D151, naked_0x47D151, 6);
     // CUser::PacketShop case 0x2603
     util::detour((void*)0x488A80, naked_0x488A80, 5);
     // CUser::PacketUserDBPoint case 0xE03
     util::detour((void*)0x47D3D7, naked_0x47D3D7, 5);
+    // CUser::PacketUserDBPoint case 0xE06
+    util::detour((void*)0x47D525, naked_0x47D525, 5);
 
     // fake a 0x105 event
     packet_shop::set_pay_letter_enable_async(true);

@@ -160,6 +160,7 @@
     <ClInclude Include="include\shaiya\packets\dbAgent\060E.h" />
     <ClInclude Include="include\shaiya\packets\dbAgent\060F.h" />
     <ClInclude Include="include\shaiya\packets\dbAgent\0717.h" />
+    <ClInclude Include="include\shaiya\packets\dbAgent\0E06.h" />
     <ClInclude Include="include\shaiya\packets\F90B.h" />
     <ClInclude Include="include\util.h" />
   </ItemGroup>

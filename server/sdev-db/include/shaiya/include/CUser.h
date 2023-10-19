@@ -53,7 +53,9 @@ namespace shaiya
         PAD(15152);
         Array<Character, 5> characterList;  //0x3B6C
         // 0x3D38
-        PAD(19136);
+        PAD(17340);
+        UINT32 points;                      //0x80F4
+        PAD(1792);
         SConnection* connection;            //0x87F8
         PAD(92);
         // 0x8858

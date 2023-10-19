@@ -10,6 +10,10 @@ Visual Studio 2022
 
 C++ 20
 
+## Documentation
+
+Please read the [wiki](https://github.com/kurtekat/shaiya-episode-6/wiki) before requesting support.
+
 ## Inspiration
 
 This project would not exist without the contributions of these developers. 
