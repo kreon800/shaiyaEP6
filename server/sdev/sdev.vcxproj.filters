@@ -28,6 +28,9 @@
     <Filter Include="include\shaiya\packets\dbAgent">
       <UniqueIdentifier>{ab28d908-8385-4b38-82b5-62f25276723e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\shaiya\packets\session">
+      <UniqueIdentifier>{7de60dcc-362b-4a20-86ac-3c45dccde63b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\dllmain.cpp">
@@ -456,6 +459,24 @@
       <Filter>include\shaiya\packets</Filter>
     </ClInclude>
     <ClInclude Include="include\shaiya\packets\dbAgent\0E06.h">
+      <Filter>include\shaiya\packets\dbAgent</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\session\1B01.h">
+      <Filter>include\shaiya\packets\session</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\session\1B02.h">
+      <Filter>include\shaiya\packets\session</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\session\1B03.h">
+      <Filter>include\shaiya\packets\session</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\session\0105.h">
+      <Filter>include\shaiya\packets\session</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\2603.h">
+      <Filter>include\shaiya\packets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\dbAgent\0E03.h">
       <Filter>include\shaiya\packets\dbAgent</Filter>
     </ClInclude>
   </ItemGroup>

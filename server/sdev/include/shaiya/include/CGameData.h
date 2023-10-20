@@ -385,11 +385,12 @@ namespace shaiya
 
         struct ProductInfo
         {
-            Array<char, 24> productCode;  //0x00
-            Array<UINT32, 24> itemId;     //0x18
-            Array<UINT8, 24> itemCount;   //0x78
-            UINT32 price;                 //0x90
-            Array<char, 52> itemName;     //0x94
+            ProductCode productCode;     //0x00
+            PAD(3);
+            Array<UINT32, 24> itemId;    //0x18
+            Array<UINT8, 24> itemCount;  //0x78
+            UINT32 price;                //0x90
+            Array<char, 52> itemName;    //0x94
             PAD(56);
             // 0x100
         };

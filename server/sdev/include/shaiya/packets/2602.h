@@ -7,9 +7,8 @@ namespace shaiya
     enum struct ProductPurchaseResult : UINT8
     {
         Success,
-        // or g_bDisableShop == true
-        ProductInfoIsNull,
-        InsufficientCash,
+        ProductCodeDoesNotExist,
+        InsufficientPoints,
         InventoryFull
     };
 

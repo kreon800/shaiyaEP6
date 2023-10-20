@@ -50,12 +50,18 @@ namespace shaiya
     {
         PAD(56);
         UserId userId;                      //0x38
-        PAD(15152);
+        PAD(36);
+        CharId charId;                      //0x60
+        PAD(15112);
         Array<Character, 5> characterList;  //0x3B6C
         // 0x3D38
         PAD(17340);
         UINT32 points;                      //0x80F4
-        PAD(1792);
+        PAD(380);
+        ProductCode productCode;            //0x8274
+        PAD(3);
+        UINT32 itemPrice;                   //0x828C
+        PAD(1384);
         SConnection* connection;            //0x87F8
         PAD(92);
         // 0x8858

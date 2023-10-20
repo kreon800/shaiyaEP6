@@ -146,6 +146,7 @@
     <ClInclude Include="include\shaiya\packets\2501.h" />
     <ClInclude Include="include\shaiya\packets\2502.h" />
     <ClInclude Include="include\shaiya\packets\2602.h" />
+    <ClInclude Include="include\shaiya\packets\2603.h" />
     <ClInclude Include="include\shaiya\packets\2605.h" />
     <ClInclude Include="include\shaiya\packets\dbAgent\0403.h" />
     <ClInclude Include="include\shaiya\packets\dbAgent\0602.h" />
@@ -160,8 +161,13 @@
     <ClInclude Include="include\shaiya\packets\dbAgent\060E.h" />
     <ClInclude Include="include\shaiya\packets\dbAgent\060F.h" />
     <ClInclude Include="include\shaiya\packets\dbAgent\0717.h" />
+    <ClInclude Include="include\shaiya\packets\dbAgent\0E03.h" />
     <ClInclude Include="include\shaiya\packets\dbAgent\0E06.h" />
     <ClInclude Include="include\shaiya\packets\F90B.h" />
+    <ClInclude Include="include\shaiya\packets\session\0105.h" />
+    <ClInclude Include="include\shaiya\packets\session\1B01.h" />
+    <ClInclude Include="include\shaiya\packets\session\1B02.h" />
+    <ClInclude Include="include\shaiya\packets\session\1B03.h" />
     <ClInclude Include="include\util.h" />
   </ItemGroup>
   <ItemGroup>

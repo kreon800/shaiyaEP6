@@ -1,4 +1,5 @@
 #include <array>
+#include <string>
 #include <thread>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -8,6 +9,9 @@
 #include <include/shaiya/packets/2602.h>
 #include <include/shaiya/packets/2605.h>
 #include <include/shaiya/packets/dbAgent/0E06.h>
+#include <include/shaiya/packets/session/0105.h>
+#include <include/shaiya/packets/session/1B02.h>
+#include <include/shaiya/packets/session/1B03.h>
 #include <include/shaiya/include/CClientToMgr.h>
 #include <include/shaiya/include/CGameData.h>
 #include <include/shaiya/include/CUser.h>
@@ -16,64 +20,9 @@
 #include <include/shaiya/include/ServerTime.h>
 using namespace shaiya;
 
-unsigned g_nPayLetterEnable = 0x58799C;
-
-// CClientToMgr::OnRecv
-// ebx = packet
-
-#pragma pack(push, 1)
-// this packet is sent from ps_session at address 0x402EF0
-// CClientToMgr::OnRecv handles it at address 0x4069CB and returns to a loop at address 0x4ECF40
-// the result is g_nPayLetterEnable being set to false because the PayLetter server is not implemented
-struct PacketBuffer0105
-{
-    ULONG u0x00;
-    void* p0x04;
-    ULONG u0x08;
-    ULONG u0x0C;
-    bool enable;  // ebx+0x02
-    // 0x11
-};
-
-// billing packets
-
-struct PacketBuffer1B02
-{
-    ULONG u0x00;
-    void* p0x04;
-    ULONG u0x08;
-    ULONG u0x0C;
-    UserId userId;                // ebx+0x02
-    ULONG charId;                 // ebx+0x06
-    UINT8 result;                 // ebx+0x0A
-    Array<char, 25> itemKey;      // ebx+0x0B
-    UINT32 u0x32;                 // ebx+0x24
-    Array<char, 16> orderNumber;  // ebx+0x28
-    // user->id
-    ULONG id;                     // ebx+0x38
-    UINT32 u0x4A;                 // ebx+0x3C
-    UINT32 itemCount;             // ebx+0x40
-    // 0x52
-};
-
-struct PacketBuffer1B03
-{
-    ULONG u0x00;
-    void* p0x04;
-    ULONG u0x08;
-    ULONG u0x0C;
-    UserId userId;            // ebx+0x02
-    ProductCode productCode;  // ebx+0x06
-    CharName targetName;      // ebx+0x1B
-    UINT32 itemPrice;         // ebx+0x30
-    UINT32 points;            // ebx+0x34
-    // 0x46
-};
-#pragma pack(pop)
-
 namespace packet_shop
 {
-    void raise_event_0x105(bool enable)
+    void raise_event_0105(bool enable)
     {
         PacketBuffer0105 packet{};
         packet.u0x00 = 0;
@@ -85,7 +34,7 @@ namespace packet_shop
         CClientToMgr::OnRecv(&packet);
     }
 
-    void raise_event_0x1B02(CUser* user)
+    void raise_event_1B02(CUser* user)
     {
         PacketBuffer1B02 packet{};
         packet.u0x00 = 0;
@@ -98,7 +47,7 @@ namespace packet_shop
         CClientToMgr::OnRecv(&packet);
     }
 
-    void raise_event_0x1B03(CUser* user, const char* targetName, const char* productCode, int itemPrice)
+    void raise_event_1B03(CUser* user, const std::string& targetName, const std::string& productCode, int itemPrice)
     {
         PacketBuffer1B03 packet{};
         packet.u0x00 = 0;
@@ -107,31 +56,31 @@ namespace packet_shop
         // 00 00 03 1B
         packet.u0x0C = 0x1B030000;
         packet.userId = user->userId;
-        std::memcpy(&packet.productCode, productCode, packet.productCode.size());
-        std::memcpy(&packet.targetName, targetName, packet.targetName.size());
+        std::memcpy(&packet.productCode, productCode.data(), packet.productCode.size());
+        std::memcpy(&packet.targetName, targetName.data(), packet.targetName.size());
         packet.itemPrice = itemPrice;
         packet.points = user->points;
         CClientToMgr::OnRecv(&packet);
     }
 
-    void purchase_item_async(CUser* user)
+    void product_purchase_async(CUser* user)
     {
         std::thread([=] {
-            raise_event_0x1B02(user);
+            raise_event_1B02(user);
             }).detach();
     }
 
-    void send_present_async(CUser* user, const char* targetName, const char* productCode, int usePoint)
+    void present_purchase_async(CUser* user, const char* targetName, const char* productCode, int usePoint)
     {
         std::thread([=] {
-            raise_event_0x1B03(user, targetName, productCode, usePoint);
+            raise_event_1B03(user, targetName, productCode, usePoint);
             }).detach();
     }
 
     void set_pay_letter_enable_async(bool enable)
     {
         std::thread([=] {
-            raise_event_0x105(enable);
+            raise_event_0105(enable);
             }).detach();
     }
 
@@ -223,7 +172,7 @@ void __declspec(naked) naked_0x48876F()
         pushad
 
         push edi // user
-        call packet_shop::purchase_item_async
+        call packet_shop::product_purchase_async
         add esp,0x4
 
         popad
@@ -246,7 +195,7 @@ void __declspec(naked) naked_0x488A80()
         lea eax,[esp+0x167]
         push eax // targetName
         push edi // user
-        call packet_shop::send_present_async
+        call packet_shop::present_purchase_async
         add esp,0x10
 
         popad
