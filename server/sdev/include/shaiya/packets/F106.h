@@ -4,23 +4,23 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct NoticeAllIncoming
+    struct ChatAdminAllIncoming
     {
-        UINT16 opcode{ 0xF90B };
-        UINT16 unknown;
+        UINT16 opcode{ 0xF106 };
         // w/ null-terminator
-        UINT8 textLength;
+        UINT16 textLength;
         // size = textLength
-        Array<char, 128> text;
+        Array<char, 2000> text;
     };
 
-    struct NoticeAllOutgoing
+    // see /nt
+    struct ChatAdminAllOutgoing
     {
-        UINT16 opcode{ 0xF90B };
+        UINT16 opcode{ 0xF106 };
         // w/ null-terminator
-        UINT8 textLength;
+        UINT16 textLength;
         // size = textLength
-        Array<char, 128> text;
+        Array<char, 2000> text;
     };
     #pragma pack(pop)
 }

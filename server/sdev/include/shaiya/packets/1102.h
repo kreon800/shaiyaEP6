@@ -4,19 +4,21 @@
 namespace shaiya
 {
     #pragma pack(push, 1)
-    struct NoticeAllIncoming
+    struct ChatWhisperIncoming
     {
-        UINT16 opcode{ 0xF90B };
-        UINT16 unknown;
+        UINT16 opcode{ 0x1102 };
+        CharName senderName;
         // w/ null-terminator
         UINT8 textLength;
         // size = textLength
         Array<char, 128> text;
     };
 
-    struct NoticeAllOutgoing
+    struct ChatWhisperOutgoing
     {
-        UINT16 opcode{ 0xF90B };
+        UINT16 opcode{ 0x1102 };
+        bool isToSender;
+        CharName senderName;
         // w/ null-terminator
         UINT8 textLength;
         // size = textLength
