@@ -117,7 +117,7 @@ namespace packet_exchange
         packet.gems = item->gems;
 
         #ifdef WITH_ITEM_DURATION
-        packet.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
+        packet.toDate = ServerTime::GetExpireTime(item->makeTime, item->itemInfo->range);
         packet.fromDate = packet.toDate ? item->makeTime : 0;
         #endif
 
@@ -147,7 +147,7 @@ namespace packet_exchange
         packet.gems = item->gems;
 
         #ifdef WITH_ITEM_DURATION
-        packet.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
+        packet.toDate = ServerTime::GetExpireTime(item->makeTime, item->itemInfo->range);
         packet.fromDate = packet.toDate ? item->makeTime : 0;
         #endif
 

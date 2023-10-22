@@ -129,7 +129,7 @@ namespace packet_shop
             auto itemInfo = CGameData::GetItemInfo(item2602.type, item2602.typeId);
             if (itemInfo)
             {
-                item2602.toDate = ServerTime::GetItemExpireTime(packet.purchaseDate, itemInfo);
+                item2602.toDate = ServerTime::GetExpireTime(packet.purchaseDate, itemInfo->range);
                 item2602.fromDate = item2602.toDate ? packet.purchaseDate : 0;
             }
             #endif

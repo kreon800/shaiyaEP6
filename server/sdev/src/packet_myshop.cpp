@@ -42,7 +42,7 @@ namespace packet_myshop
             item230B.gems = item->gems;
 
             #ifdef WITH_ITEM_DURATION
-            item230B.toDate = ServerTime::GetItemExpireTime(item->makeTime, item->itemInfo);
+            item230B.toDate = ServerTime::GetExpireTime(item->makeTime, item->itemInfo->range);
             item230B.fromDate = item230B.toDate ? item->makeTime : 0;
             #endif
 

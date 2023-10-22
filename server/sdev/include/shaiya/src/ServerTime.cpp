@@ -2,35 +2,29 @@
 #include <include/shaiya/include/ServerTime.h>
 using namespace shaiya;
 
-ULONG ServerTime::GetItemExpireTime(ULONG makeTime, CGameData::ItemInfo* itemInfo)
+ULONG ServerTime::GetExpireTime(ULONG makeTime, int days)
 {
-    if (!itemInfo->range)
+    if (!makeTime || !days)
         return 0;
 
-    auto type = static_cast<ItemType>(itemInfo->type);
-    if (type == ItemType::Pet || type == ItemType::Costume)
-    {
-        constexpr long day_as_seconds = 86400;
-        constexpr long second_as_microseconds = 10000000;
+    constexpr long day_as_seconds = 86400;
+    constexpr long second_as_microseconds = 10000000;
 
-        SYSTEMTIME st{};
-        ServerTime::ServerTimeToSystemTime(makeTime, &st);
+    SYSTEMTIME st{};
+    ServerTime::ServerTimeToSystemTime(makeTime, &st);
 
-        FILETIME ft{};
-        SystemTimeToFileTime(&st, &ft);
+    FILETIME ft{};
+    SystemTimeToFileTime(&st, &ft);
 
-        ULARGE_INTEGER li{ ft.dwLowDateTime, ft.dwHighDateTime };
-        auto seconds = static_cast<long long>(itemInfo->range) * day_as_seconds;
+    ULARGE_INTEGER li{ ft.dwLowDateTime, ft.dwHighDateTime };
+    auto seconds = static_cast<long long>(days) * day_as_seconds;
 
-        li.QuadPart += seconds * second_as_microseconds;
-        ft.dwLowDateTime = li.LowPart;
-        ft.dwHighDateTime = li.HighPart;
+    li.QuadPart += seconds * second_as_microseconds;
+    ft.dwLowDateTime = li.LowPart;
+    ft.dwHighDateTime = li.HighPart;
 
-        FileTimeToSystemTime(&ft, &st);
-        return ServerTime::SystemTimeToServerTime(&st);
-    }
-
-    return 0;
+    FileTimeToSystemTime(&ft, &st);
+    return ServerTime::SystemTimeToServerTime(&st);
 }
 
 ULONG ServerTime::GetSystemTime()

@@ -60,7 +60,7 @@ namespace shaiya
 
     struct ServerTime
     {
-        static ULONG GetItemExpireTime(ULONG makeTime, CGameData::ItemInfo* itemInfo);
+        static ULONG GetExpireTime(ULONG makeTime, int days);
         static ULONG GetSystemTime();
         static ULONG ServerTimeToSystemTime(ULONG time/*eax*/, LPSYSTEMTIME lpst/*ecx*/);
         static ULONG SystemTimeToServerTime(LPSYSTEMTIME lpst);
