@@ -55,6 +55,7 @@ namespace npc_quest
 
         for (int i = 0; i < result_list_size; ++i)
         {
+            #ifdef WITH_EXTENDED_QUEST_RESULT
             int type = result.item[i].type;
             int typeId = result.item[i].typeId;
             int count = result.item[i].count;
@@ -69,6 +70,7 @@ namespace npc_quest
                 packet.itemList[i].type = (*itemInfo)->type;
                 packet.itemList[i].typeId = (*itemInfo)->typeId;
             }
+            #endif
         }
 
         SConnection::Send(&user->connection, &packet, sizeof(QuestEndResultOutgoing));
