@@ -3,6 +3,7 @@
 #include <thread>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <strsafe.h>
 
 #include <include/main.h>
 #include <include/util.h>
@@ -56,8 +57,10 @@ namespace packet_shop
         // 00 00 03 1B
         packet.u0x0C = 0x1B030000;
         packet.userId = user->userId;
-        std::memcpy(&packet.productCode, productCode.data(), packet.productCode.size());
-        std::memcpy(&packet.targetName, targetName.data(), packet.targetName.size());
+
+        StringCbCopyA(packet.productCode.data(), packet.productCode.size(), productCode.data());
+        StringCbCopyA(packet.targetName.data(), packet.targetName.size(), targetName.data());
+
         packet.itemPrice = itemPrice;
         packet.points = user->points;
         CClientToMgr::OnRecv(&packet);

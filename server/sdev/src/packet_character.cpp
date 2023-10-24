@@ -1,6 +1,7 @@
 #include <string>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <strsafe.h>
 
 #include <include/main.h>
 #include <include/util.h>
@@ -52,7 +53,8 @@ namespace packet_character
             return;
         }
 
-        std::memcpy(request.charName.data(), charName.data(), charName.length());
+        StringCbCopyA(request.charName.data(), request.charName.size(), charName.data());
+
         int length = packet_size_without_name + charName.length() + 1;
         SConnectionTServerReconnect::Send(g_pClientToDBAgent, &request, length);
     }
@@ -147,7 +149,7 @@ namespace packet_character
         character.mana = dbCharacter->mana;
         character.stamina = dbCharacter->stamina;
         std::memcpy(&character.equipment, &dbCharacter->equipment, sizeof(Equipment0403));
-        std::memcpy(character.charName.data(), dbCharacter->charName.data(), character.charName.size() - 1);
+        StringCbCopyA(character.charName.data(), character.charName.size(), dbCharacter->charName.data());
         character.deleted = dbCharacter->deleted;
         character.nameChange = dbCharacter->nameChange;
         character.cloakBadge = dbCharacter->cloakBadge;
