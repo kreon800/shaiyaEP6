@@ -22,9 +22,4 @@ https://learn.microsoft.com/en-us/windows/win32/intl/code-page-identifiers
 
 ## Item Duration
 
-The client stores the duration as seconds.
-
-| Days    | Seconds    |
-|---------|------------|
-| 1       | 86400      |
-| 30      | 2592000    |
+See the [wiki](https://github.com/kurtekat/shaiya-episode-6/wiki/Getting-Started#item-duration) for more information.
