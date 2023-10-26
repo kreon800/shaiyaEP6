@@ -15,6 +15,7 @@ namespace hook
     void npc_quest();
     void packet_character();
     void packet_gem();
+    void packet_mailbox();
     void packet_market();
     void packet_myshop();
     void user_equipment();

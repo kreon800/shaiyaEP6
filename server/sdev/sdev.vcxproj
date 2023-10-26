@@ -42,6 +42,7 @@
     <ClCompile Include="src\item_effect.cpp" />
     <ClCompile Include="src\npc_quest.cpp" />
     <ClCompile Include="src\packet_exchange.cpp" />
+    <ClCompile Include="src\packet_mailbox.cpp" />
     <ClCompile Include="src\packet_market.cpp" />
     <ClCompile Include="src\packet_myshop.cpp" />
     <ClCompile Include="src\user_equipment.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="include\shaiya\packets\1108.h" />
     <ClInclude Include="include\shaiya\packets\1111.h" />
     <ClInclude Include="include\shaiya\packets\1112.h" />
+    <ClInclude Include="include\shaiya\packets\dbAgent\0302.h" />
     <ClInclude Include="include\shaiya\packets\F101.h" />
     <ClInclude Include="include\shaiya\packets\2202.h" />
     <ClInclude Include="include\shaiya\packets\2203.h" />
@@ -185,6 +187,7 @@
     <ClInclude Include="include\shaiya\packets\session\1B01.h" />
     <ClInclude Include="include\shaiya\packets\session\1B02.h" />
     <ClInclude Include="include\shaiya\packets\session\1B03.h" />
+    <ClInclude Include="include\shaiya\packets\userLog\0302.h" />
     <ClInclude Include="include\util.h" />
   </ItemGroup>
   <ItemGroup>

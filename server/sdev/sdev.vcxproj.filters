@@ -31,6 +31,9 @@
     <Filter Include="include\shaiya\packets\session">
       <UniqueIdentifier>{7de60dcc-362b-4a20-86ac-3c45dccde63b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\shaiya\packets\userLog">
+      <UniqueIdentifier>{b6c75488-bb27-4100-8a85-483a2aec988c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\dllmain.cpp">
@@ -136,6 +139,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\util.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\packet_mailbox.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -529,6 +535,12 @@
     </ClInclude>
     <ClInclude Include="include\shaiya\packets\F106.h">
       <Filter>include\shaiya\packets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\dbAgent\0302.h">
+      <Filter>include\shaiya\packets\dbAgent</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\userLog\0302.h">
+      <Filter>include\shaiya\packets\userLog</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
