@@ -94,12 +94,10 @@ namespace item_effect
         if (user->stateType == StateType::Death)
             return;
 
-        // to-do
-        if (user->unknown0x5880)
+        if (user->dbAgentDisconnect)
             return;
 
-        // to-do
-        if (user->unknown0x1358)
+        if (user->debuffTypeDetail)
             return;
 
         auto bag = util::read_bytes<std::uint8_t>(buffer, 2);
@@ -156,8 +154,8 @@ void __declspec(naked) naked_0x47468A()
         mov edx,[esp+0xB7C]
         mov edi,[esp+0xB78]
 
-        push edx // bag
-        push edi // slot
+        push edx // slot
+        push edi // bag
         push ecx // effect
         push ebx // item
         push ebp // user

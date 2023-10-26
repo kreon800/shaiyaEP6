@@ -20,6 +20,15 @@ namespace shaiya
     FWDDECL CZone;
 
     #pragma pack(push, 1)
+    // custom
+    struct ActivableSkill
+    {
+        UINT16 skillId;
+        UINT8 skillLv;
+        bool triggered;
+        TickCount keepTime;
+    };
+
     enum struct AttackType : UINT32
     {
         None,
@@ -141,6 +150,8 @@ namespace shaiya
         MoveWar,
         // custom
         TownTeleportScroll,
+        // GetZoneByMapID Error, MapID=200
+        Unknown10,
         MoveChar = 0xF904,
         MoveCharZone = 0xF905,
         MoveParty = 0xF90C,
@@ -190,15 +201,6 @@ namespace shaiya
         None,
         User,
         Mob
-    };
-
-    // custom
-    struct ActivableSkill
-    {
-        UINT16 skillId;
-        UINT8 skillLv;
-        bool triggered;
-        TickCount keepTime;
     };
 
     enum struct VehicleState : UINT32
@@ -321,20 +323,28 @@ namespace shaiya
         BOOL immobilized;                  //0x1344
         BOOL unconscious;                  //0x1348
         BOOL sleeping;                     //0x134C
-        PAD(4);
+        BOOL degenerated;                  //0x1350
         UINT16 transformMobId;             //0x1354
         PAD(2);
-        UINT32 unknown0x1358;              //0x1358
-        PAD(4);
+        // typeDetail 74, 75 and 76
+        UINT32 debuffTypeDetail;           //0x1358
+        // typeDetail 70
+        ULONG debuffCasterId;              //0x135C
         ShapeType shapeType;               //0x1360
         PAD(3);
-        UINT32 targetTransformMobId;       //0x1364
+        UINT32 shapeMobId;                 //0x1364
         CloneUser* clone;                  //0x1368
         BOOL invincible;                   //0x136C
         bool preventDeath;                 //0x1370
         bool preventDying;                 //0x1371
         bool preventAggro;                 //0x1372
-        PAD(17);
+        PAD(5);
+        bool passiveSkillApplied;          //0x1378
+        PAD(1);
+        UINT16 passiveSkillId;             //0x137A
+        UINT8 passiveSkillLv;              //0x137C
+        PAD(3);
+        TickCount passiveSkillUseTime;     //0x1380
         UINT32 abilityMeleeHitRate;        //0x1384
         UINT32 abilityMeleeAtkPower;       //0x1388
         UINT32 abilityMeleeEvasionRate;    //0x138C
@@ -433,9 +443,7 @@ namespace shaiya
         UINT8 townScrollLocation;          //0x1534
         PAD(3);
         ActivableSkill activableSkill;     //0x1538
-        unsigned u0x1540;
-        //
-        PAD(16);
+        PAD(20);
         TargetType targetType;             //0x1554
         // CUser->id, CMob->id
         ULONG targetId;                    //0x1558
@@ -495,7 +503,7 @@ namespace shaiya
         PAD(34);
         LogoutType logoutType;             //0x5878
         TickCount logoutTime;              //0x587C
-        BOOL unknown0x5880;                //0x5880
+        BOOL dbAgentDisconnect;            //0x5880
         PAD(44);
         UINT32 numWhereErrors;             //0x58B0
         RecallType recallType;             //0x58B4

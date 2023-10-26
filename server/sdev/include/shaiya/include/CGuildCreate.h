@@ -10,8 +10,8 @@ namespace shaiya
     {
         PAD(36);
         UINT32 joinCount;  //0x24
-        CharId bossId;     //0x28
-        CUser* boss;       //0x2C
+        CharId leaderId;   //0x28
+        CUser* leader;     //0x2C
         // 0x30
         Array<CharId, 7> userList;
         // 0x4C

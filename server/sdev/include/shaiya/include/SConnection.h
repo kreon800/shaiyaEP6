@@ -6,7 +6,10 @@ namespace shaiya
     #pragma pack(push, 1)
     struct SConnection
     {
-        PAD(104);
+        PAD(24);
+        int closeType;   //0x18
+        int closeErr;    //0x1C
+        PAD(72);
         Socket socket;   //0x68
         PAD(4);
         ULONG ipv4Addr;  //0x70

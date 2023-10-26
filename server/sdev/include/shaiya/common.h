@@ -258,6 +258,9 @@ enum MapId
     DimensionCrack,
     Pantanasa,
     Theodores,
+
+    // MapWar
+
     ProeliumFrontierBattleZone = 102,
     CantabilianBattleZone,
     DWaterBorderlandBattleZone,
@@ -316,7 +319,8 @@ enum struct ShapeType : UINT8
     Knight = 12,
     Stealth = 13,
     Disguise = 100,
-    Transformation = 102,
+    Degeneration,
+    Transformation,
 };
 
 enum SkillId
