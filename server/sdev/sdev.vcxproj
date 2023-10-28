@@ -189,10 +189,14 @@
     <ClInclude Include="include\shaiya\packets\session\1B03.h" />
     <ClInclude Include="include\shaiya\packets\userLog\0302.h" />
     <ClInclude Include="include\util.h" />
+    <ClInclude Include="resources\resource.h" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resources\sdev.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -542,5 +542,13 @@
     <ClInclude Include="include\shaiya\packets\userLog\0302.h">
       <Filter>include\shaiya\packets\userLog</Filter>
     </ClInclude>
+    <ClInclude Include="resources\resource.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resources\sdev.rc">
+      <Filter>resources</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
