@@ -19,9 +19,9 @@ namespace SetItemTool
         public int Health { get; set; }
         public int Mana { get; set; }
         public int Stamina { get; set; }
-        public int MeleeAttackPower { get; set; }
-        public int RangeAttackPower { get; set; }
-        public int MagicAttackPower { get; set; }
+        public int AttackPower { get; set; }
+        public int RangedAttackPower { get; set; }
+        public int MagicPower { get; set; }
 
         public void Read(SBinaryReader binaryReader)
         {
@@ -42,9 +42,9 @@ namespace SetItemTool
             Health = int.Parse(text[6]);
             Mana = int.Parse(text[7]);
             Stamina = int.Parse(text[8]);
-            MeleeAttackPower = int.Parse(text[9]);
-            RangeAttackPower = int.Parse(text[10]);
-            MagicAttackPower = int.Parse(text[11]);
+            AttackPower = int.Parse(text[9]);
+            RangedAttackPower = int.Parse(text[10]);
+            MagicPower = int.Parse(text[11]);
         }
 
         public void Write(SBinaryWriter binaryWriter)
@@ -60,9 +60,9 @@ namespace SetItemTool
             Health,
             Mana,
             Stamina,
-            MeleeAttackPower,
-            RangeAttackPower,
-            MagicAttackPower
+            AttackPower,
+            RangedAttackPower,
+            MagicPower
             );
 
             binaryWriter.Write(text);

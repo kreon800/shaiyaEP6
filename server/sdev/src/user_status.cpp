@@ -42,7 +42,7 @@ namespace user_status
         luck -= user->luck;
         packet.luck = luck;
 
-        auto attackPower = user->minMeleeAtkPower;
+        auto attackPower = user->minAttackPower;
 
         auto& weapon = user->inventory[0][EquipmentSlot::Weapon];
         if (weapon)
@@ -52,7 +52,7 @@ namespace user_status
             case CGameData::ItemRealType::Javelin:
             case CGameData::ItemRealType::Bow:
             case CGameData::ItemRealType::Crossbow:
-                attackPower = user->minRangeAtkPower;
+                attackPower = user->minRangedAttackPower;
                 break;
             default:
                 break;
@@ -60,15 +60,15 @@ namespace user_status
         }
 
         packet.minAttackPower = attackPower;
-        attackPower += user->maxAddAtkPower;
+        attackPower += user->maxAddAttackPower;
         packet.maxAttackPower = attackPower;
 
         auto magicPower = user->minMagicPower;
         packet.minMagicPower = magicPower;
-        magicPower += user->maxAddAtkPower;
+        magicPower += user->maxAddAttackPower;
         packet.maxMagicPower = magicPower;
 
-        packet.defense = user->meleeDefense;
+        packet.defense = user->defense;
         packet.resistance = user->magicResistance;
 
         SConnection::Send(&user->connection, &packet, sizeof(UserStatus));

@@ -21,9 +21,9 @@ namespace shaiya
         int health;
         int mana;
         int stamina;
-        int meleeAtkPower;
-        int rangeAtkPower;
-        int magicAtkPower;
+        int attackPower;
+        int rangedAttackPower;
+        int magicPower;
 
         bool isNull();
     };

@@ -308,7 +308,7 @@ namespace shaiya
         Attribute armorAttribute;          //0x1280
         PAD(92);
         UINT32 addAttackPower;             //0x12E0
-        UINT32 maxAddAtkPower;             //0x12E4
+        UINT32 maxAddAttackPower;          //0x12E4
         UINT32 addDefense;                 //0x12E8
         UINT32 addMagicResistance;         //0x12EC
         UINT32 abilityAttackRange;         //0x12F0
@@ -345,39 +345,39 @@ namespace shaiya
         UINT8 passiveSkillLv;              //0x137C
         PAD(3);
         TickCount passiveSkillUseTime;     //0x1380
-        UINT32 abilityMeleeHitRate;        //0x1384
-        UINT32 abilityMeleeAtkPower;       //0x1388
-        UINT32 abilityMeleeEvasionRate;    //0x138C
-        UINT32 abilityAddMeleeDefense;     //0x1390
-        UINT32 abilityRangeHitRate;        //0x1394
-        UINT32 abilityRangeAtkPower;       //0x1398
-        UINT32 abilityRangeEvasionRate;    //0x139C
-        UINT32 abilityAddRangeDefense;     //0x13A0
+        UINT32 abilityHitRate;             //0x1384
+        UINT32 abilityAttackPower;         //0x1388
+        UINT32 abilityEvasionRate;         //0x138C
+        UINT32 abilityAddDefense;          //0x1390
+        UINT32 abilityRangedHitRate;       //0x1394
+        UINT32 abilityRangedAttackPower;   //0x1398
+        UINT32 abilityRangedEvasionRate;   //0x139C
+        UINT32 abilityAddRangedDefense;    //0x13A0
         UINT32 abilityMagicHitRate;        //0x13A4
-        UINT32 abilityMagicAtkPower;       //0x13A8
+        UINT32 abilityMagicPower;          //0x13A8
         UINT32 abilityMagicEvasionRate;    //0x13AC
         UINT32 abilityMagicResistance;     //0x13B0
-        BOOL meleeAtkBlinded;              //0x13B4
-        UINT32 meleeEvasionStatus;         //0x13B8
-        UINT32 meleeEvasionPercentage;     //0x13BC
-        UINT32 meleeMirrorSkillId;         //0x13C0
-        UINT32 meleeMirrorSkillLv;         //0x13C4
-        UINT32 meleeHitRate;               //0x13C8
-        UINT32 minMeleeAtkPower;           //0x13CC
-        UINT32 meleeEvasionRate;           //0x13D0
-        UINT32 meleeDefense;               //0x13D4
-        UINT32 meleeCriticalHitRate;       //0x13D8
+        BOOL attackBlinded;                //0x13B4
+        UINT32 evasionStatus;              //0x13B8
+        UINT32 evasionPercentage;          //0x13BC
+        UINT32 mirrorSkillId;              //0x13C0
+        UINT32 mirrorSkillLv;              //0x13C4
+        UINT32 hitRate;                    //0x13C8
+        UINT32 minAttackPower;             //0x13CC
+        UINT32 evasionRate;                //0x13D0
+        UINT32 defense;                    //0x13D4
+        UINT32 criticalHitRate;            //0x13D8
         PAD(4);
-        BOOL rangeAtkBlinded;              //0x13E0
-        UINT32 rangeEvasionStatus;         //0x13E4
-        UINT32 rangeEvasionPercentage;     //0x13E8
-        UINT32 rangeMirrorSkillId;         //0x13EC
-        UINT32 rangeMirrorSkillLv;         //0x13F0
-        UINT32 rangeHitRate;               //0x13F4
-        UINT32 minRangeAtkPower;           //0x13F8
-        UINT32 rangeEvasionRate;           //0x13FC
-        UINT32 rangeDefense;               //0x1400
-        UINT32 rangeCriticalHitRate;       //0x1404
+        BOOL rangedAttackBlinded;          //0x13E0
+        UINT32 rangedEvasionStatus;        //0x13E4
+        UINT32 rangedEvasionPercentage;    //0x13E8
+        UINT32 rangedMirrorSkillId;        //0x13EC
+        UINT32 rangedMirrorSkillLv;        //0x13F0
+        UINT32 rangedHitRate;              //0x13F4
+        UINT32 minRangedAttackPower;       //0x13F8
+        UINT32 rangedEvasionRate;          //0x13FC
+        UINT32 rangedDefense;              //0x1400
+        UINT32 rangedCriticalHitRate;      //0x1404
         PAD(4);
         BOOL silenced;                     //0x140C
         UINT32 magicEvasionStatus;         //0x1410
@@ -432,12 +432,12 @@ namespace shaiya
         UINT32 kcCombatSpRecovery;         //0x150C
         UINT32 kcCombatMpRecovery;         //0x1510
         UINT32 kcCriticalHitRate;          //0x1514
-        UINT32 kcPhysicalHitRate;          //0x1518
-        UINT32 kcMeleeDefense;             //0x151C
-        UINT32 kcRangeDefense;             //0x1520
+        UINT32 kcHitRate;                  //0x1518
+        UINT32 kcDefense;                  //0x151C
+        UINT32 kcRangedDefense;            //0x1520
         UINT32 kcMagicResistance;          //0x1524
-        UINT32 kcMeleeEvasionRate;         //0x1528
-        UINT32 kcRangeEvasionRate;         //0x152C
+        UINT32 kcEvasionRate;              //0x1528
+        UINT32 kcRangedEvasionRate;        //0x152C
         UINT32 kcMagicEvasionRate;         //0x1530
         // custom
         UINT8 townScrollLocation;          //0x1534

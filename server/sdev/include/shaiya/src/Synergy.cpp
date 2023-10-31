@@ -103,9 +103,9 @@ void Synergy::applySynergies(CUser* user)
         user->maxHealth += ability.health;
         user->maxMana += ability.mana;
         user->maxStamina += ability.stamina;
-        user->abilityMeleeAtkPower += ability.meleeAtkPower;
-        user->abilityRangeAtkPower += ability.rangeAtkPower;
-        user->abilityMagicAtkPower += ability.magicAtkPower;
+        user->abilityAttackPower += ability.attackPower;
+        user->abilityRangedAttackPower += ability.rangedAttackPower;
+        user->abilityMagicPower += ability.magicPower;
 
         if (ability.reaction)
             user->maxHealth += ability.reaction * 5;
@@ -137,9 +137,9 @@ void Synergy::removeSynergies(CUser* user)
         user->maxHealth -= ability.health;
         user->maxMana -= ability.mana;
         user->maxStamina -= ability.stamina;
-        user->abilityMeleeAtkPower -= ability.meleeAtkPower;
-        user->abilityRangeAtkPower -= ability.rangeAtkPower;
-        user->abilityMagicAtkPower -= ability.magicAtkPower;
+        user->abilityAttackPower -= ability.attackPower;
+        user->abilityRangedAttackPower -= ability.rangedAttackPower;
+        user->abilityMagicPower -= ability.magicPower;
 
         if (ability.reaction)
             user->maxHealth -= ability.reaction * 5;

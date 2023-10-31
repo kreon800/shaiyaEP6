@@ -38,9 +38,9 @@ The application will extract the file to a format that is easy to read and edit.
     "health": 0,
     "mana": 0,
     "stamina": 0,
-    "meleeAttackPower": 0,
-    "rangeAttackPower": 0,
-    "magicAttackPower": 0
+    "attackPower": 0,
+    "rangedAttackPower": 0,
+    "magicPower": 0
   },
 ```
 
