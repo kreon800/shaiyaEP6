@@ -359,9 +359,6 @@
     <ClInclude Include="include\shaiya\packets\051D.h">
       <Filter>include\shaiya\packets</Filter>
     </ClInclude>
-    <ClInclude Include="include\shaiya\packets\0B1C.h">
-      <Filter>include\shaiya\packets</Filter>
-    </ClInclude>
     <ClInclude Include="include\shaiya\packets\0605.h">
       <Filter>include\shaiya\packets</Filter>
     </ClInclude>
@@ -544,6 +541,9 @@
     </ClInclude>
     <ClInclude Include="resources\resource.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\0501.h">
+      <Filter>include\shaiya\packets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

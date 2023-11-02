@@ -435,15 +435,15 @@ void CUser::SetAttack(CUser* user/*esi*/)
     }
 }
 
-void CUser::SetSkillAbility(CUser* user, int typeEffect/*edx*/, int _type/*ecx*/, int value/*eax*/)
+void CUser::SetSkillAbility(CUser* user, int typeEffect/*ecx*/, int _type/*edx*/, int value/*eax*/)
 {
     Address u0x495570 = 0x495570;
 
     __asm
     {
         push user
-        mov edx,typeEffect
-        mov ecx,_type
+        mov ecx,typeEffect
+        mov edx,_type
         mov eax,value
         call u0x495570
     }

@@ -1,5 +1,6 @@
 #pragma once
 #include <include/shaiya/common.h>
+#include <include/shaiya/include/CNpcData.h>
 #include <include/shaiya/include/SNode.h>
 
 namespace shaiya
@@ -18,10 +19,10 @@ namespace shaiya
         Start
     };
 
-    struct GuildNpcLv
+    struct GuildNpc
     {
-        UINT16 npcType;
-        UINT8 npcLevel;
+        NpcType type;
+        UINT8 level;
         UINT8 number;
     };
 
@@ -45,9 +46,9 @@ namespace shaiya
         UINT32 etinReturnCount;       //0x9C
         UINT32 grbJoinCount;          //0xA0
         Array<CItem*, 240> warehouse; //0xA4
-        CRITICAL_SECTION cs0x464;     //0x464
-        Array<GuildNpcLv, 8> npcLv;   //0x47C
-        CRITICAL_SECTION cs0x49C;     //0x49C
+        CRITICAL_SECTION cs464;       //0x464
+        Array<GuildNpc, 8> npc;       //0x47C
+        CRITICAL_SECTION cs49C;       //0x49C
         GvGState gvgState;            //0x4B4
         CharId gvgRequestSenderId;    //0x4B8
         GuildId gvgTargetId;          //0x4BC

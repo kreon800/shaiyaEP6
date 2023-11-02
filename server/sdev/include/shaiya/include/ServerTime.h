@@ -4,8 +4,6 @@
 
 namespace shaiya
 {
-    FWDDECL CGameData::ItemInfo;
-
     class Duration
     {
     public:
@@ -25,15 +23,15 @@ namespace shaiya
             auto duration = time_point - std::chrono::system_clock::now();
 
             typedef std::chrono::duration<int, std::ratio<60 * 60 * 24>> Days;
-            Days days = std::chrono::duration_cast<Days>(duration);
+            auto days = std::chrono::duration_cast<Days>(duration);
             this->days = days.count();
 
             typedef std::chrono::duration<int, std::ratio<60 * 60>> Hours;
-            Hours hours = std::chrono::duration_cast<Hours>(duration);
+            auto hours = std::chrono::duration_cast<Hours>(duration);
             this->hours = hours.count();
 
             typedef std::chrono::duration<int, std::ratio<60>> Minutes;
-            Minutes minutes = std::chrono::duration_cast<Minutes>(duration);
+            auto minutes = std::chrono::duration_cast<Minutes>(duration);
             this->minutes = minutes.count();
         }
 

@@ -10,6 +10,7 @@ namespace shaiya
 
     typedef Array<char, 32> ItemName;
     typedef Array<char, 32> MobName;
+    typedef Array<char, 51> ProductName;
     typedef Array<char, 32> SkillName;
 
     struct CGameData
@@ -169,8 +170,8 @@ namespace shaiya
             TwoHandedAxe,
             DualWeapon,
             Spear,
-            OneHandedHeavy,
-            TwoHandedHeavy,
+            OneHandedBlunt,
+            TwoHandedBlunt,
             ReverseDagger,
             Dagger,
             Javelin,
@@ -193,6 +194,121 @@ namespace shaiya
             Gem = 30,
             Vehicle = 42,
             Etin,
+        };
+
+        enum struct ItemType : UINT8
+        {
+            OneHandedSword = 1,
+            TwoHandedSword,
+            OneHandedAxe,
+            TwoHandedAxe,
+            DualWield,
+            Spear,
+            OneHandedBlunt,
+            TwoHandedBlunt,
+            ReverseDagger,
+            Dagger,
+            Javelin,
+            Staff,
+            Bow,
+            Crossbow,
+            Knuckles,
+            LightHelmet,
+            LightUpperArmor,
+            LightLowerArmor,
+            LightShield,
+            LightGloves,
+            LightShoes,
+            Ring,
+            Necklace,
+            LightCloak,
+            Consumable25,
+            Gold,
+            Quest27,
+            Quest28,
+            Quest29,
+            Gem,
+            FuryHelmet,
+            FuryUpperArmor,
+            FuryLowerArmor,
+            Unknown34,
+            FuryGloves,
+            FuryShoes,
+            Ring2,
+            Consumable38,
+            FuryCloak,
+            Bracelet,
+            Consumable41,
+            Vehicle,
+            Etin,
+            Consumable44,
+            OneHandedSword2,
+            TwoHandedSword2,
+            OneHandedAxe2,
+            TwoHandedAxe2,
+            DualWield2,
+            DualWield3,
+            Spear2,
+            Spear3,
+            OneHandedBlunt2,
+            OneHandedBlunt3,
+            TwoHandedBlunt2,
+            TwoHandedBlunt3,
+            ReverseDagger2,
+            Dagger2,
+            Javelin2,
+            Staff2,
+            Staff3,
+            Bow2,
+            Bow3,
+            Crossbow2,
+            Knuckles2,
+            Unknown66,
+            LightUpperArmor2,
+            LightLowerArmor2,
+            LightShield2,
+            LightGloves2,
+            LightBoots2,
+            LightHelmet3,
+            LightUpperArmor3,
+            LightLowerArmor3,
+            Unknown75,
+            LightGloves3,
+            LightShoes3,
+            Unknown78,
+            Unknown79,
+            Unknown80,
+            Unknown81,
+            FuryUpperArmor2,
+            FuryLowerArmor2,
+            FuryShield2,
+            FuryGloves2,
+            FuryShoes2,
+            FuryHelmet3,
+            FuryUpperArmor3,
+            FuryLowerArmor3,
+            Unknown90,
+            FuryGloves3,
+            FuryShoes3,
+            Unknown93,
+            GoldBar,
+            Lapisia,
+            Necklace2,
+            Bracelet2,
+            Unknown98,
+            Quest99,
+            Special100,
+            Special101,
+            Special102,
+            Pet = 120,
+            Wings,
+            Costume = 150
+        };
+
+        enum struct PerfectLapisianType : UINT8
+        {
+            Weapon,
+            Armor
         };
 
         enum struct ReqOg : UINT8
@@ -390,9 +506,78 @@ namespace shaiya
             Array<UINT32, 24> itemId;    //0x18
             Array<UINT8, 24> itemCount;  //0x78
             UINT32 price;                //0x90
-            Array<char, 52> itemName;    //0x94
-            PAD(56);
-            // 0x100
+            ProductName productName;     //0x94
+            PAD(1);
+            // 0xC8
+        };
+
+        enum struct SkillAbilityType : UINT8
+        {
+            MaxHealth = 1,
+            MaxMana,
+            MaxStamina,
+            AbilityStrength,
+            AbilityReaction,
+            AbilityIntelligence,
+            AbilityWisdom,
+            AbilityDexterity,
+            AbilityLuck,
+            AddHpRecovery,
+            AddSpRecovery,
+            AddMpRecovery,
+            DecreaseSpCostPercentage,
+            DecreaseMpCostPercentage,
+            AbilityAttackRange,
+            AbilityAttackSpeed,
+            AbilityMoveSpeed,
+            AbilityCriticalHitRate,
+            DecreaseSkillResetTime,
+            AbilityHitRate,
+            AbilityRangedHitRate,
+            AbilityMagicHitRate,
+            AbilityAttackPower,
+            AbilityRangedAttackPower,
+            AbilityMagicPower,
+            AbilityAddDefense,
+            AbilityAddRangedDefense,
+            AbilityMagicResistance,
+            AbilityEvasionRate,
+            AbilityRangedEvasionRate,
+            AbilityMagicEvasionRate,
+            AttackBlinded,
+            RangedAttackBlinded,
+            Silenced,
+            IncreaseExpRate,
+            EternalEndurance,
+            PreventItemDrop,
+            PreventExpLoss,
+            RecallWarehouse,
+            WhiteTigerCharm,
+            BlueDragonCharm,
+            RedPhoenixCharm,
+            DoubleWarehouse,
+            IncreaseGoldRate,
+            PreventEquipmentDrop,
+            ContinuousResurrection,
+            BattlefieldRune,
+            AbilityAbsorption,
+            // Curse of Goddess, etc.
+            BaseStatus
+        };
+
+        struct SkillAbility
+        {
+            UINT8 type;
+            PAD(1);
+            UINT16 value;
+        };
+
+        enum SkillId
+        {
+            FrenziedForce = 398,
+            FrenziedFocus,
+            FrenziedFinesse,
+            FrenziedFortune
         };
 
         enum struct StateType : UINT8
@@ -427,12 +612,6 @@ namespace shaiya
             EnemiesNearTarget
         };
 
-        struct SkillAbility
-        {
-            UINT16 type;
-            UINT16 value;
-        };
-
         struct SkillInfo
         {
             UINT16 skillId;           //0x00
@@ -450,7 +629,6 @@ namespace shaiya
             Grow grow;                //0x2D
             UINT8 skillPoint;         //0x2E
             UINT8 typeShow;           //0x2F
-            // db value - 1
             UINT8 typeAttack;         //0x30
             UINT8 typeEffect;         //0x31
             UINT16 typeDetail;        //0x32
@@ -501,7 +679,6 @@ namespace shaiya
             UINT16 timeHealHealth;    //0x8E
             UINT16 timeHealStamina;   //0x90
             UINT16 timeHealMana;      //0x92
-            // db value - 1
             UINT8 defenseType;        //0x94
             UINT8 defenseValue;       //0x95 
             UINT8 limitHealth;        //0x96

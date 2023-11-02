@@ -87,10 +87,10 @@ namespace item_duration
         if (!days)
             return;
 
-        switch (static_cast<ItemType>(item->type))
+        switch (static_cast<CGameData::ItemType>(item->type))
         {
-        case ItemType::Pet:
-        case ItemType::Costume:
+        case CGameData::ItemType::Pet:
+        case CGameData::ItemType::Costume:
         {
             ItemDuration packet{};
             packet.bag = bag;
@@ -145,10 +145,10 @@ namespace item_duration
         if (!days)
             return;
 
-        switch (static_cast<ItemType>(item->type))
+        switch (static_cast<CGameData::ItemType>(item->type))
         {
-        case ItemType::Pet:
-        case ItemType::Costume:
+        case CGameData::ItemType::Pet:
+        case CGameData::ItemType::Costume:
         {
             ItemDuration packet{};
             packet.bag = warehouse_bag;
@@ -169,10 +169,10 @@ namespace item_duration
         if (!days)
             return;
 
-        switch (static_cast<ItemType>(item->type))
+        switch (static_cast<CGameData::ItemType>(item->type))
         {
-        case ItemType::Pet:
-        case ItemType::Costume:
+        case CGameData::ItemType::Pet:
+        case CGameData::ItemType::Costume:
         {
             ItemDuration packet{};
             packet.bag = util::read_bytes<std::uint8_t>(buffer, 2);

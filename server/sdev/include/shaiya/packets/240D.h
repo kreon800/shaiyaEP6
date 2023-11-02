@@ -16,7 +16,6 @@ namespace shaiya
         ULONG fromDate;
         ULONG toDate;
         #endif
-        // or CloakBadge
         Gems gems;
         CraftName craftName;
     };

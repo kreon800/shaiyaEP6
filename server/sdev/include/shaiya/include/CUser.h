@@ -2,11 +2,13 @@
 #include <include/shaiya/common.h>
 #include <include/shaiya/include/CExchange.h>
 #include <include/shaiya/include/CFriend.h>
+#include <include/shaiya/include/CMap.h>
 #include <include/shaiya/include/CMiniGame.h>
 #include <include/shaiya/include/CQuest.h>
 #include <include/shaiya/include/CSkill.h>
 #include <include/shaiya/include/MyShop.h>
 #include <include/shaiya/include/SConnection.h>
+#include <include/shaiya/include/SNode.h>
 #include <include/shaiya/include/SSyncList.h>
 #include <include/shaiya/include/SVector.h>
 
@@ -57,7 +59,7 @@ namespace shaiya
         Countdown,
         Start,
         Exchange
-    };
+    }; 
 
     struct BillingItem
     {
@@ -75,7 +77,7 @@ namespace shaiya
 
     struct CloneUser
     {
-        PAD(8);
+        SNode node;               //0x00
         bool dead;                //0x08
         bool sitting;             //0x09
         Country country;          //0x0A
@@ -113,6 +115,13 @@ namespace shaiya
         RedPhoenix
     };
 
+    enum struct HealthPactType : UINT32
+    {
+        Sp,
+        Mp,
+        SpMp
+    };
+
     enum struct LogoutType : UINT32
     {
         None,
@@ -124,7 +133,17 @@ namespace shaiya
     {
         None,
         Member,
-        Boss
+        Leader
+    };
+
+    enum struct Permission : UINT8
+    {
+        AdminA = 1,
+        AdminB = 2,
+        AdminC = 3,
+        AdminD = 4,
+        AdminE = 5,
+        Normal = 11
     };
 
     struct QuickSlot
@@ -143,15 +162,14 @@ namespace shaiya
         GateKeeper = 1,
         Portal = 1,
         SavePoint,
-        Rune,
-        PartyMemberSummonRune,
-        MovementRune,
+        RecallRune,
+        PartyMemberSummon,
+        PartyMemberMoveTo,
         // itemId 100169 (EP5)
         MoveWar,
         // custom
         TownTeleportScroll,
-        // GetZoneByMapID Error, MapID=200
-        Unknown10,
+        MoveMapId200 = 10,
         MoveChar = 0xF904,
         MoveCharZone = 0xF905,
         MoveParty = 0xF90C,
@@ -168,8 +186,8 @@ namespace shaiya
         SavePoint2,
         SavePoint3,
         SavePoint4,
-        PartyMemberSummonRune = 100,
-        MovementRune = 101,
+        PartyMemberSummon = 100,
+        PartyMemberMoveTo = 101,
         // itemId 100169 (EP5)
         MoveWar = 254,
         RecallRune = 255
@@ -184,9 +202,25 @@ namespace shaiya
 
     struct SavePoint
     {
-        Array<UINT32, 4> mapid;
+        Array<UINT32, 4> mapId;
         Array<SVector, 4> pos;
         // 0x40
+    };
+
+    enum struct ShapeType : UINT8
+    {
+        None,
+        Chicken = 4,
+        Dog = 5,
+        Horse = 6,
+        Pig = 7,
+        Fox = 10,
+        Wolf = 11,
+        Knight = 12,
+        Stealth = 13,
+        Disguise = 100,
+        Degeneration,
+        Transformation,
     };
 
     enum struct StateType : UINT32
@@ -208,6 +242,48 @@ namespace shaiya
         None,
         Summon,
         Riding
+    };
+
+    struct WeaponMasterySpeed
+    {
+        PAD(1);
+        UINT8 oneHandedSword;
+        UINT8 twoHandedSword;
+        UINT8 oneHandedAxe;
+        UINT8 twoHandedAxe;
+        UINT8 dualWield;
+        UINT8 spear;
+        UINT8 oneHandedBlunt;
+        UINT8 twoHandedBlunt;
+        UINT8 reverseDagger;
+        UINT8 dagger;
+        UINT8 crossbow;
+        UINT8 staff;
+        UINT8 bow;
+        UINT8 javelin;
+        UINT8 knuckles;
+        PAD(4);
+    };
+
+    struct WeaponMasteryPower
+    {
+        PAD(1);
+        UINT8 oneHandedSword;
+        UINT8 twoHandedSword;
+        UINT8 oneHandedAxe;
+        UINT8 twoHandedAxe;
+        UINT8 dualWield;
+        UINT8 spear;
+        UINT8 oneHandedBlunt;
+        UINT8 twoHandedBlunt;
+        UINT8 reverseDagger;
+        UINT8 dagger;
+        UINT8 crossbow;
+        UINT8 staff;
+        UINT8 bow;
+        UINT8 javelin;
+        UINT8 knuckles;
+        PAD(4);
     };
 
     enum struct Where : UINT32
@@ -315,11 +391,15 @@ namespace shaiya
         UINT32 abilityAttackSpeed;         //0x12F4
         UINT32 abilityMoveSpeed;           //0x12F8
         UINT32 abilityCriticalHitRate;     //0x12FC
-        PAD(4);
+        UINT32 decreaseSkillResetTime;     //0x1300
         UINT32 abilityAbsorption;          //0x1304
         UINT32 interpretationLv;           //0x1308
         UINT32 bagsUnlocked;               //0x130C
-        PAD(52);
+        WeaponMasterySpeed weaponSpeed;    //0x1310
+        WeaponMasteryPower weaponPower;    //0x1324
+        PAD(4);
+        UINT32 shieldMasteryDefense;       //0x133C
+        HealthPactType healthPactType;     //0x1340
         BOOL immobilized;                  //0x1344
         BOOL unconscious;                  //0x1348
         BOOL sleeping;                     //0x134C
@@ -394,17 +474,19 @@ namespace shaiya
         StateType stateType;               //0x1444
         PAD(4);
         bool sitting;                      //0x144C
-        PAD(3);
+        UINT8 unknown144D;                 //0x144D
+        PAD(2);
         BOOL running;                      //0x1450
         BOOL attacking;                    //0x1454
         AttackType attackType;             //0x1458
-        UINT32 prevSkillIndex;             //0x145C
-        PAD(8);
+        UINT32 prevSkillUseIndex;          //0x145C
+        PAD(4);
+        UINT32 qualityDecSlot;             //0x1464
         TickCount attackTypeSkillTime;     //0x1468
         TickCount attackTypeBasicTime;     //0x146C
         TickCount rebirthTimeout;          //0x1470
         BOOL leaderResurrect;              //0x1474
-        PAD(4);
+        UINT32 expLossRate;                //0x1478
         VehicleState vehicleState;         //0x147C
         TickCount vehicleRideTime;         //0x1480
         UINT32 vehicleShapeType;           //0x1484
@@ -412,7 +494,9 @@ namespace shaiya
         CharId vehicleRideAlongId;         //0x148C
         CharId vehicleRideRequestId;       //0x1490
         TickCount vehicleRideReqTimeout;   //0x1494
-        PAD(12);
+        CharId partySummonRequestId;       //0x1498
+        TickCount partySummonReqTimeout;   //0x149C
+        TickCount nextRecoveryTime;        //0x14A0
         Array<TickCount, 12> itemCooldown; //0x14A4
         // 0x14D4
         PAD(4);
@@ -442,6 +526,7 @@ namespace shaiya
         // custom
         UINT8 townScrollLocation;          //0x1534
         PAD(3);
+        // custom
         ActivableSkill activableSkill;     //0x1538
         PAD(20);
         TargetType targetType;             //0x1554
@@ -483,7 +568,6 @@ namespace shaiya
         UINT64 sessionId;                  //0x5800
         Permission permission;             //0x5808
         PAD(3);
-        // stAdminInfo
         ULONG questionId;                  //0x580C
         CharId chatSendToId;               //0x5810
         bool visible;                      //0x5814
@@ -494,7 +578,6 @@ namespace shaiya
         CharId chatListenToId;             //0x5820
         CharId chatListenFromId;           //0x5824
         PAD(4);
-        // end
         UserId userId;                     //0x582C
         PAD(4);
         Username username;                 //0x5834
@@ -531,7 +614,7 @@ namespace shaiya
         BOOL eternalEndurance;             //0x5954
         BOOL preventExpLoss;               //0x5958
         BOOL preventItemDrop;              //0x595C
-        BOOL preventEquipDrop;             //0x5960
+        BOOL preventEquipmentDrop;         //0x5960
         BOOL recallWarehouse;              //0x5964
         BOOL doubleWarehouse;              //0x5968
         UINT32 increaseExpRate;            //0x596C
@@ -596,7 +679,7 @@ namespace shaiya
         static void SendSpeed(CUser* user/*ecx*/);
         static void SendUserShape(CUser* user);
         static void SetAttack(CUser* user/*esi*/);
-        static void SetSkillAbility(CUser* user, int typeEffect/*edx*/, int type/*ecx*/, int value/*eax*/);
+        static void SetSkillAbility(CUser* user, int typeEffect/*ecx*/, int type/*edx*/, int value/*eax*/);
         static void StatResetSkill(CUser* user/*eax*/, BOOL event);
         static void StatResetStatus(CUser* user/*edi*/, BOOL event);
         static void TauntMob(CUser* user, float dist, int aggro);

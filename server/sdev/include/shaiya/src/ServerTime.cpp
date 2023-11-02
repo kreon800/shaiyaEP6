@@ -1,14 +1,11 @@
-#include <include/shaiya/include/CGameData.h>
+#include <chrono>
 #include <include/shaiya/include/ServerTime.h>
 using namespace shaiya;
 
 ULONG ServerTime::GetExpireTime(ULONG makeTime, int days)
 {
-    if (!makeTime || !days)
+    if (days <= 0)
         return 0;
-
-    constexpr long day_as_seconds = 86400;
-    constexpr long second_as_microseconds = 10000000;
 
     SYSTEMTIME st{};
     ServerTime::ServerTimeToSystemTime(makeTime, &st);
@@ -17,9 +14,10 @@ ULONG ServerTime::GetExpireTime(ULONG makeTime, int days)
     SystemTimeToFileTime(&st, &ft);
 
     ULARGE_INTEGER li{ ft.dwLowDateTime, ft.dwHighDateTime };
-    auto seconds = static_cast<long long>(days) * day_as_seconds;
 
-    li.QuadPart += seconds * second_as_microseconds;
+    auto seconds = std::chrono::seconds(std::chrono::days(days)).count();
+    li.QuadPart += seconds * std::chrono::microseconds(std::chrono::seconds(1)).count();
+
     ft.dwLowDateTime = li.LowPart;
     ft.dwHighDateTime = li.HighPart;
 

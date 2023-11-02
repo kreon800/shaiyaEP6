@@ -17,15 +17,15 @@ namespace user_equipment
 {
     constexpr int max_equipment_slot = ITEM_LIST_SIZE;
 
-    bool enable_slot(CGameData::ItemInfo* info, EquipmentSlot slot)
+    bool enable_slot(CGameData::ItemInfo* itemInfo, EquipmentSlot slot)
     {
-        switch (static_cast<ItemType>(info->type))
+        switch (static_cast<CGameData::ItemType>(itemInfo->type))
         {
-        case ItemType::Pet:
+        case CGameData::ItemType::Pet:
             return slot == EquipmentSlot::Pet;
-        case ItemType::Wings:
+        case CGameData::ItemType::Wings:
             return slot == EquipmentSlot::Wings;
-        case ItemType::Costume:
+        case CGameData::ItemType::Costume:
             return slot == EquipmentSlot::Costume;
         default:
             return true;

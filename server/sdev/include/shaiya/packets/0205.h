@@ -13,7 +13,6 @@ namespace shaiya
         UINT8 typeId;
         UINT8 count;
         UINT16 quality;
-        // or CloakBadge
         Gems gems;
         // or '\0'
         CraftName craftName;

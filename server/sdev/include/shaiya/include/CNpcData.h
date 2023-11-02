@@ -15,9 +15,26 @@ namespace shaiya
         Fury
     };
 
+    enum struct NpcType : UINT16
+    {
+        Merchant = 1,
+        GateKeeper,
+        Blacksmith,
+        VetManager,
+        GamblingHouse,
+        Warehouse,
+        Normal,
+        Guard,
+        Animal,
+        Apprentice,
+        GuildMaster,
+        Dead,
+        SkillReset
+    };
+
     struct Npc
     {
-        UINT16 type;         //0x00
+        NpcType type;        //0x00
         UINT16 typeId;       //0x02
         UINT32 shape;        //0x04
         PAD(8);
@@ -54,10 +71,10 @@ namespace shaiya
 
     struct NpcShop
     {
-        Npc npc;           //0x00
-        UINT32 shopType;   //0x124
-        UINT32 itemCount;  //0x128
-        NpcItem* item;     //0x12C
+        Npc npc;            //0x00
+        UINT32 shopType;    //0x124
+        UINT32 itemCount;   //0x128
+        NpcItem* itemList;  //0x12C
         // 0x130
     };
 

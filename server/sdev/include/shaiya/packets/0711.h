@@ -10,7 +10,6 @@ namespace shaiya
         UINT8 type;
         UINT8 typeId;
         UINT16 quality;
-        // or CloakBadge
         Gems gems;
         UINT8 count;
         #ifdef WITH_ITEM_DURATION

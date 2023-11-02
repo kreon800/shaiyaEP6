@@ -93,10 +93,10 @@ namespace user_apply_skill
 
         switch (packet.skillId)
         {
-        case SkillId::FrenziedForce:
-        case SkillId::FrenziedFocus:
-        case SkillId::FrenziedFinesse:
-        case SkillId::FrenziedFortune:
+        case CGameData::SkillId::FrenziedForce:
+        case CGameData::SkillId::FrenziedFocus:
+        case CGameData::SkillId::FrenziedFinesse:
+        case CGameData::SkillId::FrenziedFortune:
         {
             send_frenzy_state(sender, skillInfo);
             return;
@@ -115,10 +115,10 @@ namespace user_apply_skill
     {
         switch (skill->skillId)
         {
-        case SkillId::FrenziedForce:
-        case SkillId::FrenziedFocus:
-        case SkillId::FrenziedFinesse:
-        case SkillId::FrenziedFortune:
+        case CGameData::SkillId::FrenziedForce:
+        case CGameData::SkillId::FrenziedFocus:
+        case CGameData::SkillId::FrenziedFinesse:
+        case CGameData::SkillId::FrenziedFortune:
             return true;
         default:
             break;

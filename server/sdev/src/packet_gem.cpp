@@ -32,42 +32,43 @@ namespace packet_gem
     bool is_perfect_lapisian(CItem* lapisian, CItem* upgradeItem)
     {
         auto enchantStep = CItem::GetEnchantStep(upgradeItem);
-        auto itemId = static_cast<PerfectLapisian>(lapisian->itemInfo->itemId);
-        auto lapisianType = static_cast<PerfectLapisianType>(lapisian->itemInfo->country);
+        auto lapisianType = static_cast<CGameData::PerfectLapisianType>(lapisian->itemInfo->country);
 
         if (CItem::IsWeapon(upgradeItem))
         {
             if (enchantStep < 10)
             {
-                switch (itemId)
+                switch (lapisian->itemInfo->itemId)
                 {
-                case PerfectLapisian::WeaponLapisianPlus:
-                case PerfectLapisian::HotTimeLapisian:
+                case 95004:
+                case 95005:
                     return true;
                 default:
                     break;
                 }
             }
 
-            if (lapisianType == PerfectLapisianType::Weapon && lapisian->itemInfo->range == enchantStep)
-                return true;
+            if (enchantStep == lapisian->itemInfo->range)
+                if (lapisianType == CGameData::PerfectLapisianType::Weapon)
+                    return true;
         }
         else
         {
             if (enchantStep < 10)
             {
-                switch (itemId)
+                switch (lapisian->itemInfo->itemId)
                 {
-                case PerfectLapisian::ArmorLapisianPlus:
-                case PerfectLapisian::HotTimeLapisian:
+                case 95005:
+                case 95009:
                     return true;
                 default:
                     break;
                 }
             }
 
-            if (lapisianType == PerfectLapisianType::Armor && lapisian->itemInfo->range == enchantStep)
-                return true;
+            if (enchantStep == lapisian->itemInfo->range)
+                if (lapisianType == CGameData::PerfectLapisianType::Armor)
+                    return true;
         }
 
         return false;

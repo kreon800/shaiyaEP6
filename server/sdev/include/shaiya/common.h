@@ -101,6 +101,8 @@ using Array = std::array<T, N>;
 typedef Array<char, 21> CharName;
 typedef Array<char, 21> CraftName;
 typedef Array<UINT8, 6> Gems;
+using CloakBadge = Gems;
+
 typedef Array<char, 25> GuildName;
 typedef Array<char, 21> ProductCode;
 typedef Array<char, 32> Username;
@@ -112,16 +114,6 @@ enum struct Country : UINT8
     Light,
     Fury,
     Neutral
-};
-
-struct CloakBadge
-{
-    UINT8 frontPattern;
-    UINT8 backPattern;
-    UINT8 emblem;
-    UINT8 frontColor;
-    UINT8 backColor;
-    UINT8 emblemColor;
 };
 
 enum EquipmentSlot
@@ -177,133 +169,6 @@ enum struct KillPC : UINT8
     From
 };
 
-enum struct ItemType : UINT8
-{
-    Gold = 26,
-    Gem = 30,
-    Vehicle = 42,
-    Pet = 120,
-    Wings = 121,
-    Costume = 150
-};
-
-enum MapId
-{
-    DWaterBorderland,
-    Ereumana,
-    Reikeuseu,
-    D1_1,
-    D1_2,
-    CornwellRuin_1,
-    CornwellRuin_2,
-    ArgillaRuin_1,
-    ArgillaRuin_2,
-    D2_1,
-    D2_2,
-    D2_3,
-    CloronLair_1,
-    CloronLair_2,
-    CloronLair_3,
-    FantasmaLair_1,
-    FantasmaLair_2,
-    FantasmaLair_3,
-    ProeliumFrontier,
-    Willieoseu,
-    Keuraijen,
-    Maitreyan_1,
-    Maitreyan_2,
-    AidionNeckria_1,
-    AidionNeckria_2,
-    ElementalCave,
-    RuberChaos,
-    Adellia = 28,
-    Adeurian,
-    Cantabilian,
-    TempleOfPharos,
-    MazeOfRapioru,
-    FedionTemple,
-    KalumusHouse,
-    Apulune,
-    Iris,
-    CaveOfStigma,
-    AurizenRuin,
-    UndergroundStadium = 40,
-    SecretPrison,
-    VaultGuildAuctionHouse,
-    Skulleron,
-    Astenes,
-    DeepDesert_1,
-    DeepDesert_2,
-    StableErde,
-    LightCrypticThrone,
-    FuryCrypticThrone,
-    GuildRankingBattle,
-    LightGuildHouse,
-    FuryGuildHouse,
-    LightGuildMgrOffice,
-    FuryGuildMgrOffice,
-    CaelumGreendieta_1 = 56,
-    CaelumGreendieta_2,
-    CaelumGreendieta_3,
-    GardenOfGoddess,
-    OblivioInsula = 64,
-    CaelumSacra_1,
-    CaelumSacra_2,
-    CaelumSacra_3,
-    ValdemarRegnum,
-    PalaionRegnum,
-    KanosIlium,
-    QueenCaput,
-    ServusColony,
-    ZeharrsMine,
-    DimensionCrack,
-    Pantanasa,
-    Theodores,
-
-    // MapWar
-
-    ProeliumFrontierBattleZone = 102,
-    CantabilianBattleZone,
-    DWaterBorderlandBattleZone,
-    GoddessBattleZone,
-    RewardMap,
-    WaitingRoom = 108,
-    StableErdeBattleZone
-};
-
-enum struct PerfectLapisian : UINT32
-{
-    WeaponLapisianPlus = 95004,
-    HotTimeLapisian = 95005,
-    ArmorLapisianPlus = 95009
-};
-
-enum struct PerfectLapisianType : UINT8
-{
-    Weapon,
-    Armor
-};
-
-enum struct Permission : UINT8
-{
-    AdminA = 1,
-    AdminB = 2,
-    AdminC = 3,
-    AdminD = 4,
-    AdminE = 5,
-    Normal = 11
-};
-
-enum PortalId
-{
-    DeepDesertLight = 1010,
-    DeepDesertFury = 1020,
-    StableErdeLight = 1011,
-    StableErdeFury = 1021,
-    KanosIliumLight = 1060,
-    KanosIliumFury = 1061
-};
-
 enum struct Race : UINT8
 {
     Human,
@@ -319,29 +184,5 @@ enum struct Sex : UINT8
 {
     Male,
     Female
-};
-
-enum struct ShapeType : UINT8
-{
-    None,
-    Chicken = 4,
-    Dog = 5,
-    Horse = 6,
-    Pig = 7,
-    Fox = 10,
-    Wolf = 11,
-    Knight = 12,
-    Stealth = 13,
-    Disguise = 100,
-    Degeneration,
-    Transformation,
-};
-
-enum SkillId
-{
-    FrenziedForce = 398,
-    FrenziedFocus,
-    FrenziedFinesse,
-    FrenziedFortune
 };
 #pragma pack(pop)

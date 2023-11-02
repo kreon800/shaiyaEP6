@@ -63,7 +63,7 @@ namespace user_shape
         }
         else
         {
-            std::memcpy(&user->clone->cloakBadge, &item->gems, item->gems.size());
+            user->clone->cloakBadge = item->gems;
             CUser::GetGuildName(target, user->clone->guildName.data());
             user->clone->packetLength = packet_size_with_cloak;
         }
@@ -141,7 +141,7 @@ namespace user_shape
         }
         else
         {
-            std::memcpy(&packet.cloakBadge, &item->gems, item->gems.size());
+            packet.cloakBadge = item->gems;
             CUser::GetGuildName(user, packet.guildName.data());
             SConnection::Send(&target->connection, &packet, packet_size_with_cloak);
         }
@@ -222,7 +222,7 @@ namespace user_shape
         }
         else
         {
-            std::memcpy(&packet.cloakBadge, &item->gems, item->gems.size());
+            packet.cloakBadge = item->gems;
             CUser::GetGuildName(user, packet.guildName.data());
             CZone::SendView(user->zone, &packet, packet_size_with_cloak, user->cellX, user->cellZ);
         }

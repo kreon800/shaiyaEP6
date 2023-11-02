@@ -27,7 +27,6 @@ namespace shaiya
         UINT8 count;               //0x42
         PAD(1);
         UINT16 quality;            //0x44
-        // or CloakBadge
         Gems gems;                 //0x46
         CraftName craftName;       //0x4C
         PAD(3);
@@ -52,19 +51,19 @@ namespace shaiya
         // 0xA8
 
         static char GetEnchantStep(CItem* item/*edx*/);
-        /*itemInfo->itemRType == 22 or 23 or 25*/
+        /*itemInfo->itemRealType == 22 or 23 or 25*/
         static bool IsAccessory(CItem* item/*eax*/);
-        /*itemInfo->itemRType >= 1 and <= 25*/
+        /*itemInfo->itemRealType >= 1 and <= 25*/
         static bool IsEquipment(CItem* item/*eax*/);
         /*itemInfo->type == 43*/
         static bool IsEtin(CItem* item/*eax*/);
-        /*itemInfo->itemRType == 27*/
+        /*itemInfo->itemRealType == 27*/
         static bool IsQuest(CItem* item/*eax*/);
-        /*itemInfo->itemRType == 1 or 3 or 7 or 9*/
+        /*itemInfo->itemRealType == 1 or 3 or 7 or 9*/
         static bool IsOneHandWeapon(CItem* item/*eax*/);
-        /*itemInfo->itemRType == 19*/
+        /*itemInfo->itemRealType == 19*/
         static bool IsShield(CItem* item/*eax*/);
-        /*itemInfo->itemRType >= 1 and <= 15*/
+        /*itemInfo->itemRealType >= 1 and <= 15*/
         static bool IsWeapon(CItem* item/*eax*/);
         static void ReGenerationCraftExpansion(CItem* item/*esi*/, BOOL compose);
     };
