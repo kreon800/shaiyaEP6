@@ -9,8 +9,6 @@
 #include <include/shaiya/include/CNpcData.h>
 #include <include/shaiya/include/CObject.h>
 #include <include/shaiya/include/CUser.h>
-#include <include/shaiya/include/SConnectionTServerReconnect.h>
-#include <include/shaiya/include/SVector.h>
 using namespace shaiya;
 
 namespace item_effect

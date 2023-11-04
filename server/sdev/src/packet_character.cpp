@@ -12,7 +12,7 @@
 #include <include/shaiya/include/CItem.h>
 #include <include/shaiya/include/CUser.h>
 #include <include/shaiya/include/SConnection.h>
-#include <include/shaiya/include/SConnectionTServerReconnect.h>
+#include <include/shaiya/include/SConnectionTBaseReconnect.h>
 #include <include/shaiya/include/ServerTime.h>
 using namespace shaiya;
 
@@ -48,7 +48,7 @@ namespace packet_character
         StringCbCopyA(request.charName.data(), request.charName.size(), charName.data());
 
         int length = packet_size_without_name + charName.length() + 1;
-        SConnectionTServerReconnect::Send(g_pClientToDBAgent, &request, length);
+        SConnectionTBaseReconnect::Send(g_pClientToDBAgent, &request, length);
     }
 
     void send_name_available(CUser* user, Packet buffer)

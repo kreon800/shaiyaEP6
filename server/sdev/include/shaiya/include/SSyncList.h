@@ -12,7 +12,7 @@ namespace shaiya
         T* head;
         T* cursor;
         CRITICAL_SECTION cs;
-        UINT size;
+        UINT32 count;
         SNode node;
     };
     #pragma pack(pop)

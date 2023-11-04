@@ -29,8 +29,8 @@ namespace user_apply_skill
             #endif
 
             user->activableSkill.triggered = true;
-            user->activableSkill.skillId = packet.skillId;
-            user->activableSkill.skillLv = packet.skillLv;
+            user->activableSkill.id = packet.skillId;
+            user->activableSkill.level = packet.skillLv;
             user->activableSkill.keepTime = GetTickCount() + (skillInfo->keepTime * 1000);
 
             SConnection::Send(&user->connection, &packet, sizeof(SkillUseOutgoing));
@@ -49,8 +49,8 @@ namespace user_apply_skill
             #endif
 
             user->activableSkill.triggered = false;
-            user->activableSkill.skillId = 0;
-            user->activableSkill.skillLv = 0;
+            user->activableSkill.id = 0;
+            user->activableSkill.level = 0;
             user->activableSkill.keepTime = 0;
 
             SConnection::Send(&user->connection, &packet, sizeof(SkillUseOutgoing));
@@ -68,7 +68,7 @@ namespace user_apply_skill
         if (!user->activableSkill.triggered || now < user->activableSkill.keepTime)
             return;
 
-        auto skillInfo = CGameData::GetSkillInfo(user->activableSkill.skillId, user->activableSkill.skillLv);
+        auto skillInfo = CGameData::GetSkillInfo(user->activableSkill.id, user->activableSkill.level);
         if (!skillInfo)
             return;
 
@@ -131,13 +131,13 @@ namespace user_apply_skill
     {
         if (user->activableSkill.triggered)
         {
-            auto skillInfo = CGameData::GetSkillInfo(user->activableSkill.skillId, user->activableSkill.skillLv);
+            auto skillInfo = CGameData::GetSkillInfo(user->activableSkill.id, user->activableSkill.level);
             if (!skillInfo)
                 return;
 
             user->activableSkill.triggered = false;
-            user->activableSkill.skillId = 0;
-            user->activableSkill.skillLv = 0;
+            user->activableSkill.id = 0;
+            user->activableSkill.level = 0;
             user->activableSkill.keepTime = 0;
 
             CUser::RemApplySkillBuff(user, skillInfo);

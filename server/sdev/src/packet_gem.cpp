@@ -15,7 +15,7 @@
 #include <include/shaiya/include/CUser.h>
 #include <include/shaiya/include/CZone.h>
 #include <include/shaiya/include/SConnection.h>
-#include <include/shaiya/include/SConnectionTServerReconnect.h>
+#include <include/shaiya/include/SConnectionTBaseReconnect.h>
 using namespace shaiya;
 
 namespace packet_gem
@@ -485,7 +485,7 @@ namespace packet_gem
         SConnection::Send(&user->connection, &packet, sizeof(ItemComposeOutgoing));
 
         SaveItemCraftName packet2{ 0x717, user->userId, itemBag, itemSlot, item->craftName };
-        SConnectionTServerReconnect::Send(g_pClientToDBAgent, &packet2, sizeof(SaveItemCraftName));
+        SConnectionTBaseReconnect::Send(g_pClientToDBAgent, &packet2, sizeof(SaveItemCraftName));
 
         CUser::ItemUseNSend(user, runeBag, runeSlot, false);
     }

@@ -1,5 +1,6 @@
 #pragma once
 #include <include/shaiya/common.h>
+#include <include/shaiya/include/SSyncList.h>
 
 namespace shaiya
 {
@@ -13,14 +14,23 @@ namespace shaiya
     struct CZone
     {
         PAD(24);
-        ULONG id;   //0x18
+        ULONG id;                   //0x18
         PAD(12);
-        CMap* map;  //0x28
-        //
+        CMap* map;                  //0x28
+        PAD(12);
+        SSyncList<CUser> waitList;  //0x38
+        // 0x64
+        PAD(120);
+        SSyncList<CUser> userList;  //0x184
+        SSyncList<CMob> mobList;    //0x1B0
+        // 0x1DC
+        PAD(316);
+        // 0x318
 
         static CMob* FindMob(CZone* zone/*ecx*/, ULONG id/*CMob->id*/);
         static CNpc* FindNpc(CZone* zone/*ecx*/, ULONG id/*CNpc->id*/);
         static CUser* FindUser(CZone* zone/*ecx*/, ULONG id/*CUser->id*/);
+        static int GetCurUserCount(CZone* zone/*ecx*/);
         static int GetInsZonePortalCountry(CZone* zone/*esi*/, int id/*edx*/); 
         static bool MobGen(CZone* zone, int mobId/*ecx*/, int count/*eax*/, SVector* pos/*ebx*/);
         static bool MobRemove(CZone* zone, int mobId, int count, int cellX, int cellZ, SVector* pos);

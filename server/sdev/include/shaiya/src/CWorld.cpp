@@ -7,7 +7,7 @@ CUser* CWorld::FindUser(ULONG id/*CUser->id*/)
     return (*(LPFN)0x414CC0)(id);
 }
 
-CUser* CWorld::FindUser(PCSTR charName/*eax*/)
+CUser* CWorld::FindUser(const char* charName/*eax*/)
 {
     Address u0x414CE0 = 0x414CE0;
 
@@ -16,6 +16,12 @@ CUser* CWorld::FindUser(PCSTR charName/*eax*/)
         mov eax,charName
         call u0x414CE0
     }
+}
+
+int CWorld::GetUserCount()
+{
+    typedef int(__stdcall* LPFN)();
+    return (*(LPFN)0x408C60)();
 }
 
 CZone* CWorld::GetZone(int mapId/*eax*/)
@@ -28,6 +34,12 @@ CZone* CWorld::GetZone(int mapId/*eax*/)
         mov eax,mapId
         call u0x41A250
     }
+}
+
+ULONG CWorld::GetWorldDay()
+{
+    typedef ULONG(__stdcall* LPFN)();
+    return (*(LPFN)0x47A670)();
 }
 
 void CWorld::SendAll(void* data/*ecx*/, int len/*eax*/)
@@ -53,5 +65,16 @@ void CWorld::SendAllCountry(void* data/*ecx*/, int len/*eax*/, int country)
         mov eax,len
         mov ecx,[data]
         call u0x4191B0
+    }
+}
+
+void CWorld::SetWorldDay(ULONG time/*eax*/)
+{
+    Address u0x405A10 = 0x405A10;
+
+    __asm
+    {
+        mov eax,time
+        call u0x405A10
     }
 }

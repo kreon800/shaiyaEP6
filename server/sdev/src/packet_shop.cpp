@@ -17,7 +17,7 @@
 #include <include/shaiya/include/CGameData.h>
 #include <include/shaiya/include/CUser.h>
 #include <include/shaiya/include/SConnection.h>
-#include <include/shaiya/include/SConnectionTServerReconnect.h>
+#include <include/shaiya/include/SConnectionTBaseReconnect.h>
 #include <include/shaiya/include/ServerTime.h>
 using namespace shaiya;
 
@@ -75,7 +75,7 @@ namespace packet_shop
     void send_reload_point(CUser* user)
     {
         ReloadPointIncoming packet{ 0xE06, user->userId };
-        SConnectionTServerReconnect::Send(g_pClientToDBAgent, &packet, sizeof(ReloadPointIncoming));
+        SConnectionTBaseReconnect::Send(g_pClientToDBAgent, &packet, sizeof(ReloadPointIncoming));
     }
 
     void reload_point_handler(CUser* user, UINT32 points)

@@ -68,11 +68,10 @@ void __declspec(naked) naked_0x455165()
         mov [edi+0x6264],ebx
 
         // initialize memory
-        mov [edi+0x1534],ebx
-        mov [edi+0x1538],ebx
-        mov [edi+0x153C],ebx
-        mov [edi+0x1540],ebx
         mov [edi+0x15E4],ebx
+        mov [edi+0x5D9C],ebx
+        mov [edi+0x5DA0],ebx
+        mov [edi+0x5DA4],ebx
 
         jmp u0x45516B
     }

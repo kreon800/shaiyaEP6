@@ -90,7 +90,7 @@
     <ClCompile Include="include\shaiya\src\SConnection.cpp">
       <Filter>include\shaiya\src</Filter>
     </ClCompile>
-    <ClCompile Include="include\shaiya\src\SConnectionTServerReconnect.cpp">
+    <ClCompile Include="include\shaiya\src\SConnectionTBaseReconnect.cpp">
       <Filter>include\shaiya\src</Filter>
     </ClCompile>
     <ClCompile Include="include\shaiya\src\SVector.cpp">
@@ -212,7 +212,7 @@
     <ClInclude Include="include\shaiya\include\MyShop.h">
       <Filter>include\shaiya\include</Filter>
     </ClInclude>
-    <ClInclude Include="include\shaiya\include\SConnectionTServerReconnect.h">
+    <ClInclude Include="include\shaiya\include\SConnectionTBaseReconnect.h">
       <Filter>include\shaiya\include</Filter>
     </ClInclude>
     <ClInclude Include="include\shaiya\include\SVector.h">
@@ -543,6 +543,15 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\shaiya\packets\0501.h">
+      <Filter>include\shaiya\packets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\0115.h">
+      <Filter>include\shaiya\packets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\include\CZoneNode.h">
+      <Filter>include\shaiya\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\0522.h">
       <Filter>include\shaiya\packets</Filter>
     </ClInclude>
   </ItemGroup>

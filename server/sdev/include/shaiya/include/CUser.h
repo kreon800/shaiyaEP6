@@ -25,8 +25,8 @@ namespace shaiya
     // custom
     struct ActivableSkill
     {
-        UINT16 skillId;
-        UINT8 skillLv;
+        UINT16 id;
+        UINT8 level;
         bool triggered;
         TickCount keepTime;
     };
@@ -66,6 +66,14 @@ namespace shaiya
         UINT8 type;
         UINT8 typeId;
         UINT8 count;
+    };
+
+    struct BuyListItem
+    {
+        ProductCode productCode;
+        PAD(3);
+        ULONG purchaseDate;
+        UINT32 itemPrice;
     };
 
     struct CloneItem
@@ -237,6 +245,36 @@ namespace shaiya
         Mob
     };
 
+    struct UserKCStatus
+    {
+        PAD(4);                    //0x14D4
+        UINT32 health;             //0x14D8
+        UINT32 stamina;            //0x14DC
+        UINT32 mana;               //0x14E0
+        UINT32 strength;           //0x14E4
+        UINT32 recovery;           //0x14E8
+        UINT32 intelligence;       //0x14EC
+        UINT32 wisdom;             //0x14F0
+        UINT32 dexterity;          //0x14F4
+        UINT32 luck;               //0x14F8
+        UINT32 sitHpRecovery;      //0x14FC
+        UINT32 sitSpRecovery;      //0x1500
+        UINT32 sitMpRecovery;      //0x1504
+        UINT32 combatHpRecovery;   //0x1508
+        UINT32 combatSpRecovery;   //0x150C
+        UINT32 combatMpRecovery;   //0x1510
+        UINT32 criticalHitRate;    //0x1514
+        UINT32 hitRate;            //0x1518
+        UINT32 defense;            //0x151C
+        UINT32 rangedDefense;      //0x1520
+        UINT32 magicResistance;    //0x1524
+        UINT32 evasionRate;        //0x1528
+        UINT32 rangedEvasionRate;  //0x152C
+        UINT32 magicEvasionRate;   //0x1530
+        PAD(16);
+        // 0x70
+    };
+
     enum struct VehicleState : UINT32
     {
         None,
@@ -288,9 +326,11 @@ namespace shaiya
 
     enum struct Where : UINT32
     {
-        None,
-        LeaveZone = 3,
-        EnterZone = 4
+        Null,
+        WorldLogout,
+        ZoneWait,
+        ZoneLeave,
+        ZoneEnter
     };
 
     struct CUser
@@ -498,37 +538,9 @@ namespace shaiya
         TickCount partySummonReqTimeout;   //0x149C
         TickCount nextRecoveryTime;        //0x14A0
         Array<TickCount, 12> itemCooldown; //0x14A4
-        // 0x14D4
-        PAD(4);
-        UINT32 kcHealth;                   //0x14D8
-        UINT32 kcStamina;                  //0x14DC
-        UINT32 kcMana;                     //0x14E0
-        UINT32 kcStrength;                 //0x14E4
-        UINT32 kcRecovery;                 //0x14E8
-        UINT32 kcIntelligence;             //0x14EC
-        UINT32 kcWisdom;                   //0x14F0
-        UINT32 kcDexterity;                //0x14F4
-        UINT32 kcLuck;                     //0x14F8
-        UINT32 kcSitHpRecovery;            //0x14FC
-        UINT32 kcSitSpRecovery;            //0x1500
-        UINT32 kcSitMpRecovery;            //0x1504
-        UINT32 kcCombatHpRecovery;         //0x1508
-        UINT32 kcCombatSpRecovery;         //0x150C
-        UINT32 kcCombatMpRecovery;         //0x1510
-        UINT32 kcCriticalHitRate;          //0x1514
-        UINT32 kcHitRate;                  //0x1518
-        UINT32 kcDefense;                  //0x151C
-        UINT32 kcRangedDefense;            //0x1520
-        UINT32 kcMagicResistance;          //0x1524
-        UINT32 kcEvasionRate;              //0x1528
-        UINT32 kcRangedEvasionRate;        //0x152C
-        UINT32 kcMagicEvasionRate;         //0x1530
-        // custom
-        UINT8 townScrollLocation;          //0x1534
-        PAD(3);
-        // custom
-        ActivableSkill activableSkill;     //0x1538
-        PAD(20);
+        UserKCStatus kcStatus;             //0x14D4
+        // 0x1544
+        PAD(16);
         TargetType targetType;             //0x1554
         // CUser->id, CMob->id
         ULONG targetId;                    //0x1558
@@ -623,13 +635,21 @@ namespace shaiya
         BOOL continuousResurrection;       //0x5974
         BOOL nameChange;                   //0x5978
         BOOL battlefieldRune;              //0x597C
-        PAD(320);
-        UINT32 points;                     //0x5AC0 
+        Array<BuyListItem, 10> buyList;    //0x5980
+        UINT32 points;                     //0x5AC0
         volatile UINT disableShop;         //0x5AC4
         TickCount reloadPointTime;         //0x5AC8
         Array<BillingItem, 240> giftBox;   //0x5ACC
-        // 0x5D9C
-        PAD(1284);
+        // custom
+        UINT32 townScrollLocation;         //0x5D9C
+        ActivableSkill activableSkill;     //0x5DA0
+        // 0x5DA8
+        PAD(1188);
+        CRITICAL_SECTION cs624C;           //0x624C
+        // 0x6264
+        PAD(32);
+        CRITICAL_SECTION cs6284;           //0x6284
+        PAD(4);
         // 0x62A0
 
         static void AddApplySkillBuff(CUser* user, CGameData::SkillInfo* skillInfo);

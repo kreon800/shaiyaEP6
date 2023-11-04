@@ -22,6 +22,12 @@ CUser* CZone::FindUser(CZone* zone/*ecx*/, ULONG id/*CUser->id*/)
     return (*(LPFN)0x41C6E0)(zone, id);
 }
 
+int CZone::GetCurUserCount(CZone* zone/*ecx*/)
+{
+    typedef int(__thiscall* LPFN)(CZone*);
+    return (*(LPFN)0x429AF0)(zone);
+}
+
 int CZone::GetInsZonePortalCountry(CZone* zone/*esi*/, int id/*edx*/)
 {
     Address u0x41DF50 = 0x41DF50;
