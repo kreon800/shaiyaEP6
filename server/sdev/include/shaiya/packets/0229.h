@@ -8,7 +8,6 @@ namespace shaiya
     {
         UINT16 opcode{ 0x229 };
         CharId killerId;
-        // range = 0:8
         UINT32 killCount;
     };
     #pragma pack(pop)

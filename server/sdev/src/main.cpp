@@ -19,7 +19,7 @@ void leave_world_hook(CUser* user)
     g_appliedSynergies.erase(user->id);
     #endif
 
-    #ifdef SHAIYA_EP6_COMMON
+    #ifdef SHAIYA_EP6_4_PT
     g_revengeMark.erase(user->id);
     #endif
 }
@@ -99,10 +99,10 @@ void Main(HMODULE hModule)
     hook::packet_gem();
     hook::packet_mailbox();
     hook::packet_market();
+    hook::revenge_mark();
     #endif
 
     #ifdef SHAIYA_EP6_COMMON
-    hook::revenge_mark();
     hook::user_status();
     #endif
 
