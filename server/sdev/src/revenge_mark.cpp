@@ -1,3 +1,4 @@
+#include <limits>
 #include <map>
 #include <vector>
 #define WIN32_LEAN_AND_MEAN
@@ -9,6 +10,8 @@
 #include <include/shaiya/include/CUser.h>
 #include <include/shaiya/include/Revenge.h>
 #include <include/shaiya/include/SConnection.h>
+
+#undef max
 using namespace shaiya;
 
 namespace revenge_mark
@@ -38,13 +41,13 @@ namespace revenge_mark
                 }
             ); revenge != it->second.end())
             {
-                if (revenge->killCount >= 8)
-                    return;
+                if (revenge->killCount < std::numeric_limits<std::uint32_t>::max())
+                {
+                    ++revenge->killCount;
 
-                ++revenge->killCount;
-
-                RevengeMarkOutgoing packet{ 0x229, revenge->killerId, revenge->killCount };
-                SConnection::Send(&target->connection, &packet, sizeof(RevengeMarkOutgoing));
+                    RevengeMarkOutgoing packet{ 0x229, revenge->killerId, revenge->killCount };
+                    SConnection::Send(&target->connection, &packet, sizeof(RevengeMarkOutgoing));
+                }
             }
             else
             {
