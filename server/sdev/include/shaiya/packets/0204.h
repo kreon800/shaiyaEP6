@@ -16,7 +16,18 @@ namespace shaiya
         CraftName craftName;
     };
 
-    struct ItemMoveOutgoing
+    struct ItemBagToBagIncoming
+    {
+        UINT16 opcode{ 0x204 };
+        UINT8 srcBag;
+        UINT8 srcSlot;
+        UINT8 destBag;
+        UINT8 destSlot;
+        // warehouse
+        ULONG npcId;
+    };
+
+    struct ItemBagToBagOutgoing
     {
         UINT16 opcode{ 0x204 };
         Item0204 srcItem;

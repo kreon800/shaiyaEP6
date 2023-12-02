@@ -596,6 +596,12 @@
     <ClInclude Include="include\shaiya\packets\0226.h">
       <Filter>include\shaiya\packets</Filter>
     </ClInclude>
+    <ClInclude Include="include\shaiya\packets\0206.h">
+      <Filter>include\shaiya\packets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaiya\packets\0402.h">
+      <Filter>include\shaiya\packets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources\sdev.rc">

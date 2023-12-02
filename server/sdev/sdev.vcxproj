@@ -106,6 +106,7 @@
     <ClInclude Include="include\shaiya\packets\0119.h" />
     <ClInclude Include="include\shaiya\packets\0204.h" />
     <ClInclude Include="include\shaiya\packets\0205.h" />
+    <ClInclude Include="include\shaiya\packets\0206.h" />
     <ClInclude Include="include\shaiya\packets\020A.h" />
     <ClInclude Include="include\shaiya\packets\020B.h" />
     <ClInclude Include="include\shaiya\packets\020E.h" />
@@ -122,6 +123,7 @@
     <ClInclude Include="include\shaiya\packets\0303.h" />
     <ClInclude Include="include\shaiya\packets\0307.h" />
     <ClInclude Include="include\shaiya\packets\0401.h" />
+    <ClInclude Include="include\shaiya\packets\0402.h" />
     <ClInclude Include="include\shaiya\packets\0501.h" />
     <ClInclude Include="include\shaiya\packets\0505.h" />
     <ClInclude Include="include\shaiya\packets\0506.h" />
