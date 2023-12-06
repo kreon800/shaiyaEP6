@@ -56,5 +56,21 @@ namespace shaiya
         UINT8 characterCount;
         Array<Character0403, 5> characterList;
     };
+
+    // custom
+    struct UserCharNameAvailableIncoming
+    {
+        UINT16 opcode{ 0x40D };
+        UserId userId;
+        Array<char, 19> charName;
+    };
+
+    // custom
+    struct UserCharNameAvailableOutgoing
+    {
+        UINT16 opcode{ 0x40D };
+        UserId userId;
+        bool available;
+    };
     #pragma pack(pop)
 }

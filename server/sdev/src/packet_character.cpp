@@ -23,24 +23,14 @@ namespace packet_character
         constexpr int min_name_len = 3;
         constexpr int max_name_len = 13;
 
-        #pragma pack(push, 1)
-        // custom
-        struct DBNameAvailableIncoming
-        {
-            UINT16 opcode{ 0x40D };
-            UserId userId;
-            Array<char, 19> charName;
-        };
-        #pragma pack(pop)
-
-        DBNameAvailableIncoming request{};
+        UserCharNameAvailableIncoming request{};
         request.userId = user->userId;
 
         std::string charName(name);
         if (charName.length() < min_name_len || charName.length() > max_name_len)
         {
-            NameAvailableOutgoing packet{ 0x119, false };
-            SConnection::Send(&user->connection, &packet, sizeof(NameAvailableOutgoing));
+            CharNameAvailableOutgoing packet{ 0x119, false };
+            SConnection::Send(&user->connection, &packet, sizeof(CharNameAvailableOutgoing));
             return;
         }
 
@@ -53,8 +43,8 @@ namespace packet_character
     void send_name_available(CUser* user, Packet buffer)
     {
         auto available = util::read_bytes<bool>(buffer, 6);
-        NameAvailableOutgoing packet{ 0x119, available };
-        SConnection::Send(&user->connection, &packet, sizeof(NameAvailableOutgoing));
+        CharNameAvailableOutgoing packet{ 0x119, available };
+        SConnection::Send(&user->connection, &packet, sizeof(CharNameAvailableOutgoing));
     }
 
     void send_warehouse(CUser* user)

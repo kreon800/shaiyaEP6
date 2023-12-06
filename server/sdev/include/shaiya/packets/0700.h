@@ -1,9 +1,32 @@
 #pragma once
 #include <include/shaiya/common.h>
 
+// CUser::PacketShop
+
 namespace shaiya
 {
     #pragma pack(push, 1)
+    struct ItemBagToNpcShopIncoming
+    {
+        UINT16 opcode{ 0x703 };
+        UINT8 bag;
+        UINT8 slot;
+        UINT8 count;
+        ULONG npcId;
+    };
+
+    struct ItemBagToNpcShopOutgoing
+    {
+        UINT16 opcode{ 0x703 };
+        UINT8 result;
+        UINT8 bag;
+        UINT8 slot;
+        UINT8 type;
+        UINT8 typeId;
+        UINT8 count;
+        UINT32 money;
+    };
+
     struct Item0711
     {
         UINT8 slot;

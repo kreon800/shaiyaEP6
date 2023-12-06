@@ -262,6 +262,22 @@ namespace shaiya
         UINT32 resistance;
     };
 
+    struct ItemRepairIncoming
+    {
+        UINT16 opcode{ 0x554 };
+        UINT8 bag;
+        UINT8 slot;
+        ULONG npcId;
+    };
+
+    struct ItemRepairOutgoing
+    {
+        UINT16 opcode{ 0x554 };
+        UINT8 bag;
+        UINT8 slot;
+        UINT32 money;
+    };
+
     struct TownTeleportScrollIncoming
     {
         UINT16 opcode{ 0x55A };

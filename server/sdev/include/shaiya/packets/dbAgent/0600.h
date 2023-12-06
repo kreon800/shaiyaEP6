@@ -14,6 +14,25 @@ namespace shaiya
         Other = 2,
     };
 
+    struct UserSetStatusIncoming
+    {
+        UINT16 opcode{ 0x601 };
+        UserId userId;
+        UINT16 level;
+        UINT32 exp;
+        UINT16 statPoint;
+        UINT16 skillPoint;
+        UINT16 strength;
+        UINT16 dexterity;
+        UINT16 intelligence;
+        UINT16 wisdom;
+        UINT16 reaction;
+        UINT16 luck;
+        UINT16 health;
+        UINT16 mana;
+        UINT16 stamina;
+    };
+
     struct UserSetStatusExpIncoming
     {
         UINT16 opcode{ 0x602 };
@@ -32,7 +51,7 @@ namespace shaiya
     {
         UINT16 opcode{ 0x604 };
         UserId userId;
-        UINT16 statusPoint;
+        UINT16 statPoint;
         UINT16 strength;
         UINT16 dexterity;
         UINT16 recovery;
@@ -47,6 +66,26 @@ namespace shaiya
         UserId userId;
         UserSetStatusGroup group;
         UINT16 value;
+    };
+
+    struct UserSetStatusHpMpSpIncoming
+    {
+        UINT16 opcode{ 0x606 };
+        UserId userId;
+        UINT16 health;
+        UINT16 mana;
+        UINT16 stamina;
+    };
+
+    struct UserSetStatusLocationIncoming
+    {
+        UINT16 opcode{ 0x607 };
+        UserId userId;
+        UINT16 mapId;
+        UINT16 direction;
+        float x;
+        float y;
+        float z;
     };
 
     struct UserSetStatusQuickSlot
@@ -103,11 +142,11 @@ namespace shaiya
         UINT32 skillPoint;
     };
 
-    struct UserSetStatusPointIncoming
+    struct UserSetStatusStatPointIncoming
     {
         UINT16 opcode{ 0x60F };
         UserId userId;
-        UINT32 statusPoint;
+        UINT32 statPoint;
     };
     #pragma pack(pop)
 }

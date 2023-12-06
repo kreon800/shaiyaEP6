@@ -49,13 +49,13 @@ namespace shaiya
         ULONG time;
     };
 
-    struct NameAvailableIncoming
+    struct CharNameAvailableIncoming
     {
         UINT16 opcode{ 0x119 };
         Array<char, 19> name;
     };
 
-    struct NameAvailableOutgoing
+    struct CharNameAvailableOutgoing
     {
         UINT16 opcode{ 0x119 };
         bool available;
