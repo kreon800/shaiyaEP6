@@ -163,7 +163,7 @@ namespace shaiya
         D3DVECTOR pos;                //0x10
         D3DVECTOR dir;                //0x1C
         D3DVECTOR up;                 //0x28
-        ULONG id;                     //0x34
+        CharId id;                    //0x34
         UINT32 upperModel;            //0x38
         UINT32 handsModel;            //0x3C
         UINT32 lowerModel;            //0x40
@@ -242,7 +242,7 @@ namespace shaiya
         ShapeType shapeType;          //0x2EC
         PAD(31);
         GuildName* guildName;         //0x30C
-        UINT32 guildId;               //0x310
+        ULONG guildId;                //0x310
         PAD(32);
         UINT32 kills;                 //0x334
         PAD(136);

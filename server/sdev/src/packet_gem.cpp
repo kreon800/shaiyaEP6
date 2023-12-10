@@ -20,7 +20,7 @@ namespace packet_gem
 {
     int find_available_slot(CUser* user, int bag)
     {
-        for (int slot = 0; slot < MAX_INVENTORY_SLOT; ++slot)
+        for (int slot = 0; slot < max_inventory_slot; ++slot)
             if (!user->inventory[bag][slot])
                 return slot;
 
@@ -84,7 +84,7 @@ namespace packet_gem
         auto runeBag = util::read_bytes<std::uint8_t>(buffer, 2);
         auto runeSlot = util::read_bytes<std::uint8_t>(buffer, 3);
 
-        if (!runeBag || runeBag > user->bagsUnlocked || runeSlot >= MAX_INVENTORY_SLOT)
+        if (!runeBag || runeBag > user->bagsUnlocked || runeSlot >= max_inventory_slot)
             return;
 
         auto& rune = user->inventory[runeBag][runeSlot];
@@ -103,7 +103,7 @@ namespace packet_gem
         auto vialBag = util::read_bytes<std::uint8_t>(buffer, 4);
         auto vialSlot = util::read_bytes<std::uint8_t>(buffer, 5);
 
-        if (!vialBag || vialBag > user->bagsUnlocked || vialSlot >= MAX_INVENTORY_SLOT)
+        if (!vialBag || vialBag > user->bagsUnlocked || vialSlot >= max_inventory_slot)
             return;
 
         auto& vial = user->inventory[vialBag][vialSlot];
@@ -173,7 +173,7 @@ namespace packet_gem
         auto runeBag = util::read_bytes<std::uint8_t>(buffer, 2);
         auto runeSlot = util::read_bytes<std::uint8_t>(buffer, 3);
 
-        if (!runeBag || runeBag > user->bagsUnlocked || runeSlot >= MAX_INVENTORY_SLOT)
+        if (!runeBag || runeBag > user->bagsUnlocked || runeSlot >= max_inventory_slot)
             return;
 
         auto& rune = user->inventory[runeBag][runeSlot];
@@ -183,7 +183,7 @@ namespace packet_gem
         auto itemBag = util::read_bytes<std::uint8_t>(buffer, 4);
         auto itemSlot = util::read_bytes<std::uint8_t>(buffer, 5);
 
-        if (itemBag > user->bagsUnlocked || itemSlot >= MAX_INVENTORY_SLOT)
+        if (itemBag > user->bagsUnlocked || itemSlot >= max_inventory_slot)
             return;
 
         auto& item = user->inventory[itemBag][itemSlot];
@@ -205,7 +205,7 @@ namespace packet_gem
             return;
         }
 
-        if (item->itemInfo->reqWis <= 0 || item->itemInfo->reqWis > MAX_REQWIS)
+        if (item->itemInfo->reqWis <= 0 || item->itemInfo->reqWis > max_reqwis)
         {
             SConnection::Send(&user->connection, &packet, 3);
             return;

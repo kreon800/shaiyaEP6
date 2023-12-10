@@ -4,22 +4,24 @@
 #include <windows.h>
 #include <d3d9.h>
 
-// thanks Cups ^^
+// thanks, Cups ^^
 #define CONCAT(x, y) x ## y
 #define EXPAND(x, y) CONCAT(x, y)
 #define PAD(size) char EXPAND(pad, __LINE__)[size]
 
-typedef unsigned char* Packet;
-
 template<class T, int N>
 using Array = std::array<T, N>;
 
-typedef Array<UINT32, 6> Clothes;
-typedef Array<char, 21> CharName;
-typedef Array<char, 51> ShapeName;
-
 namespace shaiya
 {
+    typedef UINT8* Packet;
+
+    typedef ULONG CharId;
+    typedef Array<char, 21> CharName;
+    typedef Array<char, 51> ShapeName;
+
+    typedef Array<UINT32, 6> Clothes;
+
     #pragma pack(push, 1)
     enum struct Country : UINT8
     {
