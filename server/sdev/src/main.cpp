@@ -107,7 +107,6 @@ void Main(HMODULE hModule)
 
     #ifdef SHAIYA_EP6_4_PT
     hook::packet_gem();
-    hook::packet_mailbox();
     hook::packet_market();
     hook::revenge_mark();
     #endif
